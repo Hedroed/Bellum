@@ -1,0 +1,30 @@
+{
+   "scorpion": {
+         "lien": "scorpion.png",
+         "description": "Le scorpion truc est lent mais puissant. Il ne peut se déplacer que d'une case par tour mais avec une portée de 6 cases il est l'unité la plus importante."
+    },
+	"warthog": {
+         "lien": "warthog.png",
+         "description": "Le warthog est intermediaire. Il se déplace d'une case par tour et à une portée de 4 cases."
+    },
+	"mangouste": {
+         "lien": "mangouste.png",
+         "description": "La mangouste est légère mais n'à une portée de tir de seulement 2 cases. Il ne peut se déplacer que de 2 cases par tour, c'est une unitée de reconnaissance."
+    },
+	"rocher": {
+         "lien": "rocher.png",
+         "description": "Un obstacle qui intercepte les tirs"
+    },
+	"walker": {
+         "lien": "walker.png",
+         "description": "Homme à pied, il a une petit portée et peu de vie mais il peu activer les tourrels et passer sur les cotés de la riviére"
+    },
+	"helicopter": {
+         "lien": "copter.png",
+         "description": "c'est un helico"
+    },
+	"bridger": {
+         "lien": "walker.png",
+         "description": "unité qui créé un pond lorsqu'elle se déplace sur un case d'eau"
+    }
+}
