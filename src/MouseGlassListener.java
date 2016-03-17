@@ -15,7 +15,7 @@ public class MouseGlassListener extends MouseAdapter{
 
   private MyGlassPane myGlass;
   private BufferedImage image;
-
+  
   public MouseGlassListener(MyGlassPane glass){
     myGlass = glass;
   }

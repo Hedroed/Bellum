@@ -22,7 +22,6 @@ public class TransferVec {
 		boolean ret = false;
 		if(this.nbRestant > 0 && this.joueur == jo) {
 			ret = true;
-			this.nbRestant--;
 		}
 		return ret;
 	}
@@ -33,5 +32,11 @@ public class TransferVec {
 	
 	public String toString() {
 		return "TransferVec [type:"+this.type.name()+", restant:"+this.nbRestant+", joueur:"+this.joueur+"]";
+	}
+	
+	public void isExited() {
+		if(this.nbRestant > 0) {
+			this.nbRestant--;
+		}
 	}
 }

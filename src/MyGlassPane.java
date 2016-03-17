@@ -19,8 +19,6 @@ public class MyGlassPane extends JPanel{
   //La transparence de notre glace
   private Composite transparence;
   
-  private boolean test = false;
-  
   public MyGlassPane(){
     //Afin de ne peindre que ce qui nous intéresse
     setOpaque(false);
@@ -38,6 +36,9 @@ public class MyGlassPane extends JPanel{
    
   public void paintComponent(Graphics g){
     Graphics2D g2d = (Graphics2D)g;
+	g2d.setComposite(transparence);
+	// g2d.setColor(Color.black);
+	// g2d.fillRect(0,0,this.getWidth(),this.getHeight());
 	
 	//Si on n'a pas d'image à dessiner, on ne fait rien…
     if(img != null) {

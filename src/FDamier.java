@@ -49,6 +49,7 @@ public class FDamier extends JPanel {
 	private Case caseSelec = null;
 
 	private boolean affTir = true;
+	private boolean dark = false;
 	
 	private Fenetre fenetre;
 
@@ -133,6 +134,11 @@ public class FDamier extends JPanel {
 		
 		for(int i=0; i<this.base2.getVie(); i++) {
 			g.fillRect(98+(15*i),684,7,7);
+		}
+		
+		if(this.dark) {
+			g.setColor(new Color(0,0,0,128));
+			g.fillRect(0,0,this.getWidth(),this.getHeight());
 		}
 		
 		// System.out.println("repaint damier");
@@ -476,14 +482,12 @@ public class FDamier extends JPanel {
 		this.repaint();
 	}
 
-	public void sortirVehicule(Sortie s, TypeVec type, Joueur jo) {
-		System.out.println("Sortie de vehicule :"+type.name());
+	public void sortirVehicule(Sortie s, TransferVec t) {
 		
 		if(this.damier[s.getX()][s.getY()].isEmpty()) {
-			if(jo == null) {
-				jo = new Joueur("Anonymus",null);
-			}
-			this.addVehicule(s,type, jo);
+			System.out.println("Sortie de vehicule :"+t.getType().name());
+			this.addVehicule(s,t.getType(), t.getJoueur());
+			t.isExited();
 		}
 		
 		this.fRess.repaint();
