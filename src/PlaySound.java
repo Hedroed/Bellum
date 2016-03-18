@@ -23,6 +23,21 @@ public class PlaySound {
 		gainControl.setValue(-20f);
 	}
 	
+	public PlaySound(String s, int volume) {
+		
+		File file = new File(s);
+		
+		try {
+			clip = AudioSystem.getClip();
+			clip.open(AudioSystem.getAudioInputStream(file));
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+		gainControl.setValue((float) volume);
+	}
+	
 	public void stop() {
 		if(clip.isRunning()) {
 			clip.stop();

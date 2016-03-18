@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JLabel;
 import java.awt.Graphics;
 import javax.swing.BorderFactory;
@@ -68,7 +69,7 @@ public class FEtat extends JPanel {
 		//ajout text description
 		this.texte = new JTextArea("");
 		this.texte.setEditable(false);
-		this.texte.setPreferredSize(new Dimension(186,100));
+		this.texte.setPreferredSize(new Dimension(186,120));
 		Font police = new Font("Tahoma", Font.CENTER_BASELINE, 12);
 		this.texte.setFont(police);
 		this.texte.setForeground(Color.black);

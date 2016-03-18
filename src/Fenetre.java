@@ -24,12 +24,16 @@ import java.awt.CardLayout;
   * On control toutes les methodes d'ici
   */
 public class Fenetre extends JFrame implements KeyListener {
-
+	
+	public final int MENU = 1;
+	public final int GAME = 0;
+	
 	private FDamier fDamier ;
 	private FEtat fEtat ;
 	private FRessource fRessource ;
 	private JPanel container;
-
+	private MenuPane menuPane;
+	
 	private Joueur joueur1;
 	private Joueur joueur2;
 	
@@ -37,6 +41,7 @@ public class Fenetre extends JFrame implements KeyListener {
 	
 	private CardLayout cL;
 	private String[] panelList = {"jeu","menu"};
+	private int currentPane = 0;
 	
 	public Fenetre() {
 		this.setTitle("Bellum");
@@ -60,6 +65,7 @@ public class Fenetre extends JFrame implements KeyListener {
 		String[] race = {"humain", "humain"};
 		JOptionPane jop = new JOptionPane();
 		
+		/*
 		String nom1 = jop.showInputDialog(null, "Nom du Joueur1", "Ce systeme de saisie est temporaire", JOptionPane.QUESTION_MESSAGE);
 		// String race1 = (String)jop.showInputDialog(null, "Race du Joueur1", "Ce systeme de saisie est temporaire", JOptionPane.QUESTION_MESSAGE, null,
 			// race, race[0]);
@@ -73,6 +79,10 @@ public class Fenetre extends JFrame implements KeyListener {
 		Color color2 = JColorChooser.showDialog(this, "Couleur du Joueur2", null);
 		// this.joueur2 = new Joueur(nom2,color2,race2);
 		this.joueur2 = new Joueur(nom2,color2,null);
+		*/
+		
+		joueur1 = new Joueur("1",null,null);
+		joueur2 = new Joueur("2",null,null);
 		
 		this.fRessource = new FRessource(glass,this.joueur1,this.joueur2);
 		this.fEtat = new FEtat();
@@ -85,16 +95,16 @@ public class Fenetre extends JFrame implements KeyListener {
 		this.addKeyListener(this);
 		
 		JPanel j1 = new JPanel();
-		JPanel j2 = new JPanel();
+		menuPane = new MenuPane();
 		
 		j1.add(fEtat);
 		j1.add(fDamier);
 		j1.add(fRessource);
 		
-		j2.setBackground(Color.red);
+		menuPane.setBackground(Color.red);
 		
 		container.add(j1,panelList[0]);
-		container.add(j2,panelList[1]);
+		container.add(menuPane,panelList[1]);
 		this.setGlassPane(glass);
 		this.setContentPane(container);
 		
@@ -121,12 +131,35 @@ public class Fenetre extends JFrame implements KeyListener {
 	
 		System.out.println(e.paramString());
 		
+		
 		if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-			cL.next(this.container);
+			if(currentPane == MENU) {
+				this.menuPane.close();
+			}
+			
+			this.currentPane ++;
+			if(currentPane >= this.panelList.length) {
+				this.currentPane = 0;
+			}
+			
+			cL.show(this.container,this.panelList[currentPane]);
 		}
-		else if(e.getKeyCode() == KeyEvent.VK_SPACE) {
-			this.fRessource.activeTurn();
+		
+		if(this.currentPane == GAME) {
+			if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+				this.fRessource.activeTurn();
+			}
 		}
+		
+		if(this.currentPane == MENU) {
+			if(e.getKeyCode() == KeyEvent.VK_UP) {
+				this.menuPane.up();
+			}
+			else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
+				this.menuPane.down();
+			}
+		}
+		
 	}
 	public void keyReleased(KeyEvent e) {}
 	public void	keyTyped(KeyEvent e) {}
