@@ -180,6 +180,8 @@ public abstract class Vehicule extends JPanel{
 			System.out.println("Vehicule "+this.type.name()+" mort");
 
 			//animation mort
+			PlaySound ps = new PlaySound("ressources/explosion.wav");
+			ps.play();
 			Thread t = new Thread(new AnimeExplosion(this.pan,this));
 			t.start();
 		}
