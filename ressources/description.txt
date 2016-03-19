@@ -1,30 +1,30 @@
 {
    "scorpion": {
          "lien": "scorpion.png",
-         "description": "Le scorpion truc est lent mais puissant. Il ne peut se déplacer que d'une case par tour mais avec une portée de 6 cases il est l'unité la plus importante."
+         "description": "Le scorpion est lent mais puissant. Il ne peut se déplacer que d'une case par tour, mais avec une portée de 6 cases, il est l'unité la plus importante."
     },
 	"warthog": {
          "lien": "warthog.png",
-         "description": "Le warthog est intermediaire. Il se déplace d'une case par tour et à une portée de 4 cases."
+         "description": "Le warthog est intermédiaire. Il se déplace d'une case par tour et à une portée de 4 cases."
     },
 	"mangouste": {
          "lien": "mangouste.png",
-         "description": "La mangouste est légère mais n'à une portée de tir de seulement 2 cases. Il ne peut se déplacer que de 2 cases par tour, c'est une unitée de reconnaissance."
+         "description": "La mangouste est légère mais n'a une portée de tir de seulement 2 cases. Il ne peut se déplacer que de 2 cases par tour, c'est une unité de reconnaissance."
     },
 	"rocher": {
          "lien": "rocher.png",
-         "description": "Un obstacle qui intercepte les tirs"
+         "description": "Un obstacle qui intercepte les tirs."
     },
 	"walker": {
          "lien": "walker.png",
-         "description": "Homme à pied, il a une petit portée et peu de vie mais il peu activer les tourrels et passer sur les cotés de la riviére"
+         "description": "Homme à pied, il a une petite portée et peu de vie, mais il peut activer les tourelles et passer sur les côtés de la rivière. Cette unité peut se déplacer dans la base ennemie et lui retirer 2 points de vie."
     },
 	"helicopter": {
          "lien": "copter.png",
-         "description": "c'est un helico"
+         "description": "L'hélicoptère peut ce placer au-dessus d'autres véhicules alliés, il passe aussi au-dessus de la rivière."
     },
 	"bridger": {
          "lien": "walker.png",
-         "description": "unité qui créé un pond lorsqu'elle se déplace sur un case d'eau"
+         "description": "Une unité à forte résistance pouvant être utilisée comme un bouclier. Elle permet également de créer un pont lorsqu'elle se déplace sur la rivière."
     }
 }
