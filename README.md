@@ -1,3 +1,3 @@
 # Bellum
-Jeu java style bataille naval \n
-Pour jouer telechargez le zip, décompressez et lancez Bellum_Alpha.jar
+Jeu java style bataille naval
+Pour jouer telechargez le zip, dÃ©compressez et lancez Bellum_Alpha.jar
