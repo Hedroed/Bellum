@@ -57,6 +57,8 @@ public class Fenetre extends JFrame implements KeyListener, ActionListener {
 	public Fenetre() {
 		this.setTitle("Bellum");
 		this.setSize(651, 850);
+		// this.setSize(1000, 850);
+		this.setMinimumSize(new Dimension(800,600));
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocationRelativeTo(null);
 		this.setResizable(true);
@@ -122,6 +124,7 @@ public class Fenetre extends JFrame implements KeyListener, ActionListener {
 				if(menuPane.getCurrent().equals("Jouer ") || menuPane.getCurrent().equals("Recommencer")) {
 					cL.show(this.container,"select");
 					this.currentPane = SELECT;
+					new PlaySound("ressources/select.wav",-30).play();
 				}
 				else if(menuPane.getCurrent().equals("Quitter")) {
 					System.exit(0);

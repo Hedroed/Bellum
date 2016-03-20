@@ -24,7 +24,8 @@ import java.util.ArrayList;
 
 public class FRessource extends JPanel implements ActionListener {
 	
-	private Dimension fSize = new Dimension(626,100);
+	// private Dimension fSize = new Dimension(626,100);
+	private Dimension fSize = new Dimension(110,700);
 	private FDamier fDamier;
 	private JButton nextTurn = new JButton("Tour Suivant");
 	private JPanel centerPane = new JPanel();
@@ -50,9 +51,10 @@ public class FRessource extends JPanel implements ActionListener {
 		
 		this.nextTurn.addActionListener(this);
 		this.nextTurn.setFocusable(false);
+		this.nextTurn.setPreferredSize(new Dimension(90,70));
 		
 		this.add(this.centerPane,BorderLayout.CENTER);//new JScrollPane(
-		this.add(this.nextTurn,BorderLayout.EAST);
+		this.add(this.nextTurn,BorderLayout.SOUTH);
 	}
 	
 	public void actionPerformed(ActionEvent e) {

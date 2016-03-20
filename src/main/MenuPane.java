@@ -14,6 +14,8 @@ import java.awt.AlphaComposite;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 
+import java.awt.geom.AffineTransform;
+
 public class MenuPane extends JPanel {
 	
 	
@@ -34,11 +36,11 @@ public class MenuPane extends JPanel {
 		
 		
 		//load background
-		// try {
-			// background = ImageIO.read(new File("ressources/background.png"));
-		// } catch (IOException e) {
-			// e.printStackTrace();
-		// }
+		try {
+			background = ImageIO.read(new File("ressources/bg_menu.jpg"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 	}
 	
@@ -82,6 +84,16 @@ public class MenuPane extends JPanel {
 		g.fillRect(0,0,getWidth(),getHeight());
 		
 		//draw background
+		Graphics2D g2D = (Graphics2D) g;
+		
+		AffineTransform scale = new AffineTransform();
+		System.out.println("scale h:"+(double)getWidth()/background.getWidth()+"  scale v:"+(double)getHeight()/background.getHeight());
+		scale.scale((double)getWidth()/background.getWidth(),(double)getHeight()/background.getHeight());
+		
+		g2D.drawImage(background,scale,this);
+		
+		
+		
 		
 		//draw text
 		Font f1 = null;
