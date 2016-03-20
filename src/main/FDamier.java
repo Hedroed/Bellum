@@ -61,10 +61,10 @@ public class FDamier extends JPanel {
 
 	// private JBase base1 = new JBase();
 
-	public FDamier(FEtat fe, FRessource fr, Joueur jo1, Joueur jo2, Fenetre f){
+	public FDamier(FEtat fe, FRessource fr, Joueur jo1, Joueur jo2){
 		this.fRess = fr;
 		this.fEtat = fe;
-		this.fenetre = f;
+		// this.fenetre = f;
 		
 		this.setLayout(new GridLayout(LONGUEUR, LARGEUR,1,1));
 		this.setPreferredSize(size);

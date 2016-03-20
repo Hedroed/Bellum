@@ -18,16 +18,20 @@ public class MenuPane extends JPanel {
 	
 	
 	private String title;
-	private String[] options = {"Jouer ","Option ","Quitter"};
+	private String[][] options = {{"Jouer ","Options","Quitter"},{"Continuer","Recommencer","Options","Quitter"}};
 	
 	private BufferedImage background;
 	private PlaySound soundChange ;
+	
+	private Boolean gameRunning = false;
 	
 	private int current = 0;
 	
 	public MenuPane() {
 		this.title = "Bellum";
 		this.soundChange = new PlaySound("ressources/menu.wav",-30);
+		this.setBackground(Color.black);
+		
 		
 		//load background
 		// try {
@@ -40,7 +44,11 @@ public class MenuPane extends JPanel {
 	
 	public void down() {
 		current++;
-		if(current >= options.length) {
+		
+		int i=0;
+		if(gameRunning) i=1;
+		
+		if(current >= options[i].length) {
 			current = 0;
 		}
 		this.soundChange.play();
@@ -49,8 +57,12 @@ public class MenuPane extends JPanel {
 	
 	public void up() {
 		current--;
+		
+		int i=0;
+		if(gameRunning) i=1;
+		
 		if(current < 0) {
-			current = options.length -1;
+			current = options[i].length -1;
 		}
 		this.soundChange.play();
 		this.repaint();
@@ -58,6 +70,10 @@ public class MenuPane extends JPanel {
 	
 	public void close() {
 		this.soundChange.close();
+	}
+	
+	public void setGameRunning(boolean b) {
+		gameRunning = b;
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -75,24 +91,47 @@ public class MenuPane extends JPanel {
             e.printStackTrace();
         }
 		
-		f1 = f1.deriveFont(70f);
+		f1 = f1.deriveFont(80f);
 		g.setColor(new Color(128,0,0));
 		g.setFont(f1);
 		
-		g.drawString(title,(getWidth()-(title.length()*35))/2,70);
+		g.drawString(title,(getWidth()-(title.length()*40))/2,90);
 		
 		f1 = f1.deriveFont(30f);
 		g.setFont(f1);
 		
-		for(int i = 0 ; i < options.length; i++) {
-			
-			if(current == i) {
-				g.setColor(new Color(170,0,0));
+		if(!gameRunning) {
+			for(int i = 0 ; i < options[0].length; i++) {
+				
+				if(current == i) {
+					g.setColor(new Color(170,0,0));
+				}
+				else {
+					g.setColor(Color.black);
+				}
+				g.drawString(options[0][i], (getWidth()-(options[0][i].length()*15))/2,380+(30*i));
 			}
-			else {
-				g.setColor(Color.black);
+		}
+		else {
+			for(int i = 0 ; i < options[1].length; i++) {
+				
+				if(current == i) {
+					g.setColor(new Color(170,0,0));
+				}
+				else {
+					g.setColor(Color.black);
+				}
+				g.drawString(options[1][i], (getWidth()-(options[1][i].length()*15))/2,380+(30*i));
 			}
-			g.drawString(options[i], (getWidth()-(options[i].length()*15))/2,450+(30*i));
+		}
+	}
+	
+	public String getCurrent() {
+		if(!gameRunning) {
+			return options[0][current];
+		}
+		else {
+			return options[1][current];
 		}
 	}
 	
