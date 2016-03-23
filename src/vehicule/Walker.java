@@ -39,13 +39,8 @@ public class Walker extends Vehicule{
 		else if(c.isVehicule()){
 			ret = false;
 		}
-		else if(c.isRiver()) {
-			if((c.getXCoord() == 0 || c.getXCoord() == 8)) {
-				ret = true;
-			}
-			else {
-				ret = false;
-			}
+		else if(c.isRiver() && !c.haveBridge()) {
+			ret = c.isRiverRamp();
 		}
 		else if(c.isHelicopter()) {
 			if(c.getVehicule().getJoueur() == this.getJoueur()) {

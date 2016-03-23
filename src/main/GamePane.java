@@ -2,6 +2,7 @@ package main;
 
 import joueur.*;
 import glass.*;
+import component.MapLoader;
 
 import javax.swing.JPanel;
 
@@ -19,8 +20,22 @@ public class GamePane extends JPanel {
 		
 		this.fRessource = new FRessource(glass,this.joueur1,this.joueur2);
 		this.fEtat = new FEtat();
-		this.fDamier = new FDamier(this.fEtat,this.fRessource,this.joueur1,this.joueur2);
-
+		
+		this.fDamier = new FDamier(this.fEtat,this.fRessource);
+		
+		Joueur[] js = new Joueur[2];
+		js[0] = joueur1;
+		js[1] = joueur2;
+		
+		MapLoader mL = new MapLoader("ressources/map1.map",fDamier,js);
+		if(!mL.getError()) {
+			this.fDamier.initDamier(mL);
+		}
+		else {
+			this.fDamier.initDamier(jo1,jo2);//a terme envoyer un tableau pour plus que 2 joueurs
+		}
+		
+		
 		this.fEtat.setFDamier(this.fDamier);
 		this.fRessource.setFDamier(this.fDamier);
 		

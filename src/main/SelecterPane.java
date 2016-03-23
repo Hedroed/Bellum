@@ -149,9 +149,11 @@ public class SelecterPane extends JPanel {
 	public void chooseColor(Color c, String s) {
 		if(s.equals("img1")){
 			img1.setVec(new Mangouste(0,null,new Joueur("",c,null)));
+			mcc2.block(c);
 		}
 		else if(s.equals("img2")){
 			img2.setVec(new Mangouste(0,null,new Joueur("",c,null)));
+			mcc1.block(c);
 		}
 		repaint();
 	}

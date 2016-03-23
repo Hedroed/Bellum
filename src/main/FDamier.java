@@ -39,13 +39,13 @@ public class FDamier extends JPanel {
 	private Image baseDown;
 	private Base base2;
 	private Image bridge;
-	private int[] bridges = new int[9];
+	private boolean[][] bridges;
 	private FEtat fEtat;
 	private FRessource fRess;
 
-	private static int LARGEUR = 9;
-	private static int LONGUEUR = 15;
-	private Case[][] damier = new Case[LARGEUR][LONGUEUR];
+	private static int LARGEUR;
+	private static int LONGUEUR;
+	private Case[][] damier;
 	// private ArrayList<Case> zoneTirSelect = new ArrayList<Case>();
 	// private ArrayList<Case> zoneDepSelect = new ArrayList<Case>();
 	// private ArrayList<Case> zoneCibleSelect = new ArrayList<Case>();
@@ -61,23 +61,44 @@ public class FDamier extends JPanel {
 
 	// private JBase base1 = new JBase();
 
-	public FDamier(FEtat fe, FRessource fr, Joueur jo1, Joueur jo2){
+	public FDamier(FEtat fe, FRessource fr){
 		this.fRess = fr;
 		this.fEtat = fe;
 		// this.fenetre = f;
 		
-		this.setLayout(new GridLayout(LONGUEUR, LARGEUR,1,1));
 		this.setPreferredSize(size);
 		this.setBackground(Color.black);
 		this.setBorder(BorderFactory.createEtchedBorder());
+	}
+	
+	/**
+	  * Initialise avec les deux joueur, charge la map par defaut
+	  */
+	public void initDamier(Joueur jo1, Joueur jo2) {
+		System.out.println("Creation map par defaut");
+		LARGEUR = 9;
+		LONGUEUR = 15;
+		
+		this.setLayout(new GridLayout(LONGUEUR, LARGEUR,1,1));
+		try {
+			this.fond = ImageIO.read(new File("ressources/fond.png"));
+			this.baseDown = ImageIO.read(new File("ressources/baseDown.png"));
+			this.baseUp = ImageIO.read(new File("ressources/baseUp.png"));
+			this.bridge = ImageIO.read(new File("ressources/pont.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		damier = new Case[LARGEUR][LONGUEUR];
+		bridges = new boolean[LARGEUR][LONGUEUR];
 		
 		//ajout des sortie
-		this.damier[2][1] = new CaseExit(3,1,this,Sortie.H_G,jo1);
-		this.damier[4][1] = new CaseExit(5,1,this,Sortie.H_M,jo1);
-		this.damier[6][1] = new CaseExit(7,1,this,Sortie.H_D,jo1);
-		this.damier[2][13] = new CaseExit(3,13,this,Sortie.B_G,jo2);
-		this.damier[4][13] = new CaseExit(5,13,this,Sortie.B_M,jo2);
-		this.damier[6][13] = new CaseExit(7,13,this,Sortie.B_D,jo2);
+		this.damier[2][1] = new CaseExit(2,1,this,new Exit(2,2,180),jo1);
+		this.damier[4][1] = new CaseExit(4,1,this,new Exit(4,2,180),jo1);
+		this.damier[6][1] = new CaseExit(6,1,this,new Exit(6,2,180),jo1);
+		this.damier[2][13] = new CaseExit(2,13,this,new Exit(2,12,0),jo2);
+		this.damier[4][13] = new CaseExit(4,13,this,new Exit(4,12,0),jo2);
+		this.damier[6][13] = new CaseExit(6,13,this,new Exit(6,12,0),jo2);
 		
 		for(int j=0; j<LONGUEUR; j++) {
 			for(int i=0; i<LARGEUR; i++) {
@@ -92,9 +113,11 @@ public class FDamier extends JPanel {
 		for(int i=0; i<LARGEUR; i++){
 			this.damier[i][LONGUEUR/2].setRiver();
 		}
+		damier[0][LONGUEUR/2].setRiverRamp();
+		damier[LARGEUR-1][LONGUEUR/2].setRiverRamp();
 		
-		this.base1 = new Base(jo1);
-		this.base2 = new Base(jo2);
+		this.base1 = new Base(2,0,jo1,this.baseUp);
+		this.base2 = new Base(2,13,jo2,this.baseDown);
 		
 		for(int i=2; i<7; i++) {
 			for(int j=0; j<2; j++) {
@@ -108,38 +131,51 @@ public class FDamier extends JPanel {
 		//ajout obstacles
 		addObstacle(3,5);
 		addObstacle(5,9);
+	}
+	
+	/** 
+	  * Initialise avec un objet MapLoader qui permet de charger un fichier map
+	  */
+	public void initDamier(MapLoader mL){
+		System.out.println("Creation map par MapLoader");
+		LARGEUR = mL.getWidth();
+		LONGUEUR = mL.getHeight();
+		
+		this.setLayout(new GridLayout(LONGUEUR, LARGEUR,1,1));
+		
+		
+		damier = mL.getDamier();
+		bridges = mL.getBridges();
+		
+		this.base1 = mL.getBase(1);
+		this.base2 = mL.getBase(2);
 
-		try {
-			this.fond = ImageIO.read(new File("ressources/fond.png"));
-			this.baseDown = ImageIO.read(new File("ressources/baseDown.png"));
-			this.baseUp = ImageIO.read(new File("ressources/baseUp.png"));
-			this.bridge = ImageIO.read(new File("ressources/pont.png"));
-		} catch (IOException e) {
-			e.printStackTrace();
+
+		this.fond = mL.getImageBackground();
+		this.baseDown = mL.getImageBase(1);
+		this.baseUp = mL.getImageBase(2);
+		this.bridge = mL.getImageBridge();
+		
+		for(int j=0; j<LONGUEUR; j++) {
+			for(int i=0; i<LARGEUR; i++) {
+				this.add(this.damier[i][j]);
+			}
 		}
 	}
-
+	
 	public void paintComponent(Graphics g){
 		g.drawImage(this.fond, 0, 0, this);
 		
-		if(this.base2.getVie() > 0)
-			g.drawImage(this.baseDown,95,603,this);
-		if(this.base1.getVie() > 0)
-			g.drawImage(this.baseUp,95,5,this);
+		base1.draw(g);
+		base2.draw(g);
 		
-		for(int i = 0;i<9;i++) {
-			if(this.bridges[i] != 0) {
-				g.drawImage(this.bridge,this.bridges[i],328,this);
+		
+		for(int j=0; j<LONGUEUR; j++) {
+			for(int i=0; i<LARGEUR; i++) {
+				if(bridges[i][j]) {
+					g.drawImage(this.bridge,4+(i*46),5+(46*j),this);
+				}
 			}
-		}
-		
-		g.setColor(Color.red);
-		for(int i=0; i<this.base1.getVie(); i++) {
-			g.fillRect(314-(15*i),8,7,7);
-		}
-		
-		for(int i=0; i<this.base2.getVie(); i++) {
-			g.fillRect(98+(15*i),684,7,7);
 		}
 		
 		if(this.dark) {
@@ -150,7 +186,7 @@ public class FDamier extends JPanel {
 		// System.out.println("repaint damier");
 	}
 
-	public void addVehicule(Sortie s, TypeVec t, Joueur jo) {
+	public void addVehicule(Exit s, TypeVec t, Joueur jo) {
 		if(t.name().equals("helicopter")) {
 			addHelicopter(s,jo);
 		}
@@ -166,7 +202,7 @@ public class FDamier extends JPanel {
 		}
 	}
 	
-	private Vehicule vehiculeFactory(String n, Sortie s, Joueur jo) {
+	private Vehicule vehiculeFactory(String n, Exit s, Joueur jo) {
 		Vehicule ret = null;
 		switch (n) {
 			case "mangouste":
@@ -192,7 +228,7 @@ public class FDamier extends JPanel {
 		return ret;
 	}
 	
-	public void addHelicopter(Sortie s, Joueur jo) {
+	public void addHelicopter(Exit s, Joueur jo) {
 		if(this.damier[s.getX()][s.getY()].isEmpty()) {
 			Helicopter ret = new Helicopter(s.getAngle(),(FDamier)this,jo);
 			jo.addVec(ret);
@@ -366,23 +402,6 @@ public class FDamier extends JPanel {
 									else {
 										zoneTir.add(c);
 									}
-									
-									// if(c.isBase()) {
-										// zoneCible.add(c);
-										// break;
-									// }
-									// else if(c.getVehicule() != null) {
-										// if(c.getVehicule().getJoueur() != this.caseSelec.getVehicule().getJoueur()) {
-											// zoneCible.add(c);
-										// }
-										// break;
-									// }
-									// else if(!c.isEmpty()) {
-										// break;
-									// }
-									// else {
-										// zoneTir.add(c);
-									// }
 								}
 							}
 						}
@@ -488,9 +507,9 @@ public class FDamier extends JPanel {
 		this.repaint();
 	}
 
-	public void sortirVehicule(Sortie s, TransferVec t) {
-		
+	public void sortirVehicule(Exit s, TransferVec t) {
 		if(this.damier[s.getX()][s.getY()].isEmpty()) {
+			
 			System.out.println("Sortie de vehicule :"+t.getType().name());
 			this.addVehicule(s,t.getType(), t.getJoueur());
 			t.isExited();
@@ -500,10 +519,10 @@ public class FDamier extends JPanel {
 	}
 	
 	public void setBridge(Case c) {
-		int x;
 		if(c != null) {
-			x = c.getXCoord();
-			this.bridges[x] = 4+(x*46);
+			int x = c.getXCoord();
+			int y = c.getYCoord();
+			this.bridges[x][y] = true;
 		}
 	}
 	
@@ -513,6 +532,8 @@ public class FDamier extends JPanel {
 	
 	public void setDark(boolean b) {
 		this.dark = b;
+		
+		// System.out.println(fRess.getActiveJoueur());
 		
 		for(int j=0; j<LONGUEUR; j++) {
 			for(int i=0; i<LARGEUR; i++) {

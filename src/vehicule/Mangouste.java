@@ -37,7 +37,7 @@ public class Mangouste extends Vehicule{
 		else if(c.isBase()) {
 			ret = false;
 		}
-		else if(c.isRiver()) {
+		else if(c.isRiver() && !c.haveBridge()) {
 			ret = false;
 		}
 		else if(c.isVehicule()) { //is other vehicule

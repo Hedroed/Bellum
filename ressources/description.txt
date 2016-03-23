@@ -17,7 +17,7 @@
     },
 	"walker": {
          "lien": "walker.png",
-         "description": "Homme à pied, il a une petite portée et peu de vie, mais il peut activer les tourelles et passer sur les côtés de la rivière. Cette unité peut se déplacer dans la base ennemie et lui retirer 2 points de vie."
+         "description": "Homme à pied, il a une petite portée et peu de vie, mais il pourra activer les tourelles et passer sur les côtés de la rivière. Cette unité peut se déplacer dans la base ennemie et lui retirer 2 points de vie."
     },
 	"helicopter": {
          "lien": "copter.png",

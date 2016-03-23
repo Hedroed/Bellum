@@ -27,6 +27,8 @@ public class Case extends JPanel implements MouseListener{
 	private int xCoord, yCoord;
 	private int posX, posY;
 	private boolean isRiver;
+	private boolean isRiverRamp;
+	private boolean isBridge;
 	private Vehicule vehicule;
 	private Base base;
 	private Helicopter helicopter;
@@ -48,8 +50,8 @@ public class Case extends JPanel implements MouseListener{
 		this.xCoord = x;
 		this.yCoord = y;
 		this.fDamier = fd;
-		this.posX = 12+x*44;
-		this.posY = 18+y*44;
+		// this.posX = 12+x*44;
+		// this.posY = 18+y*44;
 		// this.setBackground(Color.white);
 		this.addMouseListener(this);
 		
@@ -94,7 +96,7 @@ public class Case extends JPanel implements MouseListener{
 			g.drawRect(0,0,this.getWidth()-1,this.getHeight()-1);
 		}
 		
-		if(this.isRiver) {
+		if(this.isRiver && !isBridge) {
 			g.setColor(Color.blue);
 			g.drawRect(10,10,this.getWidth()-21,this.getHeight()-21);
 			g.drawRect(15,15,this.getWidth()-31,this.getHeight()-31);
@@ -271,9 +273,21 @@ public class Case extends JPanel implements MouseListener{
 		return this.isRiver;
 	}
 	
-	public void setBridge() {
-		this.isRiver = false;
+	public void setRiverRamp() {
+		this.isRiverRamp = true;
+	}
+	
+	public boolean isRiverRamp() {
+		return this.isRiverRamp;
+	}
+	
+	public void setBridge(boolean b) {
+		this.isBridge = b;
 		//+ ajout image pont
+	}
+	
+	public boolean haveBridge() {
+		return this.isBridge;
 	}
 	
 	//autre

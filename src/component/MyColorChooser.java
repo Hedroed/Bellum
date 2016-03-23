@@ -12,6 +12,7 @@ public class MyColorChooser extends JPanel implements MouseListener {
 	
 	private Color[] colors = new Color[8];
 	private Color currentColor = null;
+	private Color blockColor = null;
 	
 	private SelecterPane pan;
 	
@@ -62,10 +63,24 @@ public class MyColorChooser extends JPanel implements MouseListener {
 		
 		for(int i=0; i<4; i++) {
 			for(int j=0; j<2; j++) {
-				g.setColor(colors[(i*2)+j]);
+				Color c = colors[(i*2)+j];
+				if(c.equals(blockColor)) {
+					c = c.darker();
+					c = c.darker();
+					c = c.darker();
+				}
+				g.setColor(c);
 				g.fillRect(5+(i*xCoord),5+(j*yCoord),xCoord-5,yCoord-5);
 				g.setColor(Color.black);
 				g.drawRect(5+(i*xCoord),5+(j*yCoord),xCoord-5,yCoord-5);
+			}
+		}
+	}
+	
+	public void block(Color c) {
+		for(Color color : this.colors) {
+			if(color.equals(c)) {
+				blockColor = color;
 			}
 		}
 	}
@@ -84,10 +99,13 @@ public class MyColorChooser extends JPanel implements MouseListener {
 			int iColor = (int) (e.getX()-5)/xCoord;
 			int jColor = (int) (e.getY()-5)/yCoord;
 			
-			System.out.println("x:"+iColor+" y:"+jColor);
+			// System.out.println("x:"+iColor+" y:"+jColor);
 			
-			currentColor = colors[(iColor*2)+jColor];
-			pan.chooseColor(currentColor,command);
+			Color c = colors[(iColor*2)+jColor];
+			if(!c.equals(blockColor)) {
+				currentColor = c;
+				pan.chooseColor(currentColor,command);
+			}
 		}
 	}
 }

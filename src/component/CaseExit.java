@@ -10,16 +10,25 @@ import java.awt.Graphics;
 
 public class CaseExit extends Case {
 	
-	private Sortie exit;
+	private Exit exit;
 	private TransferVec transfer;
 	
 	private Joueur joueur;
 	private boolean canExitVehicule = false;
 	
-	public CaseExit(int x, int y, FDamier fd, Sortie s, Joueur jo) {
+	public CaseExit(int x, int y, FDamier fd, Exit s, Joueur jo) {
 		super(x, y, fd);
 		this.exit = s;
 		this.joueur = jo;
+		
+		//set le transferHandle
+		this.setTransferHandler(new TransferHandler("transfer"));
+	}
+	
+	public CaseExit(int x, int y, FDamier fd) {
+		super(x, y, fd);
+		this.exit = null;
+		this.joueur = null;
 		
 		//set le transferHandle
 		this.setTransferHandler(new TransferHandler("transfer"));
@@ -44,11 +53,11 @@ public class CaseExit extends Case {
 		return true;
 	}
 	
-	public void setExit(Sortie s) {
-		this.exit = s;
+	public void setExit(int x, int y, int a) {
+		this.exit = new Exit(x,y,a);
 	}
 	
-	public Sortie getExit() {
+	public Exit getExit() {
 		return this.exit;
 	}
 	

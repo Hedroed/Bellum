@@ -232,7 +232,6 @@ public abstract class Vehicule extends JPanel{
 		this.actif = false;
 	}
 	
-	
 	public abstract void makeImage();
 	
 	public void newCase(Case c) {}
