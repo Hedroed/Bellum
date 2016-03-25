@@ -26,6 +26,7 @@ import javax.swing.JLabel;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.BorderFactory;
+import javax.swing.JSlider;
 
 public class SelecterPane extends JPanel {
 	
@@ -37,6 +38,8 @@ public class SelecterPane extends JPanel {
 	
 	private MyColorChooser mcc1;
 	private MyColorChooser mcc2;
+	
+	private JSlider slider;
 	
 	private JButton ok;
 	private JButton exit;
@@ -79,7 +82,9 @@ public class SelecterPane extends JPanel {
 		n.add(label);
 		n.add(name1);
 		label = new JLabel("option Joueur1 :");
+		slider = new JSlider(40,55,46);
 		n.add(label);
+		n.add(slider);
 		m.add(n);
 		
 		label = new JLabel("Couleur Joueur1 :");
@@ -160,6 +165,7 @@ public class SelecterPane extends JPanel {
 	
 	public Joueur getJoueur(int i) {
 		if(i == 1) {
+			ImageSprite.tileSize = (int) slider.getValue();
 			return new Joueur(name1.getText(),mcc1.getColor(),null);
 		}
 		else if(i == 2) {

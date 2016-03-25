@@ -31,8 +31,6 @@ import java.awt.event.MouseEvent;
   */
 public class FDamier extends JPanel {
 
-	private Dimension size = new Dimension(420,700);
-
 	private Image fond;
 	private Image baseUp;
 	private Base base1;
@@ -46,9 +44,6 @@ public class FDamier extends JPanel {
 	private static int LARGEUR;
 	private static int LONGUEUR;
 	private Case[][] damier;
-	// private ArrayList<Case> zoneTirSelect = new ArrayList<Case>();
-	// private ArrayList<Case> zoneDepSelect = new ArrayList<Case>();
-	// private ArrayList<Case> zoneCibleSelect = new ArrayList<Case>();
 	private ArrayList<Case> zoneTirSelect = null;
 	private ArrayList<Case> zoneDepSelect = null;
 	private ArrayList<Case> zoneCibleSelect = null;
@@ -59,15 +54,12 @@ public class FDamier extends JPanel {
 	
 	private Fenetre fenetre;
 
-	// private JBase base1 = new JBase();
-
 	public FDamier(FEtat fe, FRessource fr){
 		this.fRess = fr;
 		this.fEtat = fe;
-		// this.fenetre = f;
+
 		
-		this.setPreferredSize(size);
-		this.setBackground(Color.black);
+		this.setBackground(new Color(30,20,10));
 		this.setBorder(BorderFactory.createEtchedBorder());
 	}
 	
@@ -79,7 +71,9 @@ public class FDamier extends JPanel {
 		LARGEUR = 9;
 		LONGUEUR = 15;
 		
+		this.setSize(new Dimension(LONGUEUR*46,LARGEUR*46));
 		this.setLayout(new GridLayout(LONGUEUR, LARGEUR,1,1));
+		
 		try {
 			this.fond = ImageIO.read(new File("ressources/fond.png"));
 			this.baseDown = ImageIO.read(new File("ressources/baseDown.png"));
@@ -90,7 +84,6 @@ public class FDamier extends JPanel {
 		}
 		
 		damier = new Case[LARGEUR][LONGUEUR];
-		bridges = new boolean[LARGEUR][LONGUEUR];
 		
 		//ajout des sortie
 		this.damier[2][1] = new CaseExit(2,1,this,new Exit(2,2,180),jo1);
@@ -131,6 +124,7 @@ public class FDamier extends JPanel {
 		//ajout obstacles
 		addObstacle(3,5);
 		addObstacle(5,9);
+
 	}
 	
 	/** 
@@ -141,11 +135,10 @@ public class FDamier extends JPanel {
 		LARGEUR = mL.getWidth();
 		LONGUEUR = mL.getHeight();
 		
+		// this.setSize(new Dimension(LONGUEUR*10,LARGEUR*10));
 		this.setLayout(new GridLayout(LONGUEUR, LARGEUR,1,1));
-		
-		
+
 		damier = mL.getDamier();
-		bridges = mL.getBridges();
 		
 		this.base1 = mL.getBase(1);
 		this.base2 = mL.getBase(2);
@@ -161,22 +154,23 @@ public class FDamier extends JPanel {
 				this.add(this.damier[i][j]);
 			}
 		}
+		
 	}
 	
 	public void paintComponent(Graphics g){
-		g.drawImage(this.fond, 0, 0, this);
-		
-		base1.draw(g);
-		base2.draw(g);
-		
+		// g.drawImage(this.fond, 0, 0, this);
+		g.setColor(new Color(65,65,65));
+		g.fillRect(0,0,this.getWidth(),this.getHeight());
 		
 		for(int j=0; j<LONGUEUR; j++) {
 			for(int i=0; i<LARGEUR; i++) {
-				if(bridges[i][j]) {
-					g.drawImage(this.bridge,4+(i*46),5+(46*j),this);
-				}
+				this.damier[i][j].draw(g);
+				this.damier[i][j].draw2(g);
 			}
 		}
+		
+		base1.draw(g);
+		base2.draw(g);
 		
 		if(this.dark) {
 			g.setColor(new Color(0,0,0,128));
@@ -250,6 +244,8 @@ public class FDamier extends JPanel {
 	  * declache tout les calcule de selection
 	  */
 	public void caseClicked(Case c) {
+		
+		// System.out.println("Taille fdamier :"+this.getWidth()+":"+this.getHeight());
 		
 		if(this.caseSelec == null) {
 			if(c.getVehicule() != null && !c.getVehicule().isDead()) {
@@ -516,14 +512,6 @@ public class FDamier extends JPanel {
 		}
 		
 		this.fRess.repaint();
-	}
-	
-	public void setBridge(Case c) {
-		if(c != null) {
-			int x = c.getXCoord();
-			int y = c.getYCoord();
-			this.bridges[x][y] = true;
-		}
 	}
 	
 	public Joueur getActiveJoueur() {

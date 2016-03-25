@@ -109,9 +109,8 @@ public class Bridger extends Vehicule{
 	}
 	
 	public void newCase(Case c) {
-		if(c.isRiver()) {
+		if(c.isRiver() && !c.haveBridge()) {
 			c.setBridge(true);
-			this.pan.setBridge(c);
 			this.pan.unselect();
 			this.pan.killMe(this);
 		}

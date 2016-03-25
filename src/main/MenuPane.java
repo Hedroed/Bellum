@@ -80,20 +80,17 @@ public class MenuPane extends JPanel {
 	
 	public void paintComponent(Graphics g) {
 		//clear screen
-		g.setColor(Color.white);
-		g.fillRect(0,0,getWidth(),getHeight());
+		// g.setColor(Color.white);
+		// g.fillRect(0,0,getWidth(),getHeight());
 		
 		//draw background
 		Graphics2D g2D = (Graphics2D) g;
 		
 		AffineTransform scale = new AffineTransform();
-		System.out.println("scale h:"+(double)getWidth()/background.getWidth()+"  scale v:"+(double)getHeight()/background.getHeight());
+		// System.out.println("scale h:"+(double)getWidth()/background.getWidth()+"  scale v:"+(double)getHeight()/background.getHeight());
 		scale.scale((double)getWidth()/background.getWidth(),(double)getHeight()/background.getHeight());
 		
 		g2D.drawImage(background,scale,this);
-		
-		
-		
 		
 		//draw text
 		Font f1 = null;

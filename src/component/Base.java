@@ -1,9 +1,13 @@
 package component;
 
 import joueur.Joueur;
+import component.*;
 
 import java.awt.Image;
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 
 public class Base {
 
@@ -37,10 +41,20 @@ public class Base {
 	}
 	
 	public void draw(java.awt.Graphics g) {
-		int x = 4+(posX*46);
-		int y = 5+(posY*46);
+		int tileSize = ImageSprite.tileSize;
 		
-		g.drawImage(img,x,y,null);
+		int x = 2+(posX*tileSize);
+		int y = 2+(posY*tileSize);
+		
+		Graphics2D g2 = (Graphics2D) g;
+		
+		AffineTransform scale = new AffineTransform();
+		scale.translate(x,y);
+		scale.scale((double) (tileSize-1)/(img.getWidth(null)/5),(double) (tileSize-1)/(img.getHeight(null)/2));
+		
+		if(vie > 0) {
+			g2.drawImage(img,scale,null);
+		}
 		
 		g.setColor(Color.red);
 		for(int i=0; i< vie; i++) {

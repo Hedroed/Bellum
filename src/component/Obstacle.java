@@ -8,12 +8,13 @@ import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import javax.swing.JPanel;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Dimension;
 
 import java.awt.image.BufferedImage;
 
 
-public class Obstacle extends JPanel{
+public class Obstacle{
 	private BufferedImage image;
 	private int angle;
 	private int posX = 1;
@@ -22,8 +23,6 @@ public class Obstacle extends JPanel{
 
 	public Obstacle() {
 		// System.out.println("Creation obstacle");
-		// this.pan = jp;
-		this.setPreferredSize(new Dimension(43,43));
 		try {
 			this.image = ImageIO.read(new File("ressources/rocher.png"));
 		} catch (IOException e) {
@@ -40,22 +39,20 @@ public class Obstacle extends JPanel{
 		// }
 	}
 
-	public void paintComponent(Graphics g){
+	public void draw(Graphics g, int x, int y){
 		// System.out.println("paint obstacle");
-
-		// g.clearRect(0, 0, this.getWidth(), this.getHeight());
-
-		g.drawImage(image, 0, 0, this);
+		
+		Graphics2D g2 = (Graphics2D) g;
+		
+		int tileSize = ImageSprite.tileSize;
+		AffineTransform scale = new AffineTransform();
+		scale.translate(x,y);
+		scale.scale((double) (tileSize-3)/43,(double) (tileSize-3)/43);
+		
+		g2.drawImage(image, scale, null);
 	}
 
 	//accesseur et modifieur
-	// public void setX(int x){
-		// this.posX = x;
-	// }
-
-	// public void setY(int y){
-		// this.posY = y;
-	// }
 
 	public int getX(){
 		return this.posX;

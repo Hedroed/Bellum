@@ -43,7 +43,7 @@ public class MapLoader {
 		this.joueurs = jos;
 		
 		BufferedReader in = null;
-		int width, height, nbBase;
+		int width = 0, height = 0, nbBase;
 		
 		try {
 			in = new BufferedReader(new FileReader(fileName));
@@ -111,6 +111,7 @@ public class MapLoader {
 			e.printStackTrace();
 		}
 		
+		placeRiverTales(width, height);
 		
 	}
 	
@@ -183,7 +184,8 @@ public class MapLoader {
 			case RIVER:        
 				ret.setRiver();
 				break;
-			case RIVER_RAMP:        
+			case RIVER_RAMP:
+				ret.setRiver();
 				ret.setRiverRamp();
 				break;
 			case OBSTACLE:        
@@ -202,6 +204,41 @@ public class MapLoader {
 		}
 		
 		cases[x][y] = ret;
+	}
+	
+	private void placeRiverTales(int width, int height) {
+		
+		for(int i=0; i<width; i++) {
+			for(int j=0; j<height; j++) {
+				if(cases[i][j].isRiver() && !cases[i][j].isRiverRamp()) {
+					if(j-1 >= 0 && cases[i][j-1].isRiver()) {
+						if(j+1 >= height || cases[i][j+1].isRiver()) {
+							cases[i][j].setIdRiver(1);
+						}
+						else if(i+1 < width && cases[i+1][j].isRiver()) {
+							cases[i][j].setIdRiver(4);
+						}
+						else if(i-1 >=0 && cases[i-1][j].isRiver()) {
+							cases[i][j].setIdRiver(3);
+						}
+					}
+					else if(j+1 < height && cases[i][j+1].isRiver()) {
+						if(i+1 < width && cases[i+1][j].isRiver()) {
+							cases[i][j].setIdRiver(5);
+						}
+						else if(i-1 >=0 && cases[i-1][j].isRiver()) {
+							cases[i][j].setIdRiver(2);
+						}
+						else if(j-1 < 0) {
+							cases[i][j].setIdRiver(1);
+						}
+					}
+					else {
+						cases[i][j].setIdRiver(0);
+					}
+				}
+			}
+		}
 	}
 	
 	public Case[][] getDamier() {

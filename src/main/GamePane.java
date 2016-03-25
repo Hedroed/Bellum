@@ -4,6 +4,7 @@ import joueur.*;
 import glass.*;
 import component.MapLoader;
 
+import java.awt.BorderLayout;
 import javax.swing.JPanel;
 
 public class GamePane extends JPanel {
@@ -41,9 +42,14 @@ public class GamePane extends JPanel {
 		
 		//setBackground(Color.white);
 		
-		this.add(fEtat);
-		this.add(fDamier);
-		this.add(fRessource);
+		this.setLayout(new BorderLayout());
+		
+		JPanel center = new JPanel();
+		center.add(fDamier);
+		
+		this.add(fEtat,BorderLayout.WEST);
+		this.add(center,BorderLayout.CENTER);
+		this.add(fRessource,BorderLayout.EAST);
 		
 		this.fRessource.activeTurn();
 	}

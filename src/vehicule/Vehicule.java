@@ -19,7 +19,7 @@ import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 
 
-public abstract class Vehicule extends JPanel{
+public abstract class Vehicule {
 	private Image image;
 	private BufferedImage[] explosions;
 	private boolean mort = false;
@@ -43,33 +43,12 @@ public abstract class Vehicule extends JPanel{
 		this.joueur = jo;
 		this.angle = a;
 		this.type = t;
-		this.setPreferredSize(new Dimension(43,43));
+		// this.setPreferredSize(new Dimension(ImageSprite.tileSize-1,ImageSprite.tileSize-1));
 
 		this.life = t.getVieMax();
-		
-		//image de l'explosion
-		BufferedImage explosion = null;
-		try {
-			explosion = ImageIO.read(new File("ressources/explosion.png"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		final int width = 45;
-		final int height = 45;
-		final int rows = 9;
-		final int cols = 9;
-		explosions = new BufferedImage[rows * cols];
-
-		for (int i = 0; i < rows; i++)
-		{
-			for (int j = 0; j < cols; j++)
-			{
-				explosions[(i * cols) + j] = explosion.getSubimage(j * width,i * height,width,height);
-			}
-		}
 	}
 
-	public void paintComponent(Graphics g){
+	public void draw(Graphics g, int x, int y){
 		// System.out.println("repaint vehicule");
 		
 		Graphics2D g2D = (Graphics2D) g;
@@ -81,41 +60,51 @@ public abstract class Vehicule extends JPanel{
 		}
 		
 		double angleR = Math.toRadians(this.angle);
+		int tileSize = ImageSprite.tileSize;
 		AffineTransform rotate = new AffineTransform();
-		rotate.translate(this.posX,this.posY);
-		rotate.scale(0.65,0.65);
-		rotate.rotate(angleR,image.getWidth(this)/2,image.getHeight(this)/2);
+		rotate.translate(x+this.posX,y+this.posY);
+		rotate.scale((double) (tileSize-3)/64,(double) (tileSize-3)/64);
+		rotate.rotate(angleR,image.getWidth(null)/2,image.getHeight(null)/2);
 
 		if(this.ind < 30) {
 			g2D.drawImage(image, rotate, pan);
 		}
 		//explosion si mort
-		if(this.mort && this.ind <= 81) {
-			g.drawImage(this.explosions[this.ind],0,0,this);
+		if(this.mort ) {
+			if(this.ind <= 81) {
+				AffineTransform scale = new AffineTransform();
+				scale.translate(0,0);
+				scale.scale((double) (tileSize-3)/45,(double) (tileSize-3)/45);
+				// scale.scale(1.2,1.2);
+				g2D.drawImage(ImageSprite.explosion[this.ind],scale,null);
+			}
 		}
+		else {
+			
+			//dessin de la vie
+			g2D.setColor(new Color(127,0,0));
+			for(int i = 0; i < this.life; i++){
+				g2D.fillRect(x+(2+6*i),y+(tileSize-5),3,3);
+			}
+			
+			//pixel utilisation
+			int nb = 0;
+			
+			g2D.setColor(Color.red);
+			for(int i = 0; i < this.tirRestant; i++){
+				g2D.fillRect(x+(38-(6*nb)),y+2,3,3);
+				nb++;
+			}
+			
+			g2D.setColor(Color.blue);
+			for(int i = 0; i < this.depRestant; i++){
+				g2D.fillRect(x+(38-(6*nb)),y+2,3,3);
+				nb++;
+			}
 
-		//dessin de la vie
-		g2D.setColor(new Color(127,0,0));
-		for(int i = 0; i < this.life; i++){
-			g2D.fillRect(2+6*i,this.getHeight()-5,3,3);
 		}
 		
-		//pixel utilisation
-		int nb = 0;
-		
-		g2D.setColor(Color.red);
-		for(int i = 0; i < this.tirRestant; i++){
-			g2D.fillRect(38-(6*nb),2,3,3);
-			nb++;
-		}
-		
-		g2D.setColor(Color.blue);
-		for(int i = 0; i < this.depRestant; i++){
-			g2D.fillRect(38-(6*nb),2,3,3);
-			nb++;
-		}
-		
-		
+		g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 	}
 
 	public void moveTo(int x, int y){
@@ -267,28 +256,47 @@ public abstract class Vehicule extends JPanel{
 
 	public void enter() {
 		
-		setVisible(false);
-		setVisible(true);
 		
 		Thread t = new Thread(new Runnable() {
 			public void run() {
 				int yDep = 0;
-
+				int tileSize = ImageSprite.tileSize;
+				
 				if(angle == 0) {
-					for(posY = 23; posY > 1; posY--) {
+					for(posY = tileSize; posY > 1; posY--) {
 						pan.repaint();
 						try {
-						  Thread.sleep(30);
+						  Thread.sleep(15);
+						} catch (InterruptedException e) {
+						  e.printStackTrace();
+						}
+					}
+				}
+				else if(angle == 270) {
+					for(posX = tileSize; posX > 1; posX--) {
+						pan.repaint();
+						try {
+						  Thread.sleep(15);
+						} catch (InterruptedException e) {
+						  e.printStackTrace();
+						}
+					}
+				}
+				else if(angle == 90) {
+					for(posX = -tileSize; posX < 1; posX++) {
+						pan.repaint();
+						try {
+						  Thread.sleep(15);
 						} catch (InterruptedException e) {
 						  e.printStackTrace();
 						}
 					}
 				}
 				else {
-					for(posY = -23; posY < 1; posY++) {
+					for(posY = -tileSize; posY < 1; posY++) {
 						pan.repaint();
 						try {
-						  Thread.sleep(30);
+						  Thread.sleep(15);
 						} catch (InterruptedException e) {
 						  e.printStackTrace();
 						}
