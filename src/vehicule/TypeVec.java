@@ -6,7 +6,9 @@ public enum TypeVec {
 	scorpion ("ressources/scorpion.png",3,6,1),
 	helicopter ("ressources/copter.png",2,3,2),
 	walker ("ressources/walker.png",1,1,1),
-	bridger ("ressources/bridger.png",5,0,1);
+	bridger ("ressources/bridger.png",5,0,1),
+	turret ("ressources/turret.png",3,0,0),
+	activeTurret("ressources/activeTurret.png",3,3,0);
 	// ghost("ghost.png"),
 	// revenant("revenant.png"),
 	// apparition("apparition.png");

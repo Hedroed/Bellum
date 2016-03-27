@@ -13,11 +13,17 @@ public class MapSelecterState extends JPanel implements MouseListener{
 	
 	private String[] mapList;
 	private File currentMap;
+	private int nbPlayers;
 	
 	private File mapDirectory;
 	private File[] mapFiles;
 	
-	public MapSelecterState() {
+	private Fenetre fenetre;
+	
+	
+	public MapSelecterState(Fenetre f) {
+		this.fenetre = f;
+		
 		mapDirectory = new File("maps");
 		this.addMouseListener(this);
 		
@@ -98,7 +104,8 @@ public class MapSelecterState extends JPanel implements MouseListener{
 			
 			MapInfo info = new MapInfo("maps/"+currentMap.getName());
 			g.drawString("Name : "+info.getName(),center+10,400);
-			g.drawString("Players : "+info.getPlayers(),center+10,430);
+			nbPlayers = info.getPlayers();
+			g.drawString("Players : "+nbPlayers,center+10,430);
 			g.drawString("Size : "+info.getWidth()+" x "+info.getHeight(),center+10,460);
 		
 			//refresh and back buttun
@@ -107,9 +114,6 @@ public class MapSelecterState extends JPanel implements MouseListener{
 			g.setColor(new Color(128,0,0));
 			g.drawString("Bellum !",center+114,h-62);
 		}
-		
-		
-		
 		
 	}
 	
@@ -121,6 +125,10 @@ public class MapSelecterState extends JPanel implements MouseListener{
 	
 	public String getMap() {
 		return currentMap.getName();
+	}
+	
+	public int getNbPlayers() {
+		return nbPlayers;
 	}
 	
 	//MouseListener
@@ -158,10 +166,12 @@ public class MapSelecterState extends JPanel implements MouseListener{
 				if(y >= h-85 && y < h-55 && currentMap != null) {
 					//click valid button
 					System.out.println("OK !!");
+					fenetre.mapNext();
 				}
 				else if(y >= h-45 && y < h-15) {
 					//click back button
 					System.out.println("Back !!");
+					fenetre.mapBack();
 				}
 				repaint();
 			}

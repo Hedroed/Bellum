@@ -13,7 +13,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import javax.swing.TransferHandler;
 import glass.*;
 
 public class DragImage extends JPanel {
@@ -27,7 +26,6 @@ public class DragImage extends JPanel {
 		this.setBackground(Color.white);
 		this.addMouseListener(new MouseGlassListener(glass,fDamier));
 		this.addMouseMotionListener(new MouseGlassMotionListener(glass));
-		this.setTransferHandler(new TransferHandler("transfer"));
 
 		this.transfer = t;
 		
@@ -48,10 +46,6 @@ public class DragImage extends JPanel {
 		g.drawImage(this.image,0,0,this);
 		g.setColor(Color.red);
 		g.drawString("x"+this.transfer.getNbRestant(),25,74);
-	}
-	
-	public void setTranfser(TransferVec t) {
-		System.out.println("Essai de changement vers:"+t);
 	}
 	
 	public TransferVec getTransfer() {

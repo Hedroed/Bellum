@@ -24,7 +24,7 @@ import java.awt.Graphics2D;
 
 public class Case extends JPanel{
 	
-	private int xCoord, yCoord;
+	protected int xCoord, yCoord;
 	// private int posX, posY;
 	private boolean isRiver;
 	private int idRiver;

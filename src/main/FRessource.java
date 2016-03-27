@@ -24,7 +24,6 @@ import java.util.ArrayList;
 
 public class FRessource extends JPanel implements ActionListener {
 	
-	// private Dimension fSize = new Dimension(626,100);
 	private Dimension fSize = new Dimension(110,700);
 	private FDamier fDamier;
 	private JButton nextTurn = new JButton("Tour Suivant");
@@ -32,20 +31,19 @@ public class FRessource extends JPanel implements ActionListener {
 	
 	private MyGlassPane glass;
 	
-	private Joueur joueur1;
-	private Joueur joueur2;
-	private Joueur joueurActif;
+	private Joueur[] players;
+	private int joueurActif;
 	
 	private int tour;
 	
-	public FRessource(MyGlassPane g, Joueur jo1, Joueur jo2){
+	public FRessource(MyGlassPane g, Joueur[] players){
 		this.setPreferredSize(fSize);
 		this.setBackground(Color.black);
 		this.setBorder(BorderFactory.createEtchedBorder());
 		this.setLayout(new BorderLayout());
 		
-		this.joueur1 = jo1;
-		this.joueur2 = jo2;
+		this.players = players;
+
 		this.tour = 0;
 		this.glass = g;
 		
@@ -67,33 +65,35 @@ public class FRessource extends JPanel implements ActionListener {
 	}
 	
 	public void activeTurn() {
-		if(this.joueurActif != null) {
-			this.joueurActif.deactiveAll();
+		players[joueurActif].deactiveAll();
+		
+		joueurActif++;
+		if(joueurActif >= players.length) {
+			joueurActif = 0;
 		}
 		
-		if(this.joueurActif == null) {
-			this.joueur1.deactiveAll();
-			this.joueur2.deactiveAll();
-			this.joueurActif = this.joueur1; //ici calcul du premier joueur
-		}
-		else if(this.joueurActif == this.joueur1) {
-			this.joueurActif = this.joueur2;
-		}
-		else {
-			this.joueurActif = this.joueur1;
-		}
 		System.out.println("- tour : " + this.tour);
-		this.tour ++;
-		this.joueurActif.activeAll();
+		tour ++;
+		players[joueurActif].activeAll();
+		
 		this.fillRessources();
 		this.fDamier.unselect();
 		this.fDamier.repaint();
 		this.repaint();
 	}
 	
+	public void startGame() {
+		if(tour == 0) {
+			for(Joueur p : players) {
+				p.deactiveAll();
+			}
+			joueurActif = (int) Math.random()*players.length;
+		}
+	}
+	
 	public void fillRessources() {
 		this.centerPane.removeAll();
-		ArrayList<TransferVec> list = this.joueurActif.getVecRestant();
+		ArrayList<TransferVec> list = players[joueurActif].getVecRestant();
 		
 		for(TransferVec tv : list){
 			int nb = tv.getNbRestant();
@@ -107,6 +107,6 @@ public class FRessource extends JPanel implements ActionListener {
 	}
 	
 	public Joueur getActiveJoueur() {
-		return this.joueurActif;
+		return players[joueurActif];
 	}
 }

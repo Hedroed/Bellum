@@ -3,7 +3,6 @@ package glass;
 import main.*;
 
 import java.awt.Component;
-import javax.swing.TransferHandler;
 import javax.swing.SwingUtilities;
 import java.awt.Point;
 import java.awt.Graphics;
@@ -53,28 +52,31 @@ public class MouseGlassListener extends MouseAdapter{
 
   public void mouseReleased(MouseEvent event) {
     //---------------------------------------------------------------------
-    //On implémente le transfert lorsqu'on relâche le bouton de souris
-    //Ceci afin de ne pas supplanter le fonctionnement du déplacement
     JComponent lab = (JComponent)event.getSource();
-    TransferHandler handle = lab.getTransferHandler();
-    handle.exportAsDrag(lab, event, TransferHandler.COPY);
     //---------------------------------------------------------------------
       
     //On récupère le composant pour en déduire sa position
     Component composant = event.getComponent();
     Point location = (Point)event.getPoint().clone();
+	
     //Les méthodes ci-dessous permettent, dans l'ordre, 
     //de convertir un point en coordonnées d'écran
     //et de reconvertir ce point en coordonnées fenêtre
     SwingUtilities.convertPointToScreen(location, composant);
+
+	Point locationDamier = (Point)location.clone();
     SwingUtilities.convertPointFromScreen(location, myGlass);
-      
+	
+	//On recupere les coordonnées sur le damier
+	SwingUtilities.convertPointFromScreen(locationDamier, fDamier);	
+	
     //On passe les données qui vont bien à notre GlassPane
     myGlass.setLocation(location);
     myGlass.setImage(null);
 	
 	//damier
 	fDamier.setDark(false);
+	fDamier.sortirVehicule(locationDamier, lab);
 	
     //On n'oublie pas de ne plus l'afficher
     myGlass.setVisible(false);

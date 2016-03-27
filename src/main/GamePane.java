@@ -8,34 +8,33 @@ import java.awt.BorderLayout;
 import javax.swing.JPanel;
 
 public class GamePane extends JPanel {
-	private Joueur joueur1;
-	private Joueur joueur2;
-	
 	private FRessource fRessource;
 	private FDamier fDamier;
 	private FEtat fEtat;
+	private Fenetre fenetre;
 	
-	public GamePane(Joueur jo1, Joueur jo2, String map, MyGlassPane glass) {
-		joueur1 = jo1;
-		joueur2 = jo2;
+	private MyGlassPane glass;
+	
+	public GamePane(Fenetre f, MyGlassPane glass) {
+		this.glass = glass;
+		this.fenetre = f;
+	}
+	
+	public void newGame(Joueur[] players, String map) {
+		removeAll();
 		
-		this.fRessource = new FRessource(glass,this.joueur1,this.joueur2);
+		this.fRessource = new FRessource(glass,players);
 		this.fEtat = new FEtat();
 		
 		this.fDamier = new FDamier(this.fEtat,this.fRessource);
 		
-		Joueur[] js = new Joueur[2];
-		js[0] = joueur1;
-		js[1] = joueur2;
-		
-		MapLoader mL = new MapLoader("maps/"+map,fDamier,js);
+		MapLoader mL = new MapLoader("maps/"+map,fDamier,players);
 		if(!mL.getError()) {
 			this.fDamier.initDamier(mL);
 		}
 		else {
-			this.fDamier.initDamier(jo1,jo2);//a terme envoyer un tableau pour plus que 2 joueurs
+			this.fDamier.initDamier(players[0],players[1]);//a terme envoyer un tableau pour plus que 2 joueurs
 		}
-		
 		
 		this.fEtat.setFDamier(this.fDamier);
 		this.fRessource.setFDamier(this.fDamier);

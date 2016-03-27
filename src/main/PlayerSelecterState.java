@@ -98,10 +98,15 @@ public class PlayerSelecterState extends JPanel{
 		repaint();
 	}
 	
-	public Joueur getJoueur(int i) {
+	public Joueur[] getJoueur() {
 		
 		ImageSprite.tileSize = (int) slider.getValue();
-		System.out.println("id joueur ="+i);
-		return new Joueur(nameSelecter[i].getText(),colorSelecter[i].getColor(),null);
+		
+		Joueur[] players = new Joueur[nameSelecter.length];
+		for(int i=0; i<nameSelecter.length; i++) {
+			players[i] = new Joueur(nameSelecter[i].getText(),colorSelecter[i].getColor(),null);
+		}
+		
+		return players;
 	}
 }

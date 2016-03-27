@@ -3,7 +3,6 @@ package component;
 import joueur.Joueur;
 import main.*;
 
-import javax.swing.TransferHandler;
 import java.awt.event.MouseEvent;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -11,7 +10,6 @@ import java.awt.Graphics;
 public class CaseExit extends Case {
 	
 	private Exit exit;
-	private TransferVec transfer;
 	
 	private Joueur joueur;
 	private boolean canExitVehicule = false;
@@ -21,8 +19,6 @@ public class CaseExit extends Case {
 		this.exit = s;
 		this.joueur = jo;
 		
-		//set le transferHandle
-		this.setTransferHandler(new TransferHandler("transfer"));
 	}
 	
 	public CaseExit(int x, int y, FDamier fd) {
@@ -30,24 +26,9 @@ public class CaseExit extends Case {
 		this.exit = null;
 		this.joueur = null;
 		
-		//set le transferHandle
-		this.setTransferHandler(new TransferHandler("transfer"));
 	}
 	
-	public TransferVec getTransfer() {
-		return this.transfer;
-	}
-	
-	public void setTransfer(TransferVec t) {
-		this.transfer = t;
-		
-		if(t.canExtract(this.joueur)) {
-			System.out.println("Transfer: "+t);
-			//appele la method de fDamier de sortir de vehicule
-			this.fDamier.sortirVehicule(this.exit, t);
-			this.transfer = null;
-		}
-	}
+
 	
 	public boolean isExit() {
 		return true;
@@ -73,12 +54,20 @@ public class CaseExit extends Case {
 		this.canExitVehicule = b;
 	}
 	
-	public void paintComponent(Graphics g){ 
-		// super.paintComponent(g);
+	public boolean isWhite() {
+		return canExitVehicule;
+	}
+	
+	public void draw(Graphics g){ 
+		super.draw(g);
 		
-		if(this.canExitVehicule) {
-			g.setColor(new Color(255,255,255,128));
-			g.fillRect(0,0,this.getWidth(), this.getHeight());
-		}
+		// int tileSize = ImageSprite.tileSize;
+		// int x = 2+(xCoord*(tileSize));
+		// int y = 2+((tileSize)*yCoord);
+		
+		// if(this.canExitVehicule) {
+			// g.setColor(new Color(255,255,255,128));
+			// g.fillRect(x,y,tileSize, tileSize);
+		// }
 	}
 }

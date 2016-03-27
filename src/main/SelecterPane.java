@@ -32,65 +32,43 @@ import java.awt.CardLayout;
 
 public class SelecterPane extends JPanel {
 	
-	private CardLayout cL;
-	
-	private JPanel joueurContainer;
 	private PlayerSelecterState playerState;
-	private MapSelecterState mapState;
+	
+	private Fenetre fenetre;
 	
 	public SelecterPane(Fenetre f) {
-		cL = new CardLayout();
-		
+		this.fenetre = f;
+	}
+	
+	public void init(int nbPlayer) {
+		removeAll();
+		System.out.println("selecter pour :"+nbPlayer);
 		this.setBackground(Color.black);
 		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		
 		JPanel buttonPan = new JPanel();
+		// buttonPan.setPreferredSize(new Dimension(10,50));
 		
 		JButton exit = new JButton("Retour");
-		exit.addActionListener(f);
+		exit.addActionListener(fenetre);
 		exit.setActionCommand("exit");
 		buttonPan.add(exit);
 		
 		JButton ok = new JButton("Ok");
-		ok.addActionListener(f);
+		ok.addActionListener(fenetre);
 		ok.setActionCommand("ok");
 		buttonPan.add(ok);
 		
-		JButton joueur = new JButton("Joueur");
-		joueur.addActionListener(f);
-		joueur.setActionCommand("joueur");
-		buttonPan.add(joueur);
+		playerState = new PlayerSelecterState(nbPlayer);
 		
-		JButton map = new JButton("Map");
-		map.addActionListener(f);
-		map.setActionCommand("map");
-		buttonPan.add(map);
-		
-		playerState = new PlayerSelecterState(2);
-		
-		mapState = new MapSelecterState();
-		
-		joueurContainer = new JPanel();
-		joueurContainer.setLayout(cL);
-		joueurContainer.add(new JScrollPane(playerState),"Joueur");
-		joueurContainer.add(mapState,"Map");
-		
-		this.add(joueurContainer);
+		this.add(new JScrollPane(playerState));
 		this.add(buttonPan);
 		
 		setVisible(true);
 	}
 	
-	public void showPan(String s) {
-		this.cL.show(joueurContainer,s);
-	}
-	
-	public Joueur getJoueur(int i) {
-		return playerState.getJoueur(i);
-	}
-	
-	public String getMap() {
-		return mapState.getMap();
+	public Joueur[] getJoueur() {
+		return playerState.getJoueur();
 	}
 	
 	public void paintComponent(Graphics g) {

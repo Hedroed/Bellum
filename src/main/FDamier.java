@@ -11,6 +11,8 @@ import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
+import javax.swing.JComponent;
+import java.awt.Point;
 import java.awt.Graphics;
 import javax.swing.BorderFactory;
 import java.awt.Image;
@@ -155,11 +157,10 @@ public class FDamier extends JPanel implements MouseListener,MouseMotionListener
 			}
 		}
 		
-		// this.add(new JLabel("test de merde"));
-		
 	}
 	
 	public void paintComponent(Graphics g){
+		// long start = System.nanoTime();
 		// g.drawImage(this.fond, 0, 0, this);
 		g.setColor(new Color(65,65,65));
 		g.fillRect(0,0,this.getWidth(),this.getHeight());
@@ -177,13 +178,22 @@ public class FDamier extends JPanel implements MouseListener,MouseMotionListener
 		if(this.dark) {
 			g.setColor(new Color(0,0,0,128));
 			g.fillRect(0,0,this.getWidth(),this.getHeight());
+			
+			// draw caseExit on White :(
+			for(int j=0; j<LONGUEUR; j++) {
+				for(int i=0; i<LARGEUR; i++) {
+					if(damier[i][j].isExit()) {
+						if(((CaseExit)damier[i][j]).isWhite()) {
+							g.setColor(new Color(255,255,255,128));
+							g.fillRect(i*ImageSprite.tileSize+2,j*ImageSprite.tileSize+2,ImageSprite.tileSize, ImageSprite.tileSize);
+						}
+					}
+				}
+			}
+			
 		}
-		
-		// if(indExplose > -1 && indExplose < 48) {
-			// g.drawImage(ImageSprite.baseExplosion[indExplose],50,50,null);
-		// }
-		
-		// System.out.println("repaint damier");
+		// long end = System.nanoTime();
+		// System.out.println("Chargement :"+(end-start)/1000000);
 	}
 
 	public void addVehicule(Exit s, TypeVec t, Joueur jo) {
@@ -219,6 +229,12 @@ public class FDamier extends JPanel implements MouseListener,MouseMotionListener
 				break;
 			case "bridger":        
 				ret = new Bridger(s.getAngle(), (FDamier)this, jo);
+				break;
+			case "turret":        
+				ret = new Turret(s.getAngle(), (FDamier)this, jo);
+				break;
+			case "activeTurret":        
+				ret = new ActiveTurret(s.getAngle(), (FDamier)this, jo);
 				break;
 			default:
 				System.out.println("Erreur :: nom inconnu");
@@ -535,17 +551,6 @@ public class FDamier extends JPanel implements MouseListener,MouseMotionListener
 		this.calculeZones();
 		this.repaint();
 	}
-
-	public void sortirVehicule(Exit s, TransferVec t) {
-		if(this.damier[s.getX()][s.getY()].isEmpty()) {
-			
-			System.out.println("Sortie de vehicule :"+t.getType().name());
-			this.addVehicule(s,t.getType(), t.getJoueur());
-			t.isExited();
-		}
-		
-		this.fRess.repaint();
-	}
 	
 	public Joueur getActiveJoueur() {
 		return this.fRess.getActiveJoueur();
@@ -566,6 +571,33 @@ public class FDamier extends JPanel implements MouseListener,MouseMotionListener
 			}
 		}
 	}
+	
+	public void sortirVehicule(Point p, JComponent c) {
+		TransferVec t = ((DragImage) c).getTransfer();
+		
+		int x = (int) (p.getX()-2)/ImageSprite.tileSize;
+		int y = (int) (p.getY()-2)/ImageSprite.tileSize;
+		
+		if(x >= 0 && x < LARGEUR && y >= 0 && y < LONGUEUR) {
+			if(damier[x][y].isExit() && t.canExtract(getActiveJoueur())) {
+				
+				Exit e = ((CaseExit)damier[x][y]).getExit();
+				
+				if(this.damier[e.getX()][e.getY()].isEmpty()) {
+			
+					System.out.println("Sortie de vehicule :"+t.getType().name());
+					this.addVehicule(e,t.getType(), t.getJoueur());
+					t.isExited();
+				}
+		
+				this.fRess.repaint();
+				// System.out.println("transfer truc :"+v+" sortie "+e);
+			}
+		}
+		
+	}
+	
+	
 	
 	//Mouse Listener
 	public void mouseClicked(MouseEvent e) {}
@@ -611,6 +643,7 @@ public class FDamier extends JPanel implements MouseListener,MouseMotionListener
 				damier[x][y].mouseEntered();
 				hoverCaseX = x;
 				hoverCaseY = y;
+				// System.out.println("new hover :"+x+" :: "+y);
 				
 				this.repaint();
 			}

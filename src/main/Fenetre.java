@@ -33,24 +33,21 @@ public class Fenetre extends JFrame implements KeyListener, ActionListener {
 	
 	public final int MENU = 1;
 	public final int GAME = 0;
-	public final int SELECT = 2;
+	public final int PLAYERS = 2;
+	public final int MAP = 3;
+	public final int OPTION = 4;
 	
-	private FDamier fDamier ;
-	private FEtat fEtat ;
-	private FRessource fRessource ;
 	private JPanel container;
 	
 	private GamePane gamePanel;
 	private MenuPane menuPane;
-	private SelecterPane selectPanel;
-	
-	private Joueur joueur1;
-	private Joueur joueur2;
+	private SelecterPane playerSelecterPanel;
+	private MapSelecterState mapSelecterPanel;
 	
 	private MyGlassPane glass;
 	
 	private CardLayout cL;
-	private String[] panelList = {"game","menu","select"};
+	private String[] panelList = {"game","menu","players","map","option"};
 	private int currentPane;
 	private boolean gameRunning = false;
 	
@@ -74,11 +71,15 @@ public class Fenetre extends JFrame implements KeyListener, ActionListener {
 		this.cL = new CardLayout();
 		
 		menuPane = new MenuPane(this);
-		selectPanel = new SelecterPane(this);
+		playerSelecterPanel = new SelecterPane(this);
+		gamePanel = new GamePane(this,glass);
+		mapSelecterPanel = new MapSelecterState(this);
 		
 		container.setLayout(cL);
 		container.add(menuPane,panelList[1]);
-		container.add(selectPanel,panelList[2]);
+		container.add(playerSelecterPanel,panelList[2]);
+		container.add(gamePanel,panelList[0]);
+		container.add(mapSelecterPanel,panelList[3]);
 		currentPane = MENU;
 		
 		this.setGlassPane(glass);
@@ -126,19 +127,34 @@ public class Fenetre extends JFrame implements KeyListener, ActionListener {
 	
 	public void clickMenu() {
 		if(menuPane.getCurrent().equals("Jouer ") || menuPane.getCurrent().equals("Recommencer")) {
-			cL.show(this.container,"select");
-			this.currentPane = SELECT;
-			new PlaySound("ressources/select.wav",-30).play();
+			cL.show(this.container,panelList[MAP]);
+			this.currentPane = MAP;
+			// new PlaySound("ressources/select.wav",-30).play();
 		}
 		else if(menuPane.getCurrent().equals("Quitter")) {
 			System.exit(0);
 		}
 		else if(menuPane.getCurrent().equals("Continuer")) {
-			this.setContentPane(gamePanel);
+			cL.show(this.container,panelList[GAME]);
+			this.currentPane = GAME;
 			requestFocus();
-			currentPane = GAME;
 			repaint();
 		}
+	}
+	
+	public void mapNext() {
+		cL.show(this.container,panelList[PLAYERS]);
+		playerSelecterPanel.init(mapSelecterPanel.getNbPlayers());
+		this.currentPane = PLAYERS;
+		requestFocus();
+		repaint();
+	}
+	
+	public void mapBack() {
+		cL.show(this.container,panelList[MENU]);
+		this.currentPane = MENU;
+		requestFocus();
+		repaint();
 	}
 	
 	public void keyReleased(KeyEvent e) {}
@@ -150,26 +166,15 @@ public class Fenetre extends JFrame implements KeyListener, ActionListener {
 		if(((JButton)e.getSource()).getActionCommand().equals("ok")) {
 			System.out.println("bouton ok");
 			
-			gamePanel = new GamePane(selectPanel.getJoueur(0),selectPanel.getJoueur(1),selectPanel.getMap(),glass);
-			
-			this.setContentPane(gamePanel);
-			gamePanel.setVisible(false);
-			gamePanel.setVisible(true);
+			cL.show(this.container,panelList[GAME]);
+			gamePanel.newGame(playerSelecterPanel.getJoueur(),mapSelecterPanel.getMap());
 			requestFocus();
 			currentPane = GAME;
 			gameRunning = true;
 			menuPane.setGameRunning(true);
 		}
-		else if(((JButton)e.getSource()).getActionCommand().equals("joueur")) {
-			selectPanel.showPan("Joueur");
-		}
-		else if(((JButton)e.getSource()).getActionCommand().equals("map")) {
-			selectPanel.showPan("Map");
-		}
 		else {
-			cL.show(this.container,"menu");
-			this.currentPane = MENU;
-			requestFocus();
+			mapBack();
 		}
 	}
 	

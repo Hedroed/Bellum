@@ -26,5 +26,13 @@
 	"bridger": {
          "lien": "walker.png",
          "description": "Une unité à forte résistance pouvant être utilisée comme un bouclier. Elle permet également de créer un pont lorsqu'elle se déplace sur la rivière."
+    },
+	"turret": {
+         "lien": "turret.png",
+         "description": "Tourelle inactive, ne peut rien faire"
+    },
+	"activeTurret": {
+         "lien": "activeTurret.png",
+         "description": "Tourelle activé par un homme à pied"
     }
 }

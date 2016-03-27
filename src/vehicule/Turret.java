@@ -13,53 +13,23 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 
-public class Walker extends Vehicule{
+public class Turret extends Vehicule{
 
 	//constante du sprite
 	public final int width = 64;
 	public final int height = 64;
 	public final int rows = 1;
-	public final int cols = 2;
+	public final int cols = 1;
 	
 
-	public Walker(int a, FDamier f, Joueur jo) {
+	public Turret(int a, FDamier f, Joueur jo) {
 		// System.out.println("Creation mangouste");
-		super(f, jo, a, TypeVec.walker);
+		super(f, jo, a, TypeVec.turret);
 		this.makeImage();
 	}
 	
 	public boolean canMove(Case c) {
-		boolean ret = false;
-		
-		if(c.isBase()) {
-			if(c.getBase().getJoueur() != this.getJoueur()) {
-				ret = true;
-			}
-		}
-		else if(c.isVehicule()){
-			if(c.getVehicule().getJoueur() == this.getJoueur() && c.getVehicule().getType() == TypeVec.turret) {
-				ret = true;
-			}
-			else {
-				ret = false;
-			}
-		}
-		else if(c.isRiver() && !c.haveBridge()) {
-			ret = c.isRiverRamp();
-		}
-		else if(c.isHelicopter()) {
-			if(c.getVehicule().getJoueur() == this.getJoueur()) {
-				ret = true;
-			}
-			else {
-				ret = false;
-			}
-		}
-		else if(c.isEmpty()){
-			ret = true;
-		}
-		
-		return ret;
+		return false;
 	}
 	
 	public void makeImage() {
@@ -73,6 +43,9 @@ public class Walker extends Vehicule{
 			e.printStackTrace();
 		}
 		
+		this.setImage(bigImage);
+		
+		/*
 		for (int i = 0; i < rows; i++)
 		{
 			for (int j = 0; j < cols; j++)
@@ -107,19 +80,6 @@ public class Walker extends Vehicule{
 			}
 		}
 		
-		this.setImage(image);
-	}
-	
-	public void newCase(Case c) {
-		if(c.isBase()) {
-			
-			System.out.println("attaque de base");
-			if(c.getBase().getJoueur() != this.getJoueur()) {
-				c.getBase().attack();
-				c.getBase().attack();
-			}
-			this.pan.unselect();
-			this.pan.killMe(this);
-		}
+		this.setImage(image);*/
 	}
 }

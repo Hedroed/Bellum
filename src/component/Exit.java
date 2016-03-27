@@ -35,4 +35,8 @@ public class Exit {
 	public int getAngle() {
 		return angle;
 	}
+	
+	public String toString() {
+		return "Exit :[posX:"+xPos+", posY:"+yPos+", angle:"+angle+"]";
+	}
 }

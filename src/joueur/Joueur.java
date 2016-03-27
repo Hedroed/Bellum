@@ -29,6 +29,8 @@ public class Joueur {
 		this.vecRestant.add(new TransferVec(TypeVec.helicopter,2,this));
 		this.vecRestant.add(new TransferVec(TypeVec.walker,5,this));
 		this.vecRestant.add(new TransferVec(TypeVec.bridger,1,this));
+		this.vecRestant.add(new TransferVec(TypeVec.turret,1,this));
+		this.vecRestant.add(new TransferVec(TypeVec.activeTurret,1,this));
 	}
 	
 	public Joueur(String n, Color c) {
