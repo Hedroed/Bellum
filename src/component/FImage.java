@@ -38,10 +38,19 @@ public class FImage extends JPanel {
 	
 	public void paintComponent(Graphics g){
 		
-		g.setColor(Color.white);
-		g.fillRect(0,0,this.getWidth(), this.getHeight());
-		
 		Graphics2D g2D = (Graphics2D) g;
+		
+		if(ImageSprite.mapSprite != null && vec != null) {
+			AffineTransform scale = new AffineTransform();
+			scale.scale(getWidth()/45d,getHeight()/45d);
+			scale.translate(0,0);
+			g2D.drawImage(ImageSprite.mapSprite[0], scale, this);
+		}
+		else {
+			g.setColor(Color.white);
+			g.fillRect(0,0,this.getWidth(), this.getHeight());
+		}
+		
 		if(this.vec != null) {
 			double angleR = Math.toRadians(this.vec.getAngle());
 			AffineTransform rotate = new AffineTransform();

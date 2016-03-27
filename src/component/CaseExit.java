@@ -74,7 +74,7 @@ public class CaseExit extends Case {
 	}
 	
 	public void paintComponent(Graphics g){ 
-		super.paintComponent(g);
+		// super.paintComponent(g);
 		
 		if(this.canExitVehicule) {
 			g.setColor(new Color(255,255,255,128));

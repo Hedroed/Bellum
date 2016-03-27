@@ -21,21 +21,18 @@ import java.awt.Graphics2D;
 
 import java.util.ArrayList;
 import java.awt.GridLayout;
-//temp
-import java.awt.event.MouseEvent;
+
+import java.awt.event.*;
 
 /** Class du damier de jeu contient les objets cases dans un tableau a 2 dimensions
   *	Contient une image de fond et le Vehicule/case selectionné
   * Calcule les zones de tirs et de deplacements du vehicule Selectinné
   * Autorise les deplacements de ce dernier
   */
-public class FDamier extends JPanel {
+public class FDamier extends JPanel implements MouseListener,MouseMotionListener {
 
-	private Image fond;
-	private Image baseUp;
-	private Base base1;
-	private Image baseDown;
-	private Base base2;
+	private Base[] bases;
+
 	private Image bridge;
 	private boolean[][] bridges;
 	private FEtat fEtat;
@@ -53,14 +50,20 @@ public class FDamier extends JPanel {
 	private boolean dark = false;
 	
 	private Fenetre fenetre;
+	
+	private int hoverCaseX;
+	private int hoverCaseY;
 
 	public FDamier(FEtat fe, FRessource fr){
 		this.fRess = fr;
 		this.fEtat = fe;
-
+		
+		this.addMouseListener(this);
+		this.addMouseMotionListener(this);
 		
 		this.setBackground(new Color(30,20,10));
 		this.setBorder(BorderFactory.createEtchedBorder());
+		
 	}
 	
 	/**
@@ -74,14 +77,16 @@ public class FDamier extends JPanel {
 		this.setSize(new Dimension(LONGUEUR*46,LARGEUR*46));
 		this.setLayout(new GridLayout(LONGUEUR, LARGEUR,1,1));
 		
+		Image baseUp = null;
+		Image baseDown = null;
 		try {
-			this.fond = ImageIO.read(new File("ressources/fond.png"));
-			this.baseDown = ImageIO.read(new File("ressources/baseDown.png"));
-			this.baseUp = ImageIO.read(new File("ressources/baseUp.png"));
+			baseDown = ImageIO.read(new File("ressources/baseDown.png"));
+			baseUp = ImageIO.read(new File("ressources/baseUp.png"));
 			this.bridge = ImageIO.read(new File("ressources/pont.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		ImageSprite.mapSprite = ImageSprite.createSprite(65,65,2,6,"ressources/spriteMap.png");
 		
 		damier = new Case[LARGEUR][LONGUEUR];
 		
@@ -109,15 +114,16 @@ public class FDamier extends JPanel {
 		damier[0][LONGUEUR/2].setRiverRamp();
 		damier[LARGEUR-1][LONGUEUR/2].setRiverRamp();
 		
-		this.base1 = new Base(2,0,jo1,this.baseUp);
-		this.base2 = new Base(2,13,jo2,this.baseDown);
+		bases = new Base[2];
+		bases[0] = new Base(2,0,jo1,baseUp);
+		bases[1] = new Base(2,13,jo2,baseDown);
 		
 		for(int i=2; i<7; i++) {
 			for(int j=0; j<2; j++) {
-				this.damier[i][j].setBase(this.base1);
+				this.damier[i][j].setBase(bases[0]);
 			}
 			for(int j=13; j<15; j++) {
-				this.damier[i][j].setBase(this.base2);
+				this.damier[i][j].setBase(bases[1]);
 			}
 		}
 		
@@ -135,18 +141,12 @@ public class FDamier extends JPanel {
 		LARGEUR = mL.getWidth();
 		LONGUEUR = mL.getHeight();
 		
-		// this.setSize(new Dimension(LONGUEUR*10,LARGEUR*10));
+		this.setMinimumSize(new Dimension(LARGEUR*ImageSprite.tileSize,LONGUEUR*ImageSprite.tileSize));
 		this.setLayout(new GridLayout(LONGUEUR, LARGEUR,1,1));
 
 		damier = mL.getDamier();
-		
-		this.base1 = mL.getBase(1);
-		this.base2 = mL.getBase(2);
+		bases = mL.getBases();
 
-
-		this.fond = mL.getImageBackground();
-		this.baseDown = mL.getImageBase(1);
-		this.baseUp = mL.getImageBase(2);
 		this.bridge = mL.getImageBridge();
 		
 		for(int j=0; j<LONGUEUR; j++) {
@@ -154,6 +154,8 @@ public class FDamier extends JPanel {
 				this.add(this.damier[i][j]);
 			}
 		}
+		
+		// this.add(new JLabel("test de merde"));
 		
 	}
 	
@@ -165,17 +167,21 @@ public class FDamier extends JPanel {
 		for(int j=0; j<LONGUEUR; j++) {
 			for(int i=0; i<LARGEUR; i++) {
 				this.damier[i][j].draw(g);
-				this.damier[i][j].draw2(g);
 			}
 		}
 		
-		base1.draw(g);
-		base2.draw(g);
+		for(Base b : this.bases) {
+			b.draw(g);
+		}
 		
 		if(this.dark) {
 			g.setColor(new Color(0,0,0,128));
 			g.fillRect(0,0,this.getWidth(),this.getHeight());
 		}
+		
+		// if(indExplose > -1 && indExplose < 48) {
+			// g.drawImage(ImageSprite.baseExplosion[indExplose],50,50,null);
+		// }
 		
 		// System.out.println("repaint damier");
 	}
@@ -298,7 +304,10 @@ public class FDamier extends JPanel {
 					if(c == cCible && c.isBase()) {
 						cCible.getBase().attack();
 						if(cCible.getBase().getVie() <= 0) {
-							System.out.println("Defaite de "+cCible.getBase().getJoueur().getName());
+							// System.out.println("Defaite de "+cCible.getBase().getJoueur().getName());
+							
+							Thread t = new Thread(new AnimeExplosion(cCible.getBase()));
+							t.start();
 							// this.fenetre.fin();
 						}
 						this.caseSelec.getVehicule().tir();
@@ -345,6 +354,30 @@ public class FDamier extends JPanel {
 		
 		this.fEtat.repaint();
 		this.repaint();
+	}
+	
+	public class AnimeExplosion implements Runnable {
+		
+		private Base b;
+		
+		public AnimeExplosion (Base b) {
+			this.b = b;
+		}
+		
+		public void run() {
+			
+			for(int i = 0;i<48;i++) {
+				
+				b.update();
+				repaint();
+				try {
+				  Thread.sleep(60);
+				} catch (InterruptedException e) {
+				  e.printStackTrace();
+				}
+			}
+			
+		}
 	}
 	
 	public void unselect() {
@@ -532,5 +565,56 @@ public class FDamier extends JPanel {
 				} 
 			}
 		}
+	}
+	
+	//Mouse Listener
+	public void mouseClicked(MouseEvent e) {}
+
+    public void mouseReleased(MouseEvent e) {}
+
+    public void mouseEntered(MouseEvent e) {}
+
+    public void mouseExited(MouseEvent e) {
+		if(hoverCaseX != -1) {
+			damier[hoverCaseX][hoverCaseY].mouseExited();
+			hoverCaseX = -1;
+			hoverCaseY = -1;
+			this.repaint();
+		}
+	}
+
+    public void mousePressed(MouseEvent e) {
+		// System.out.println(e.paramString());
+		
+		int x = (int) (e.getX()-2)/ImageSprite.tileSize;
+		int y = (int) (e.getY()-2)/ImageSprite.tileSize;
+		
+		if(x >= 0 && x < LARGEUR && y >= 0 && y < LONGUEUR) {
+			caseClicked(damier[x][y]);
+		}
+    }
+	
+	//Mouse Motion Listener
+	public void mouseDragged(MouseEvent e) {}
+	
+	public void mouseMoved(MouseEvent e) {
+		// System.out.println(e.paramString());
+		
+		int x = (int) (e.getX()-2)/ImageSprite.tileSize;
+		int y = (int) (e.getY()-2)/ImageSprite.tileSize;
+		
+		if(x >= 0 && x < LARGEUR && y >= 0 && y < LONGUEUR) {
+			if(x != hoverCaseX || y != hoverCaseY) {
+				if(hoverCaseX != -1) {
+					damier[hoverCaseX][hoverCaseY].mouseExited();
+				}
+				damier[x][y].mouseEntered();
+				hoverCaseX = x;
+				hoverCaseY = y;
+				
+				this.repaint();
+			}
+		}
+		
 	}
 }

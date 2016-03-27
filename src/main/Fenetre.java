@@ -56,7 +56,7 @@ public class Fenetre extends JFrame implements KeyListener, ActionListener {
 	
 	public Fenetre() {
 		this.setTitle("Bellum");
-		this.setSize(651, 850);
+		this.setSize(800, 850);
 		// this.setSize(1000, 850);
 		this.setMinimumSize(new Dimension(800,600));
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -73,7 +73,7 @@ public class Fenetre extends JFrame implements KeyListener, ActionListener {
 		this.glass = new MyGlassPane();
 		this.cL = new CardLayout();
 		
-		menuPane = new MenuPane();
+		menuPane = new MenuPane(this);
 		selectPanel = new SelecterPane(this);
 		
 		container.setLayout(cL);
@@ -95,10 +95,7 @@ public class Fenetre extends JFrame implements KeyListener, ActionListener {
 	
 	public void keyPressed(KeyEvent e) {
 	
-		System.out.println(e.paramString());
-		
-		
-		
+		// System.out.println(e.paramString());
 		
 		if(this.currentPane == GAME) {
 			if(e.getKeyCode() == KeyEvent.VK_SPACE) {
@@ -121,23 +118,27 @@ public class Fenetre extends JFrame implements KeyListener, ActionListener {
 				this.menuPane.down();
 			}
 			else if(e.getKeyCode() == KeyEvent.VK_ENTER) {
-				if(menuPane.getCurrent().equals("Jouer ") || menuPane.getCurrent().equals("Recommencer")) {
-					cL.show(this.container,"select");
-					this.currentPane = SELECT;
-					new PlaySound("ressources/select.wav",-30).play();
-				}
-				else if(menuPane.getCurrent().equals("Quitter")) {
-					System.exit(0);
-				}
-				else if(menuPane.getCurrent().equals("Continuer")) {
-					this.setContentPane(gamePanel);
-					requestFocus();
-					currentPane = GAME;
-					repaint();
-				}
+				clickMenu();
 			}
 		}
 		
+	}
+	
+	public void clickMenu() {
+		if(menuPane.getCurrent().equals("Jouer ") || menuPane.getCurrent().equals("Recommencer")) {
+			cL.show(this.container,"select");
+			this.currentPane = SELECT;
+			new PlaySound("ressources/select.wav",-30).play();
+		}
+		else if(menuPane.getCurrent().equals("Quitter")) {
+			System.exit(0);
+		}
+		else if(menuPane.getCurrent().equals("Continuer")) {
+			this.setContentPane(gamePanel);
+			requestFocus();
+			currentPane = GAME;
+			repaint();
+		}
 	}
 	
 	public void keyReleased(KeyEvent e) {}
@@ -149,7 +150,7 @@ public class Fenetre extends JFrame implements KeyListener, ActionListener {
 		if(((JButton)e.getSource()).getActionCommand().equals("ok")) {
 			System.out.println("bouton ok");
 			
-			gamePanel = new GamePane(selectPanel.getJoueur(1),selectPanel.getJoueur(2),glass);
+			gamePanel = new GamePane(selectPanel.getJoueur(0),selectPanel.getJoueur(1),selectPanel.getMap(),glass);
 			
 			this.setContentPane(gamePanel);
 			gamePanel.setVisible(false);
@@ -158,6 +159,12 @@ public class Fenetre extends JFrame implements KeyListener, ActionListener {
 			currentPane = GAME;
 			gameRunning = true;
 			menuPane.setGameRunning(true);
+		}
+		else if(((JButton)e.getSource()).getActionCommand().equals("joueur")) {
+			selectPanel.showPan("Joueur");
+		}
+		else if(((JButton)e.getSource()).getActionCommand().equals("map")) {
+			selectPanel.showPan("Map");
 		}
 		else {
 			cL.show(this.container,"menu");

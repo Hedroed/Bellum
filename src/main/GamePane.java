@@ -15,7 +15,7 @@ public class GamePane extends JPanel {
 	private FDamier fDamier;
 	private FEtat fEtat;
 	
-	public GamePane(Joueur jo1, Joueur jo2, MyGlassPane glass) {
+	public GamePane(Joueur jo1, Joueur jo2, String map, MyGlassPane glass) {
 		joueur1 = jo1;
 		joueur2 = jo2;
 		
@@ -28,7 +28,7 @@ public class GamePane extends JPanel {
 		js[0] = joueur1;
 		js[1] = joueur2;
 		
-		MapLoader mL = new MapLoader("ressources/map1.map",fDamier,js);
+		MapLoader mL = new MapLoader("maps/"+map,fDamier,js);
 		if(!mL.getError()) {
 			this.fDamier.initDamier(mL);
 		}

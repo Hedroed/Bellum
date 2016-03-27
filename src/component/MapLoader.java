@@ -27,11 +27,10 @@ public class MapLoader {
 	private boolean[][] bridges;
 	private Base[] bases;
 	private Joueur[] joueurs;
+	private int[][] longueurBase;
 	
-	private Joueur currentJoueur;
 	private boolean error;
 	
-	private Image backgound;
 	private Image spriteMap;
 	private ArrayList<Image> basesImage;
 	private Image bridge;
@@ -61,17 +60,29 @@ public class MapLoader {
 			
 			s = in.readLine();
 			nbBase = Integer.parseInt(s);
+			if(nbBase != joueurs.length) {
+				error = true;
+				return;
+			}
+			
 			
 			bases = new Base[nbBase];
 			basesImage = new ArrayList<Image>(nbBase);
+			longueurBase = new int[nbBase][2];
 			
 			for(int i=0; i<nbBase; i++) {
 				s = in.readLine();
 				basesImage.add(ImageIO.read(new File("ressources/"+s)));
+				int lx = Character.getNumericValue(in.read());
+				int ly = Character.getNumericValue(in.read());
+				System.out.println("long BAse :"+lx+" :: "+ly);
+				longueurBase[i][0] = lx;
+				longueurBase[i][1] = ly;
+				in.readLine();//passe a la ligne suivante
 			}
 			
 			s = in.readLine();
-			backgound = ImageIO.read(new File("ressources/"+s));
+			ImageSprite.mapSprite = ImageSprite.createSprite(65,65,2,6,"ressources/"+s);
 			s = in.readLine();
 			bridge = ImageIO.read(new File("ressources/"+s));
 			
@@ -123,6 +134,7 @@ public class MapLoader {
 			ret.setJoueur(joueurs[idJoueur-1]);
 			if(bases[idJoueur-1] == null) {
 				bases[idJoueur-1] = new Base(x,y,joueurs[idJoueur-1],basesImage.get(idJoueur-1));
+				bases[idJoueur-1].setBaseTile(longueurBase[idJoueur-1][0],longueurBase[idJoueur-1][1]);
 			}
 			ret.setBase(bases[idJoueur-1]);
 		}
@@ -165,6 +177,7 @@ public class MapLoader {
 		if(checkIdJoueur(idJoueur)) {
 			if(bases[idJoueur-1] == null) {
 				bases[idJoueur-1] = new Base(x,y,joueurs[idJoueur-1],basesImage.get(idJoueur-1));
+				bases[idJoueur-1].setBaseTile(longueurBase[idJoueur-1][0],longueurBase[idJoueur-1][1]);
 			}
 			ret.setBase(bases[idJoueur-1]);
 		}
@@ -257,16 +270,8 @@ public class MapLoader {
 		return this.bridges;
 	}
 	
-	public Base getBase(int i) {
-		Base ret = null;
-		if(i > 0 && i <= bases.length) {
-			ret = this.bases[i-1];
-		} 
-		return ret;
-	}
-	
-	public Image getImageBackground() {
-		return this.backgound;
+	public Base[] getBases() {
+		return this.bases;
 	}
 	
 	public Image getImageBase(int i) {

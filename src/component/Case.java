@@ -19,10 +19,10 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import java.awt.AlphaComposite;
-import java.awt.Composite;
+// import java.awt.Composite;
 import java.awt.Graphics2D;
 
-public class Case extends JPanel implements MouseListener{
+public class Case extends JPanel{
 	
 	private int xCoord, yCoord;
 	// private int posX, posY;
@@ -45,8 +45,6 @@ public class Case extends JPanel implements MouseListener{
 	
 	private boolean hover = false;
 	
-	private Composite transparence;
-	
 	public Case(int x, int y, FDamier fd) {
 		this.setPreferredSize(new Dimension(ImageSprite.tileSize-1,ImageSprite.tileSize-1));
 		this.xCoord = x;
@@ -54,29 +52,47 @@ public class Case extends JPanel implements MouseListener{
 		this.fDamier = fd;
 		this.idEmpty = (int)(Math.random()*2);
 		
-		// this.posX = 12+x*44;
-		// this.posY = 18+y*44;
-		// this.setBackground(Color.white);
-		this.addMouseListener(this);
-		
-		setOpaque(false);
-		transparence = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.55f);
-		
+		this.setOpaque(false);
 	}
 	
-	public void draw2(Graphics g){
+	public void draw(Graphics g) {
+		Graphics2D g2 = (Graphics2D) g;
 		
-		// System.out.println("repaint case");
+		int tileSize = ImageSprite.tileSize;
+		int x = 2+(xCoord*(tileSize));
+		int y = 2+((tileSize)*yCoord);
 		
-		int tileSize = ImageSprite.tileSize-1;
-		int x = 2+(xCoord*(tileSize+1));
-		int y = 2+((tileSize+1)*yCoord);
+		AffineTransform scale = new AffineTransform();
+		scale.translate(x,y);
+		scale.scale((double) (tileSize-1)/64,(double) (tileSize-1)/64);
 		
-		if(this.hover) {
+		//dessine le fond de la case
+		if(isRiverRamp) {
+			g2.drawImage(ImageSprite.mapSprite[2],scale,null);
+		}
+		else if(isRiver) {
+			g2.drawImage(ImageSprite.mapSprite[6+idRiver],scale,null);
+		}
+		else {
+			g2.drawImage(ImageSprite.mapSprite[idEmpty],scale,null);
+		}
+		
+		if(isBridge) {
+			if(idRiver == 1) {
+				g2.drawImage(ImageSprite.mapSprite[4],scale,null);
+			}
+			else {
+				g2.drawImage(ImageSprite.mapSprite[3],scale,null);
+			}
+		}
+		
+		tileSize --;
+		
+		//dessine le contour 
+		if(this.hover && this.base == null) {
 			g.setColor(new Color(255,255,255,140));
 			g.fillRect(x, y, tileSize, tileSize);
 		}
-		
 		if(this.deplacement) {
 			g.setColor(Color.blue);
 			g.drawRect(x,y,tileSize-1,tileSize-1);
@@ -98,6 +114,7 @@ public class Case extends JPanel implements MouseListener{
 			g.drawRect(x,y,tileSize-1,tileSize-1);
 		}
 		
+		//dessine les differents vehicule 
 		if(this.vehicule != null) {
 			this.vehicule.draw(g,x,y);
 		}
@@ -126,37 +143,6 @@ public class Case extends JPanel implements MouseListener{
 			ret = false;
 		}
 		return ret;
-	}
-	
-	
-	public void draw(Graphics g) {
-		Graphics2D g2 = (Graphics2D) g;
-		
-		int tileSize = ImageSprite.tileSize;
-		
-		AffineTransform scale = new AffineTransform();
-		scale.translate(2+(xCoord*(tileSize)),2+((tileSize)*yCoord));
-		scale.scale((double) (tileSize-1)/64,(double) (tileSize-1)/64);
-		
-		if(isRiverRamp) {
-			g2.drawImage(ImageSprite.mapSprite[2],scale,null);
-		}
-		else if(isRiver) {
-			g2.drawImage(ImageSprite.mapSprite[6+idRiver],scale,null);
-		}
-		else {
-			g2.drawImage(ImageSprite.mapSprite[idEmpty],scale,null);
-		}
-		
-		if(isBridge) {
-			if(idRiver == 1) {
-				g2.drawImage(ImageSprite.mapSprite[4],scale,null);
-			}
-			else {
-				g2.drawImage(ImageSprite.mapSprite[3],scale,null);
-			}
-		}
-		
 	}
 	
 	// methode de bordure
@@ -343,21 +329,14 @@ public class Case extends JPanel implements MouseListener{
 		return "Case en "+this.xCoord+" : "+this.yCoord;
 	}
 	
-	//Mouse Listener
-	public void mouseClicked(MouseEvent e) {}
-
-    public void mouseReleased(MouseEvent e) {}
-
-    public void mouseEntered(MouseEvent e) {
+	public void mouseEntered() {
 		this.hover = true;
-		this.repaint();
 	}
-
-    public void mouseExited(MouseEvent e) {
+	
+	public void mouseExited() {
 		this.hover = false;
-		this.repaint();
 	}
-
+	
     public void mousePressed(MouseEvent e) {
 		// System.out.println("Clique sur case en "+this.xCoord+" : "+this.yCoord);
 		

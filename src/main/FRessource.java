@@ -40,7 +40,7 @@ public class FRessource extends JPanel implements ActionListener {
 	
 	public FRessource(MyGlassPane g, Joueur jo1, Joueur jo2){
 		this.setPreferredSize(fSize);
-		this.setBackground(Color.blue);
+		this.setBackground(Color.black);
 		this.setBorder(BorderFactory.createEtchedBorder());
 		this.setLayout(new BorderLayout());
 		
@@ -53,6 +53,7 @@ public class FRessource extends JPanel implements ActionListener {
 		this.nextTurn.setFocusable(false);
 		this.nextTurn.setPreferredSize(new Dimension(90,70));
 		
+		centerPane.setBackground(new Color(255,235,175));
 		this.add(this.centerPane,BorderLayout.CENTER);//new JScrollPane(
 		this.add(this.nextTurn,BorderLayout.SOUTH);
 	}

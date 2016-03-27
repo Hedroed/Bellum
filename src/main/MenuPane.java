@@ -16,8 +16,9 @@ import java.awt.image.BufferedImage;
 
 import java.awt.geom.AffineTransform;
 
-public class MenuPane extends JPanel {
-	
+import java.awt.event.*;
+
+public class MenuPane extends JPanel implements MouseListener{
 	
 	private String title;
 	private String[][] options = {{"Jouer ","Options","Quitter"},{"Continuer","Recommencer","Options","Quitter"}};
@@ -29,12 +30,16 @@ public class MenuPane extends JPanel {
 	
 	private int current = 0;
 	
-	public MenuPane() {
+	private Fenetre fenetre;
+	
+	public MenuPane(Fenetre f) {
+		this.fenetre = f;
+	
 		this.title = "Bellum";
 		this.soundChange = new PlaySound("ressources/menu.wav",-30);
 		this.setBackground(Color.black);
 		
-		
+		this.addMouseListener(this);
 		//load background
 		try {
 			background = ImageIO.read(new File("ressources/bg_menu.jpg"));
@@ -144,6 +149,31 @@ public class MenuPane extends JPanel {
 		}
 	}
 	
+	public void mouseClicked(MouseEvent e) {}
+
+    public void mouseReleased(MouseEvent e) {}
+
+    public void mouseEntered(MouseEvent e) {}
+
+    public void mouseExited(MouseEvent e) {}
+
+    public void mousePressed(MouseEvent e) {		
+		double i = (double)(e.getY()-357)/30;
+		int iMax = 0;
+		
+		if(gameRunning) {
+			iMax = options[1].length;
+		}
+		else {
+			iMax = options[0].length;
+		}
+		
+		if(i >= 0 && i < iMax) {
+			current = (int)i;
+			fenetre.clickMenu();
+			repaint();
+		}
+	}
 }
 
 

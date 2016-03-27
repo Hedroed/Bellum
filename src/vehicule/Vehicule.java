@@ -73,7 +73,7 @@ public abstract class Vehicule {
 		if(this.mort ) {
 			if(this.ind <= 81) {
 				AffineTransform scale = new AffineTransform();
-				scale.translate(0,0);
+				scale.translate(x,y);
 				scale.scale((double) (tileSize-3)/45,(double) (tileSize-3)/45);
 				// scale.scale(1.2,1.2);
 				g2D.drawImage(ImageSprite.explosion[this.ind],scale,null);
@@ -188,7 +188,6 @@ public abstract class Vehicule {
 		int yy = cA.getYCoord() - cD.getYCoord(); 
 		
 		int dep = (int) Math.sqrt((xx*xx)+(yy*yy));
-		System.out.println("Deplacement de "+dep);
 		this.depRestant = this.depRestant - dep;
 	}
 	

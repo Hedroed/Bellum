@@ -14,16 +14,16 @@ public class MyColorChooser extends JPanel implements MouseListener {
 	private Color currentColor = null;
 	private Color blockColor = null;
 	
-	private SelecterPane pan;
+	private PlayerSelecterState pan;
 	
-	private String command;
+	private int command;
 	
 	private int xMax;
 	private int yMax;
 	private int xCoord;
 	private int yCoord;
 	
-	public MyColorChooser(SelecterPane p) {
+	public MyColorChooser(PlayerSelecterState p) {
 		
 		setBackground(Color.red);
 		addMouseListener(this);
@@ -41,11 +41,11 @@ public class MyColorChooser extends JPanel implements MouseListener {
 		
 	}
 	
-	public void setCommand(String c) {
+	public void setCommand(int c) {
 		this.command = c;
 	}
 	
-	public String getCommand() {
+	public int getCommand() {
 		return this.command;
 	}
 	
@@ -71,7 +71,14 @@ public class MyColorChooser extends JPanel implements MouseListener {
 				}
 				g.setColor(c);
 				g.fillRect(5+(i*xCoord),5+(j*yCoord),xCoord-5,yCoord-5);
-				g.setColor(Color.black);
+				
+				if(c.equals(currentColor)) {
+					g.setColor(Color.green);
+				}
+				else { 
+					g.setColor(Color.black);
+				}
+				
 				g.drawRect(5+(i*xCoord),5+(j*yCoord),xCoord-5,yCoord-5);
 			}
 		}

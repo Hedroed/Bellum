@@ -10,9 +10,11 @@ public class ImageSprite {
 	
 	public static int tileSize = 46; 
 	public static Image[] explosion = createSprite(45,45,9,9,"ressources/explosion.png");
-	public static Image[] mapSprite = createSprite(65,65,2,6,"ressources/spriteMap.png");
+	public static Image[] mapSprite ;//= createSprite(65,65,2,6,"ressources/spriteMap.png");
+	public static Image[] baseExplosion = createSprite(256,256,1,48,"ressources/baseExplosion3.png");
 	
 	public static Image[] createSprite(int w, int h,int r, int c, String filePath) {
+		System.out.println("load :"+filePath);
 		
 		BufferedImage image = null;
 		Image[] ret = new Image[r * c];

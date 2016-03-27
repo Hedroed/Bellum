@@ -54,7 +54,7 @@ public class FEtat extends JPanel {
 
 	public FEtat(){
 		this.setPreferredSize(size);
-		this.setBackground(Color.white);
+		this.setBackground(Color.black);
 		this.setBorder(BorderFactory.createEtchedBorder());
 		this.setLayout(new BorderLayout());
 		
@@ -73,6 +73,7 @@ public class FEtat extends JPanel {
 
 		//ajout text description
 		this.texte = new JTextArea("");
+		texte.setBackground(new Color(255,235,175));
 		this.texte.setEditable(false);
 		this.texte.setPreferredSize(new Dimension(186,120));
 		Font police = new Font("Tahoma", Font.CENTER_BASELINE, 12);
@@ -126,13 +127,15 @@ public class FEtat extends JPanel {
 		// this.setPreferredSize(new Dimension(186,30));
 		this.check.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					System.out.println("- etat : " + ((JCheckBox)e.getSource()).isSelected());
+					// System.out.println("- etat : " + ((JCheckBox)e.getSource()).isSelected());
 					fDamier.setAffTir(((JCheckBox)e.getSource()).isSelected());
 					// repaint();
 				}
 			}
 		);
 		
+		check.setBackground(new Color(255,235,175));
+		container.setBackground(new Color(255,235,175));
 		this.add(container,BorderLayout.CENTER);
 		this.add(this.check,BorderLayout.SOUTH);
 	}
