@@ -1,5 +1,7 @@
 package main;
 
+import component.ImageSprite;
+
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -20,17 +22,23 @@ import java.awt.event.*;
 
 public class MenuPane extends JPanel implements MouseListener{
 	
-	private String title;
-	private String[][] options = {{"Jouer ","Options","Quitter"},{"Continuer","Recommencer","Options","Quitter"}};
+	public final static int PLAY = 1;
+	public final static int CONTINUE = 0;
+	public final static int OPTION = 2;
+	public final static int EXIT = 3;
 	
-	private BufferedImage background;
+	private String title;
+	private String[][] options = {{"Play ","Options ","Quit "},{"Continue","Restart","Options ","Quit "}};
+	
 	private PlaySound soundChange ;
 	
 	private Boolean gameRunning = false;
-	
 	private int current = 0;
 	
 	private Fenetre fenetre;
+	
+	private Image music;
+	private boolean musicOff = false;
 	
 	public MenuPane(Fenetre f) {
 		this.fenetre = f;
@@ -39,13 +47,10 @@ public class MenuPane extends JPanel implements MouseListener{
 		this.soundChange = new PlaySound("ressources/menu.wav",-30);
 		this.setBackground(Color.black);
 		
+		music = ImageSprite.createImage("ressources/music.png");
+		
 		this.addMouseListener(this);
 		//load background
-		try {
-			background = ImageIO.read(new File("ressources/bg_menu.jpg"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 		
 	}
 	
@@ -92,10 +97,9 @@ public class MenuPane extends JPanel implements MouseListener{
 		Graphics2D g2D = (Graphics2D) g;
 		
 		AffineTransform scale = new AffineTransform();
-		// System.out.println("scale h:"+(double)getWidth()/background.getWidth()+"  scale v:"+(double)getHeight()/background.getHeight());
-		scale.scale((double)getWidth()/background.getWidth(),(double)getHeight()/background.getHeight());
+		scale.scale((double)getWidth()/ImageSprite.menuBackground.getWidth(this),(double)getHeight()/ImageSprite.menuBackground.getHeight(this));
 		
-		g2D.drawImage(background,scale,this);
+		g2D.drawImage(ImageSprite.menuBackground,scale,this);
 		
 		//draw text
 		Font f1 = null;
@@ -138,14 +142,16 @@ public class MenuPane extends JPanel implements MouseListener{
 				g.drawString(options[1][i], (getWidth()-(options[1][i].length()*15))/2,380+(30*i));
 			}
 		}
+		
+		g.drawImage(music,getWidth()-64,0,this);
 	}
 	
-	public String getCurrent() {
+	public int getCurrent() {
 		if(!gameRunning) {
-			return options[0][current];
+			return current+1;
 		}
 		else {
-			return options[1][current];
+			return current;
 		}
 	}
 	
@@ -171,6 +177,19 @@ public class MenuPane extends JPanel implements MouseListener{
 		if(i >= 0 && i < iMax) {
 			current = (int)i;
 			fenetre.clickMenu();
+			repaint();
+		}
+		
+		if(e.getY() < 64 && e.getX() > getWidth()-64) {
+			fenetre.toggleMusic();
+			if(musicOff) {
+				musicOff = false;
+				music = ImageSprite.createImage("ressources/music.png");
+			}
+			else {
+				musicOff = true;
+				music = ImageSprite.createImage("ressources/musicOff.png");
+			}
 			repaint();
 		}
 	}

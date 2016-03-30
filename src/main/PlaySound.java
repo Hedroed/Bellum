@@ -49,8 +49,17 @@ public class PlaySound {
 	public void play() {
 		if(clip != null) {
 			stop();
-		clip.setFramePosition(0);
-		clip.start();
+			// clip.setFramePosition(0);
+			clip.start();
+		}
+	}
+	
+	public void playContinuously() {
+		if(clip != null) {
+			stop();
+			clip.setFramePosition(0);
+			clip.loop(Clip.LOOP_CONTINUOUSLY);
+			clip.start();
 		}
 	}
 	
@@ -58,5 +67,9 @@ public class PlaySound {
 		if(clip != null) {
 			clip.close();
 		}
+	}
+	
+	public boolean isRunning() {
+		return clip.isRunning();
 	}
 }

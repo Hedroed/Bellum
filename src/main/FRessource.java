@@ -78,6 +78,7 @@ public class FRessource extends JPanel implements ActionListener {
 		
 		this.fillRessources();
 		this.fDamier.unselect();
+		this.fDamier.next();
 		this.fDamier.repaint();
 		this.repaint();
 	}
@@ -87,7 +88,9 @@ public class FRessource extends JPanel implements ActionListener {
 			for(Joueur p : players) {
 				p.deactiveAll();
 			}
-			joueurActif = (int) Math.random()*players.length;
+			joueurActif = (int) (Math.random()*players.length);
+			System.out.println("Start with "+joueurActif);
+			activeTurn();
 		}
 	}
 	

@@ -2,7 +2,8 @@ package main;
 
 import joueur.*;
 import glass.*;
-import component.MapLoader;
+import component.*;
+import vehicule.*;
 
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
@@ -50,17 +51,14 @@ public class GamePane extends JPanel {
 		this.add(center,BorderLayout.CENTER);
 		this.add(fRessource,BorderLayout.EAST);
 		
-		this.fRessource.activeTurn();
+		this.fRessource.startGame();
+		
+		// fDamier.addVehicule(new Exit(5,5,54), TypeVec.scorpion, players[0]);
 	}
 	
 	public void nextTurn() {
 		fRessource.activeTurn();
 	}
 	
-	// fDamier.addVehicule(Sortie.H_D, TypeVec.bridger, this.joueur1);
-		// fDamier.addVehicule(Sortie.H_M, TypeVec.bridger, this.joueur1);
-		// fDamier.addVehicule(Sortie.H_G, TypeVec.bridger, this.joueur1);
-		// fDamier.addVehicule(Sortie.B_G, TypeVec.bridger, this.joueur2);
-		// fDamier.addHelicopter(Sortie.B_M, this.joueur2);
-		// fDamier.addVehicule(Sortie.B_D, TypeVec.bridger, this.joueur2);
+	
 }

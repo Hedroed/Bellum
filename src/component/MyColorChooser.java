@@ -8,27 +8,25 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class MyColorChooser extends JPanel implements MouseListener {
+public class MyColorChooser {
 	
 	private Color[] colors = new Color[8];
 	private Color currentColor = null;
 	private Color blockColor = null;
 	
-	private PlayerSelecterState pan;
-	
 	private int command;
 	
-	private int xMax;
-	private int yMax;
-	private int xCoord;
-	private int yCoord;
+	private int width;
+	private int height;
+	private int posX;
+	private int posY;
 	
-	public MyColorChooser(PlayerSelecterState p) {
+	public MyColorChooser(int x, int y, int width, int height) {
 		
-		setBackground(Color.red);
-		addMouseListener(this);
-		
-		this.pan = p;
+		this.width = width;
+		this.height = height;
+		this.posX = x;
+		this.posY = y;
 		
 		colors[0] = Color.white;
 		colors[1] = Color.black;
@@ -53,13 +51,9 @@ public class MyColorChooser extends JPanel implements MouseListener {
 		return currentColor;
 	}
 	
-	public void paintComponent(Graphics g) {
-		
-		xMax = this.getWidth();
-		yMax = this.getHeight();
-		
-		xCoord = ((xMax-5)/4);
-		yCoord = ((yMax-5)/2);
+	public void draw(Graphics g) {
+		int xCoord = ((width-5)/4);
+		int yCoord = ((height-5)/2);
 		
 		for(int i=0; i<4; i++) {
 			for(int j=0; j<2; j++) {
@@ -70,16 +64,16 @@ public class MyColorChooser extends JPanel implements MouseListener {
 					c = c.darker();
 				}
 				g.setColor(c);
-				g.fillRect(5+(i*xCoord),5+(j*yCoord),xCoord-5,yCoord-5);
+				g.fillRect(posX + 5+(i*xCoord),posY + 5+(j*yCoord),xCoord-5,yCoord-5);
 				
 				if(c.equals(currentColor)) {
-					g.setColor(Color.green);
+					g.setColor(new Color(128,0,0));
 				}
 				else { 
 					g.setColor(Color.black);
 				}
 				
-				g.drawRect(5+(i*xCoord),5+(j*yCoord),xCoord-5,yCoord-5);
+				g.drawRect(posX + 5+(i*xCoord),posY + 5+(j*yCoord),xCoord-5,yCoord-5);
 			}
 		}
 	}
@@ -91,27 +85,17 @@ public class MyColorChooser extends JPanel implements MouseListener {
 			}
 		}
 	}
-	
-	//MouseListener
-	public void mouseClicked(MouseEvent e) {}
-
-	public void mouseReleased(MouseEvent e) {}
-
-	public void mouseEntered(MouseEvent e) {}
-
-	public void mouseExited(MouseEvent e) {}
 
 	public void mousePressed(MouseEvent e) {
 		if(e.getButton() == MouseEvent.BUTTON1) {
-			int iColor = (int) (e.getX()-5)/xCoord;
-			int jColor = (int) (e.getY()-5)/yCoord;
+			int iColor = (int) ((e.getX()-posX)-5)/((width-5)/4);
+			int jColor = (int) ((e.getY()-posY)-5)/((height-5)/2);
 			
-			// System.out.println("x:"+iColor+" y:"+jColor);
+			System.out.println("x:"+iColor+" y:"+jColor);
 			
 			Color c = colors[(iColor*2)+jColor];
 			if(!c.equals(blockColor)) {
 				currentColor = c;
-				pan.chooseColor(currentColor,command);
 			}
 		}
 	}

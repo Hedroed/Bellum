@@ -55,7 +55,7 @@ public class Case extends JPanel{
 		this.setOpaque(false);
 	}
 	
-	public void draw(Graphics g) {
+	public void drawBack(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
 		
 		int tileSize = ImageSprite.tileSize;
@@ -85,8 +85,12 @@ public class Case extends JPanel{
 				g2.drawImage(ImageSprite.mapSprite[3],scale,null);
 			}
 		}
-		
-		tileSize --;
+	}
+	
+	public void draw(Graphics g) {	
+		int tileSize = ImageSprite.tileSize-1;
+		int x = 2+(xCoord*(tileSize+1));
+		int y = 2+((tileSize+1)*yCoord);
 		
 		//dessine le contour 
 		if(this.hover && this.base == null) {

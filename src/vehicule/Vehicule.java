@@ -67,10 +67,10 @@ public abstract class Vehicule {
 		rotate.rotate(angleR,image.getWidth(null)/2,image.getHeight(null)/2);
 
 		if(this.ind < 30) {
-			g2D.drawImage(image, rotate, pan);
+			g2D.drawImage(image, rotate, null);
 		}
 		//explosion si mort
-		if(this.mort ) {
+		if(this.mort) {
 			if(this.ind <= 81) {
 				AffineTransform scale = new AffineTransform();
 				scale.translate(x,y);
@@ -106,7 +106,7 @@ public abstract class Vehicule {
 		
 		g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 	}
-
+	
 	public void moveTo(int x, int y){
 
 		this.posX = x;
@@ -238,7 +238,7 @@ public abstract class Vehicule {
 			for(this.v.ind = 0;this.v.ind<81;this.v.ind++) {
 				this.f.repaint();
 				try {
-				  Thread.sleep(30);
+				  Thread.sleep(10);
 				} catch (InterruptedException e) {
 				  e.printStackTrace();
 				}

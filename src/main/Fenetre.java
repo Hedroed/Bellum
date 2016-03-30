@@ -31,25 +31,26 @@ import java.awt.CardLayout;
   */
 public class Fenetre extends JFrame implements KeyListener, ActionListener {
 	
-	public final int MENU = 1;
-	public final int GAME = 0;
-	public final int PLAYERS = 2;
-	public final int MAP = 3;
-	public final int OPTION = 4;
+	public final String MENU = "0";
+	public final String GAME = "1";
+	public final String PLAYERS = "2";
+	public final String MAP = "3";
+	public final String OPTION = "4";
 	
 	private JPanel container;
 	
 	private GamePane gamePanel;
 	private MenuPane menuPane;
-	private SelecterPane playerSelecterPanel;
+	private PlayersSelecterState playerSelecterPanel;
 	private MapSelecterState mapSelecterPanel;
 	
 	private MyGlassPane glass;
 	
 	private CardLayout cL;
-	private String[] panelList = {"game","menu","players","map","option"};
-	private int currentPane;
+	private String currentPane;
 	private boolean gameRunning = false;
+	
+	private PlaySound backSound;
 	
 	public Fenetre() {
 		this.setTitle("Bellum");
@@ -59,6 +60,9 @@ public class Fenetre extends JFrame implements KeyListener, ActionListener {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocationRelativeTo(null);
 		this.setResizable(true);
+		
+		backSound = new PlaySound("ressources/bellum.wav",-40);
+		backSound.playContinuously();
 		
 		this.init();
 	}
@@ -71,15 +75,15 @@ public class Fenetre extends JFrame implements KeyListener, ActionListener {
 		this.cL = new CardLayout();
 		
 		menuPane = new MenuPane(this);
-		playerSelecterPanel = new SelecterPane(this);
+		playerSelecterPanel = new PlayersSelecterState(this);
 		gamePanel = new GamePane(this,glass);
 		mapSelecterPanel = new MapSelecterState(this);
 		
 		container.setLayout(cL);
-		container.add(menuPane,panelList[1]);
-		container.add(playerSelecterPanel,panelList[2]);
-		container.add(gamePanel,panelList[0]);
-		container.add(mapSelecterPanel,panelList[3]);
+		container.add(menuPane,MENU);
+		container.add(playerSelecterPanel,PLAYERS);
+		container.add(gamePanel,GAME);
+		container.add(mapSelecterPanel,MAP);
 		currentPane = MENU;
 		
 		this.setGlassPane(glass);
@@ -94,24 +98,81 @@ public class Fenetre extends JFrame implements KeyListener, ActionListener {
 		// System.out.println("Sort on d'ici ?");
 	}
 	
+	public void goPlayer() {
+		cL.show(this.container,PLAYERS);
+		playerSelecterPanel.init(mapSelecterPanel.getNbPlayers());
+		this.currentPane = PLAYERS;
+		requestFocus();
+		repaint();
+	}
+	
+	public void goMenu() {
+		cL.show(this.container,MENU);
+		this.currentPane = MENU;
+		requestFocus();
+		repaint();
+	}
+	
+	public void goGame() {
+		cL.show(this.container,GAME);
+		gamePanel.newGame(playerSelecterPanel.getJoueur(),mapSelecterPanel.getMap());
+		requestFocus();
+		currentPane = GAME;
+		gameRunning = true;
+		menuPane.setGameRunning(true);
+		repaint();
+	}
+	
+	public void goMap() {
+		cL.show(this.container,MAP);
+		this.currentPane = MAP;
+		requestFocus();
+		repaint();
+	}
+	
+	public void clickMenu() {
+		if(menuPane.getCurrent() == MenuPane.PLAY) {
+			cL.show(this.container,MAP);
+			this.currentPane = MAP;
+			// new PlaySound("ressources/select.wav",-30).play();
+		}
+		else if(menuPane.getCurrent() == MenuPane.EXIT) {
+			System.exit(0);
+		}
+		else if(menuPane.getCurrent() == MenuPane.CONTINUE) {
+			cL.show(this.container,GAME);
+			this.currentPane = GAME;
+			requestFocus();
+			repaint();
+		}
+	}
+	
+	public void toggleMusic() {
+		if(backSound.isRunning()) {
+			backSound.stop();
+		}
+		else {
+			backSound.play();
+		}
+		
+	}
+	
+	//interfaces
 	public void keyPressed(KeyEvent e) {
 	
 		// System.out.println(e.paramString());
 		
-		if(this.currentPane == GAME) {
+		if(currentPane.equals(GAME)) {
 			if(e.getKeyCode() == KeyEvent.VK_SPACE) {
 				gamePanel.nextTurn();
 			}
 			
 			if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-				this.setContentPane(container);
-				cL.show(this.container,"menu");
-				currentPane = MENU;
-				repaint();
+				goMenu();
 			}
 		}
 		
-		if(this.currentPane == MENU) {
+		if(currentPane.equals(MENU)) {
 			if(e.getKeyCode() == KeyEvent.VK_UP) {
 				this.menuPane.up();
 			}
@@ -122,39 +183,12 @@ public class Fenetre extends JFrame implements KeyListener, ActionListener {
 				clickMenu();
 			}
 		}
+		else if(currentPane.equals(MAP)) {
+			if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+				goPlayer();
+			}
+		}
 		
-	}
-	
-	public void clickMenu() {
-		if(menuPane.getCurrent().equals("Jouer ") || menuPane.getCurrent().equals("Recommencer")) {
-			cL.show(this.container,panelList[MAP]);
-			this.currentPane = MAP;
-			// new PlaySound("ressources/select.wav",-30).play();
-		}
-		else if(menuPane.getCurrent().equals("Quitter")) {
-			System.exit(0);
-		}
-		else if(menuPane.getCurrent().equals("Continuer")) {
-			cL.show(this.container,panelList[GAME]);
-			this.currentPane = GAME;
-			requestFocus();
-			repaint();
-		}
-	}
-	
-	public void mapNext() {
-		cL.show(this.container,panelList[PLAYERS]);
-		playerSelecterPanel.init(mapSelecterPanel.getNbPlayers());
-		this.currentPane = PLAYERS;
-		requestFocus();
-		repaint();
-	}
-	
-	public void mapBack() {
-		cL.show(this.container,panelList[MENU]);
-		this.currentPane = MENU;
-		requestFocus();
-		repaint();
 	}
 	
 	public void keyReleased(KeyEvent e) {}
@@ -165,16 +199,10 @@ public class Fenetre extends JFrame implements KeyListener, ActionListener {
 		
 		if(((JButton)e.getSource()).getActionCommand().equals("ok")) {
 			System.out.println("bouton ok");
-			
-			cL.show(this.container,panelList[GAME]);
-			gamePanel.newGame(playerSelecterPanel.getJoueur(),mapSelecterPanel.getMap());
-			requestFocus();
-			currentPane = GAME;
-			gameRunning = true;
-			menuPane.setGameRunning(true);
+			goGame();
 		}
 		else {
-			mapBack();
+			goMenu();
 		}
 	}
 	
