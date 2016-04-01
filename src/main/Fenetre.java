@@ -56,9 +56,11 @@ public class Fenetre extends JFrame implements KeyListener {
 	public Fenetre() {
 		this.setTitle("Bellum");
 		this.setSize(800, 850);
+		
 		this.setMinimumSize(new Dimension(800,600));
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocationRelativeTo(null);
+		this.setLocation(0,0);
 		this.setResizable(false);
 		
 		this.init();

@@ -26,6 +26,8 @@ public class OptionState extends JPanel implements MouseListener{
 	
 	private File optionFile;
 	
+	private int[][] screen;
+	
 	private Fenetre fenetre;
 	private Font f1;
 	
@@ -45,6 +47,16 @@ public class OptionState extends JPanel implements MouseListener{
         } catch (Exception e) {
             e.printStackTrace();
         }
+		
+		screen = new int[4][2];
+		screen[0][0] = 1000;
+		screen[0][1] = 800;
+		screen[1][0] = 1200;
+		screen[1][1] = 900;
+		screen[2][0] = 1366;
+		screen[2][1] = 728;
+		screen[3][0] = 1600;
+		screen[3][1] = 860;
 		
 		optionSave();
 	}
@@ -108,8 +120,9 @@ public class OptionState extends JPanel implements MouseListener{
 		int length = metrics.stringWidth(sizeX+" x "+sizeY);
 		g.drawString(sizeX+" x "+sizeY,center-(length/2),150);
 		
-		length = metrics.stringWidth("Music Volume : "+ musicVolume);
-		g.drawString("Music Volume : "+musicVolume,center-(length/2),200);
+		int volumePercent = (100/45)*(musicVolume+60);
+		length = metrics.stringWidth("Music Volume : "+ volumePercent);
+		g.drawString("Music Volume : "+volumePercent,center-(length/2),200);
 		for(int i=0; i<10; i++) {
 			if(-60+(i*5) <= musicVolume) {
 				g.setColor(Color.white);
@@ -120,9 +133,10 @@ public class OptionState extends JPanel implements MouseListener{
 			g.fillRect((center-200)+(40*i),220,30,20);
 		}
 		
+		volumePercent = (100/45)*(soundVolume+40);
 		g.setColor(new Color(128,0,0));
-		length = metrics.stringWidth("Sound Volume : "+ soundVolume);
-		g.drawString("Sound Volume : "+ soundVolume,center-(length/2),300);
+		length = metrics.stringWidth("Sound Volume : "+ volumePercent);
+		g.drawString("Sound Volume : "+ volumePercent,center-(length/2),300);
 		for(int i=0; i<10; i++) {
 			if(-40+(i*5) <= soundVolume) {
 				g.setColor(Color.white);
@@ -142,6 +156,7 @@ public class OptionState extends JPanel implements MouseListener{
 	}
 	
 	public void save() {
+		fenetre.setSize(sizeX,sizeY);
 		try {
 			PrintWriter out = new PrintWriter(new FileWriter(optionFile),false);
 			out.println("Longueur:"+sizeX);
@@ -172,17 +187,34 @@ public class OptionState extends JPanel implements MouseListener{
 		
 		int volX = (x-(center-200))/40;
 		
-		if(x >= center-200 && x < center+200 && y >= 220 && y < 240) {
+		System.out.println(x+"::"+y);
+		
+		if(x >= center-200 && x < center+200) {
+			if(y >= 220 && y < 240) {
 			musicVolume = -60+(volX*5);
+			}
+			else if(y >= 320 && y < 340) {
+				soundVolume = -40+(volX*5);
+			}
+			else if(y >= 120 && y < 160) {
+				for(int i=0; i< screen.length; i++) {
+					if(sizeX == screen[i][0]) {
+						if(i >= screen.length-1) {
+							i=-1;
+						}
+						sizeX = screen[i+1][0];
+						sizeY = screen[i+1][1];
+						break;
+					}
+				}
+			}
 		}
-		else if(x >= center-200 && x < center+200 && y >= 320 && y < 340) {
-			soundVolume = -40+(volX*5);
-		}
-		else if(x >= center-130 && x < center+130 && y >= h-55 && y < h-25) {
+		if(x >= center-130 && x < center+130 && y >= h-55 && y < h-25) {
 			System.out.println("back button");
 			fenetre.goMenu();
+			save();
 		}
-		save();
+		
 		repaint();
 	}
 	
