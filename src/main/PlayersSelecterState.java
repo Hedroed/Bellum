@@ -117,7 +117,7 @@ public class PlayersSelecterState extends JPanel implements MouseListener{
 		}
 		else if(x >= center-130 && x < center+130 && y >= h-95 && y < h-65) {
 			System.out.println("strat button");
-			fenetre.goGame();
+			fenetre.startGame();
 		}
 		
 		repaint();

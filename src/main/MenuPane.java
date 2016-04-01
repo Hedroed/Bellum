@@ -20,7 +20,7 @@ import java.awt.geom.AffineTransform;
 
 import java.awt.event.*;
 
-public class MenuPane extends JPanel implements MouseListener{
+public class MenuPane extends JPanel implements MouseListener,MouseMotionListener{
 	
 	public final static int PLAY = 1;
 	public final static int CONTINUE = 0;
@@ -44,11 +44,12 @@ public class MenuPane extends JPanel implements MouseListener{
 		this.fenetre = f;
 	
 		this.title = "Bellum";
-		this.soundChange = new PlaySound("ressources/menu.wav",-30);
+		this.soundChange = new PlaySound("ressources/menu.wav",-30,10);
 		this.setBackground(Color.black);
 		
 		music = ImageSprite.createImage("ressources/music.png");
 		
+		this.addMouseMotionListener(this);
 		this.addMouseListener(this);
 		//load background
 		
@@ -190,6 +191,26 @@ public class MenuPane extends JPanel implements MouseListener{
 				musicOff = true;
 				music = ImageSprite.createImage("ressources/musicOff.png");
 			}
+			repaint();
+		}
+	}
+	
+	//Mouse Motion Listener
+	public void mouseDragged(MouseEvent e) {}
+	
+	public void mouseMoved(MouseEvent e) {
+		double i = (double)(e.getY()-357)/30;
+		int iMax = 0;
+		
+		if(gameRunning) {
+			iMax = options[1].length;
+		}
+		else {
+			iMax = options[0].length;
+		}
+		if(i >= 0 && i < iMax && current != (int)i) {
+			current = (int)i;
+			soundChange.play();
 			repaint();
 		}
 	}

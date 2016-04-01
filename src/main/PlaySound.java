@@ -9,6 +9,8 @@ import javax.sound.sampled.FloatControl;
 public class PlaySound {
 	
 	private Clip clip;
+	private FloatControl gainControl;
+	private int discount;
 	
 	public PlaySound(String s) {
 		
@@ -21,23 +23,32 @@ public class PlaySound {
 			e.printStackTrace();
 		}
 		
-		FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+		gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
 		gainControl.setValue(-20f);
 	}
 	
 	public PlaySound(String s, int volume) {
-		
-		File file = new File(s);
-		
-		try {
-			clip = AudioSystem.getClip();
-			clip.open(AudioSystem.getAudioInputStream(file));
-		} catch(Exception e) {
-			e.printStackTrace();
+		this(s);
+		gainControl.setValue((float)volume);
+	}
+	
+	public PlaySound(String s, int volume, int discount) {
+		this(s,volume);
+		this.discount = discount;
+	}
+	
+	public void setVolume(int volume) {
+		System.out.println("vol :"+volume);
+		if(volume > -60 && volume <= 5) {
+			gainControl.setValue((float)volume-discount);
+			this.playContinuously();
 		}
-		
-		FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-		gainControl.setValue((float) volume);
+		else if(volume == -60) {
+			clip.stop();
+		}
+		else {
+			System.out.println("Erreur :: volume incorrect");
+		}
 	}
 	
 	public void stop() {
@@ -47,17 +58,20 @@ public class PlaySound {
 	}
 	
 	public void play() {
-		if(clip != null) {
+		if(gainControl.getValue() != (float)OptionState.soundVolume-discount) {
+			gainControl.setValue((float)OptionState.soundVolume-discount);
+			System.out.println("change vol");
+		}
+		if(clip != null && !clip.isRunning() && OptionState.soundVolume != -40) {
 			stop();
-			// clip.setFramePosition(0);
+			clip.setFramePosition(0);
 			clip.start();
 		}
 	}
 	
 	public void playContinuously() {
-		if(clip != null) {
+		if(clip != null && !clip.isRunning() && OptionState.soundVolume != -60) {
 			stop();
-			clip.setFramePosition(0);
 			clip.loop(Clip.LOOP_CONTINUOUSLY);
 			clip.start();
 		}

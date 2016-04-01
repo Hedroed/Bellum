@@ -173,7 +173,7 @@ public abstract class Vehicule {
 			System.out.println("Vehicule "+this.type.name()+" mort");
 
 			//animation mort
-			PlaySound ps = new PlaySound("ressources/explosion.wav");
+			PlaySound ps = new PlaySound("ressources/explosion.wav",OptionState.soundVolume);
 			ps.play();
 			Thread t = new Thread(new AnimeExplosion(this.pan,this));
 			t.start();
