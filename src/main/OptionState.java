@@ -4,6 +4,7 @@ import component.*;
 
 import java.util.ArrayList;
 import javax.swing.JPanel;
+import javax.swing.JFrame;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -23,6 +24,8 @@ public class OptionState extends JPanel implements MouseListener{
 	
 	public static int sizeX = 1200;
 	public static int sizeY = 900; 
+	
+	private int fullscreen;
 	
 	private File optionFile;
 	
@@ -118,7 +121,11 @@ public class OptionState extends JPanel implements MouseListener{
 		g.setColor(new Color(128,0,0));
 		
 		int length = metrics.stringWidth(sizeX+" x "+sizeY);
-		g.drawString(sizeX+" x "+sizeY,center-(length/2),150);
+		g.drawString(sizeX+" x "+sizeY,center-(length/2),120);
+		
+		//fullscreen option
+		g.drawString("fullscreen",center-45,157);
+		g.drawImage(ImageSprite.createImage("ressources/check"+fullscreen+".png"),center-65,140,null);
 		
 		int volumePercent = (100/45)*(musicVolume+60);
 		length = metrics.stringWidth("Music Volume : "+ volumePercent);
@@ -156,7 +163,14 @@ public class OptionState extends JPanel implements MouseListener{
 	}
 	
 	public void save() {
-		fenetre.setSize(sizeX,sizeY);
+		if(fullscreen == 0) {
+			fenetre.setSize(sizeX,sizeY);
+			// fenetre.setUndecorated(false);
+		}
+		else {
+			// fenetre.setUndecorated(true);
+			fenetre.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		}
 		try {
 			PrintWriter out = new PrintWriter(new FileWriter(optionFile),false);
 			out.println("Longueur:"+sizeX);
@@ -196,7 +210,15 @@ public class OptionState extends JPanel implements MouseListener{
 			else if(y >= 320 && y < 340) {
 				soundVolume = -40+(volX*5);
 			}
-			else if(y >= 120 && y < 160) {
+			else if(y >= 140 && y < 160) {
+				if(fullscreen == 0) {
+					fullscreen = 1;
+				}
+				else {
+					fullscreen = 0;
+				}
+			}
+			else if(y >= 100 && y < 130) {
 				for(int i=0; i< screen.length; i++) {
 					if(sizeX == screen[i][0]) {
 						if(i >= screen.length-1) {
