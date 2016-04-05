@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
+import javax.swing.JPanel;
 
 public class Walker extends Vehicule{
 
@@ -22,9 +23,9 @@ public class Walker extends Vehicule{
 	public final int cols = 2;
 	
 
-	public Walker(int a, FDamier f, Joueur jo) {
+	public Walker(int a, FDamier f, JPanel pan, Joueur jo) {
 		// System.out.println("Creation mangouste");
-		super(f, jo, a, TypeVec.walker);
+		super(pan,f, jo, a, TypeVec.walker);
 		this.makeImage();
 	}
 	
@@ -36,7 +37,7 @@ public class Walker extends Vehicule{
 				ret = true;
 			}
 		}
-		else if(c.isVehicule()){
+		else if(c.getVehicule() != null){
 			if(c.getVehicule().getJoueur() == this.getJoueur() && c.getVehicule().getType() == TypeVec.turret) {
 				ret = true;
 			}
@@ -47,19 +48,18 @@ public class Walker extends Vehicule{
 		else if(c.isRiver() && !c.haveBridge()) {
 			ret = c.isRiverRamp();
 		}
-		else if(c.isHelicopter()) {
-			if(c.getVehicule().getJoueur() == this.getJoueur()) {
-				ret = true;
-			}
-			else {
-				ret = false;
-			}
+		else if(c.getFlying() != null && c.getFlying().getJoueur() == this.getJoueur()) {
+			ret = true;
 		}
 		else if(c.isEmpty()){
 			ret = true;
 		}
 		
 		return ret;
+	}
+	
+	public boolean isFlying() {
+		return false;
 	}
 	
 	public void makeImage() {
@@ -118,8 +118,8 @@ public class Walker extends Vehicule{
 				c.getBase().attack();
 				c.getBase().attack();
 			}
-			this.pan.unselect();
-			this.pan.killMe(this);
+			this.damier.unselect();
+			this.damier.killMe(this);
 		}
 	}
 }

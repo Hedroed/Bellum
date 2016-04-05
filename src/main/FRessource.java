@@ -3,61 +3,72 @@ package main;
 import joueur.Joueur;
 import component.*;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener; 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
 import java.awt.Graphics;
-import javax.swing.BorderFactory;
-import javax.swing.JScrollPane;
-
-import javax.swing.TransferHandler;
-import glass.*;
+import javax.swing.JPanel;
+import java.io.File;
+import java.io.IOException;
+import java.awt.event.MouseEvent;
 
 import java.util.ArrayList;
 
-public class FRessource extends JPanel implements ActionListener {
+public class FRessource {
 	
-	private Dimension fSize = new Dimension(110,700);
+	private int width, height;
+	private int posX, posY;
+	
 	private FDamier fDamier;
-	private JButton nextTurn = new JButton("Tour Suivant");
-	private JPanel centerPane = new JPanel();
-	
-	private MyGlassPane glass;
+	private JPanel pan;
+	private ArrayList<DragImage> dragList;
 	
 	private Joueur[] players;
 	private int joueurActif;
 	
 	private int tour;
 	
-	public FRessource(MyGlassPane g, Joueur[] players){
-		this.setPreferredSize(fSize);
-		this.setBackground(Color.black);
-		this.setBorder(BorderFactory.createEtchedBorder());
-		this.setLayout(new BorderLayout());
+	public FRessource(JPanel pan, Joueur[] players){
+		this.pan = pan;
+		posX = 600;
+		posY = 0;
+		width = 110;
+		height = 700;
 		
+		dragList = new ArrayList<DragImage>();
 		this.players = players;
 
 		this.tour = 0;
-		this.glass = g;
 		
-		this.nextTurn.addActionListener(this);
-		this.nextTurn.setFocusable(false);
-		this.nextTurn.setPreferredSize(new Dimension(90,70));
-		
-		centerPane.setBackground(new Color(255,235,175));
-		this.add(this.centerPane,BorderLayout.CENTER);//new JScrollPane(
-		this.add(this.nextTurn,BorderLayout.SOUTH);
 	}
 	
-	public void actionPerformed(ActionEvent e) {
-		this.activeTurn();
+	public void setPosition(int x, int y, int w, int h) {
+		this.posX = x;
+		this.posY = y;
+		this.width = w;
+		this.height = h;
+	}
+	
+	public void draw(Graphics g) {		
+		g.setColor(new Color(255,235,175));
+		g.fillRect(posX, posY, width, height);
+		
+		g.setColor(Color.black);
+		g.drawRect(posX,posY,width,height);
+		
+		if(!dragList.isEmpty()) {
+			for(DragImage di : dragList) {
+				di.draw(g);
+			}
+		}
+		
+		//next buttun
+		g.setFont(g.getFont().deriveFont(17f));
+		g.setColor(new Color(223,118,11));
+		g.fillRect(posX+1,height-60,width-1,60);
+		g.setColor(new Color(128,0,0));
+		g.drawString("Tour suivant",posX+4,height-25);
 	}
 	
 	public void setFDamier(FDamier f) {
@@ -79,8 +90,7 @@ public class FRessource extends JPanel implements ActionListener {
 		this.fillRessources();
 		this.fDamier.unselect();
 		this.fDamier.next();
-		this.fDamier.repaint();
-		this.repaint();
+		pan.repaint();
 	}
 	
 	public void startGame() {
@@ -89,27 +99,43 @@ public class FRessource extends JPanel implements ActionListener {
 				p.deactiveAll();
 			}
 			joueurActif = (int) (Math.random()*players.length);
-			System.out.println("Start with "+joueurActif);
 			activeTurn();
 		}
 	}
 	
 	public void fillRessources() {
-		this.centerPane.removeAll();
+		dragList.clear();
 		ArrayList<TransferVec> list = players[joueurActif].getVecRestant();
 		
+		int i=0;
 		for(TransferVec tv : list){
 			int nb = tv.getNbRestant();
 			if(nb > 0) {
-				this.centerPane.add(new DragImage(glass,tv,fDamier));
-				// System.out.println("drag image en plus");
+				dragList.add(new DragImage(posX+25,posY+20+(83*i),tv));
+				i++;
 			}
 		}
-		this.centerPane.setVisible(false);
-		this.centerPane.setVisible(true);
 	}
 	
 	public Joueur getActiveJoueur() {
 		return players[joueurActif];
+	}
+	
+	public void mousePressed(MouseEvent e) {
+		int x = e.getX()-posX;
+		int y = e.getY()-posY;
+		
+		if(x >= 0 && y >= 0 && x < width && y < height) {
+			
+			if(x >= 25 && x < 25+64 && y >= 20 && y < height-60) {
+				int i = (int) (y-posY-20)/83;
+				DragImage drag = dragList.get(i);
+				drag.begin();
+				((GamePane)pan).setDragImage(drag,(x+posX)-drag.getX(),(y+posY)-drag.getY());
+			}
+			else if(x >= 1 && x < width && y >= height-60 && y < height){
+				activeTurn();
+			}
+		}
 	}
 }

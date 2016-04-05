@@ -21,7 +21,6 @@ public class PlayersSelecterState extends JPanel implements MouseListener{
 	private Image inter;
 	
 	private Joueur[] players;
-	private int currentPlayer;
 	
 	private Font f1;
 	private PlayerSelecterPane[] selecterTab;
@@ -45,8 +44,6 @@ public class PlayersSelecterState extends JPanel implements MouseListener{
 		this.players = new Joueur[nbPlayer];
 		this.selecterTab = new PlayerSelecterPane[nbPlayer];
 		
-		currentPlayer = 0;
-		System.out.println("init");
 		for(int i=0; i<players.length; i++) {
 			players[i] = new Joueur("Joueur "+(i+1),null,null);
 			selecterTab[i] = new PlayerSelecterPane(getWidth()/2-300,80+(i*120),players[i]);
@@ -67,7 +64,6 @@ public class PlayersSelecterState extends JPanel implements MouseListener{
 		g.setFont(f1);
 		g.setColor(new Color(128,0,0));
 		g.drawString("Players",center-80,50);
-		System.out.println("current players = "+currentPlayer);
 		
 		for(PlayerSelecterPane p : selecterTab) {
 			p.draw(g);
@@ -109,14 +105,11 @@ public class PlayersSelecterState extends JPanel implements MouseListener{
 			
 			int iPlayer = (y-80)/120;
 			selecterTab[iPlayer].mousePressed(e);
-			System.out.println("player :"+iPlayer);
 		}
 		else if(x >= center-130 && x < center+130 && y >= h-55 && y < h-25) {
-			System.out.println("back button");
 			fenetre.goMap();
 		}
 		else if(x >= center-130 && x < center+130 && y >= h-95 && y < h-65) {
-			System.out.println("strat button");
 			fenetre.startGame();
 		}
 		

@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
+import javax.swing.JPanel;
 
 public class Mangouste extends Vehicule{
 
@@ -22,9 +23,9 @@ public class Mangouste extends Vehicule{
 	public final int cols = 4;
 	
 
-	public Mangouste(int a, FDamier f, Joueur jo) {
+	public Mangouste(int a, FDamier f,JPanel pan , Joueur jo) {
 		// System.out.println("Creation mangouste");
-		super(f, jo, a, TypeVec.mangouste);
+		super(pan,f, jo, a, TypeVec.mangouste);
 		this.makeImage();
 	}
 	
@@ -40,22 +41,21 @@ public class Mangouste extends Vehicule{
 		else if(c.isRiver() && !c.haveBridge()) {
 			ret = false;
 		}
-		else if(c.isVehicule()) { //is other vehicule
+		else if(c.getVehicule() != null) { //is other vehicule
 			ret = false;
 		}
-		else if(c.isHelicopter()) {
-			if(c.getVehicule().getJoueur() == this.getJoueur()) {
-				ret = true;
-			}
-			else {
-				ret = false;
-			}
+		else if(c.getFlying() != null && c.getFlying().getJoueur() == this.getJoueur()) {
+			ret = true;
 		}
 		else if(c.isEmpty()){
 			ret = true;
 		}
 		
 		return ret;
+	}
+	
+	public boolean isFlying() {
+		return false;
 	}
 	
 	public void makeImage() {

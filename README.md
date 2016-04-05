@@ -26,3 +26,15 @@ de modifier le volume des sons. Les options sont enregistrées dans un fichier.
 Grande carte 4 joueurs et changement des interfaces.
 
 Ajout d'une musique de fond original composé par un ami spécifiquement pour le jeu. Merci beaucoup :)
+
+UPDATE 0.3 - 05/04/2016
+
+Il est désormais possible de déplacer le damier de jeu dans la fenêtre en déplaçant le curseur de la souris 
+
+tout en maintenant le clique molette enfoncée. Les flèches directionnelles fonctionnent aussi.
+
+La molette permet de zoomer ! Et un double clique molette centrer le damier.
+
+Quelques modifications invisibles qui me permetteront par la suite de créer des animations de déplacement de véhicule.
+
+Résolution de bug qui permettait de sortir un véhicule depuis la base ennemie.

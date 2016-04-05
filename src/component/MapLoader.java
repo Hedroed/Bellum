@@ -75,7 +75,6 @@ public class MapLoader {
 				basesImage.add(ImageIO.read(new File("ressources/"+s)));
 				int lx = Character.getNumericValue(in.read());
 				int ly = Character.getNumericValue(in.read());
-				System.out.println("long BAse :"+lx+" :: "+ly);
 				longueurBase[i][0] = lx;
 				longueurBase[i][1] = ly;
 				in.readLine();//passe a la ligne suivante

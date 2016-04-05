@@ -20,6 +20,9 @@ import java.awt.image.BufferedImage;
 
 
 public abstract class Vehicule {
+	
+	private static PlaySound soundExplose = new PlaySound("ressources/explosion.wav",OptionState.soundVolume);
+	
 	private Image image;
 	private BufferedImage[] explosions;
 	private boolean mort = false;
@@ -28,7 +31,8 @@ public abstract class Vehicule {
 	private int angle;
 	private int posX = 1;
 	private int posY = 1;
-	protected FDamier pan;
+	protected JPanel pan;
+	protected FDamier damier;
 	protected TypeVec type;
 	private Joueur joueur;
 
@@ -37,13 +41,13 @@ public abstract class Vehicule {
 	private int depRestant;
 	private boolean actif = true;
 
-	public Vehicule(FDamier f, Joueur jo, int a, TypeVec t) {
+	public Vehicule(JPanel pan, FDamier damier, Joueur jo, int a, TypeVec t) {
 		// System.out.println("Creation vehicule "+t.name()+" ["+a+"]");
-		this.pan = f;
+		this.pan = pan;
+		this.damier = damier;
 		this.joueur = jo;
 		this.angle = a;
 		this.type = t;
-		// this.setPreferredSize(new Dimension(ImageSprite.tileSize-1,ImageSprite.tileSize-1));
 
 		this.life = t.getVieMax();
 	}
@@ -60,7 +64,7 @@ public abstract class Vehicule {
 		}
 		
 		double angleR = Math.toRadians(this.angle);
-		int tileSize = ImageSprite.tileSize;
+		int tileSize = FDamier.tileSize;
 		AffineTransform rotate = new AffineTransform();
 		rotate.translate(x+this.posX,y+this.posY);
 		rotate.scale((double) (tileSize-3)/64,(double) (tileSize-3)/64);
@@ -92,13 +96,13 @@ public abstract class Vehicule {
 			
 			g2D.setColor(Color.red);
 			for(int i = 0; i < this.tirRestant; i++){
-				g2D.fillRect(x+(38-(6*nb)),y+2,3,3);
+				g2D.fillRect(x+((tileSize-8)-(6*nb)),y+2,3,3);
 				nb++;
 			}
 			
 			g2D.setColor(Color.blue);
 			for(int i = 0; i < this.depRestant; i++){
-				g2D.fillRect(x+(38-(6*nb)),y+2,3,3);
+				g2D.fillRect(x+((tileSize-8)-(6*nb)),y+2,3,3);
 				nb++;
 			}
 
@@ -173,8 +177,7 @@ public abstract class Vehicule {
 			System.out.println("Vehicule "+this.type.name()+" mort");
 
 			//animation mort
-			PlaySound ps = new PlaySound("ressources/explosion.wav",OptionState.soundVolume);
-			ps.play();
+			soundExplose.play();
 			Thread t = new Thread(new AnimeExplosion(this.pan,this));
 			t.start();
 		}
@@ -222,21 +225,23 @@ public abstract class Vehicule {
 	
 	public abstract void makeImage();
 	
+	public abstract boolean isFlying();
+	
 	public void newCase(Case c) {}
 	
 	public class AnimeExplosion implements Runnable {
-		private FDamier f;
+		private JPanel pan;
 		private Vehicule v;
 
-		public AnimeExplosion(FDamier f, Vehicule v) {
-			this.f = f;
+		public AnimeExplosion(JPanel pan, Vehicule v) {
+			this.pan = pan;
 			this.v = v;
 		}
 
 		public void run() {
 
 			for(this.v.ind = 0;this.v.ind<81;this.v.ind++) {
-				this.f.repaint();
+				pan.repaint();
 				try {
 				  Thread.sleep(10);
 				} catch (InterruptedException e) {
@@ -244,8 +249,8 @@ public abstract class Vehicule {
 				}
 			}
 			ind = 80;
-			this.f.repaint();
-			this.f.killMe(this.v);
+			pan.repaint();
+			damier.killMe(this.v);
 		}
 	}
 
@@ -259,7 +264,7 @@ public abstract class Vehicule {
 		Thread t = new Thread(new Runnable() {
 			public void run() {
 				int yDep = 0;
-				int tileSize = ImageSprite.tileSize;
+				int tileSize = FDamier.tileSize;
 				
 				if(angle == 0) {
 					for(posY = tileSize; posY > 1; posY--) {
@@ -328,6 +333,11 @@ public abstract class Vehicule {
 		}
 		else if(c.getVehicule() != null) {
 			if(c.getVehicule().getJoueur() != this.joueur) {
+				ret = true;
+			}
+		}
+		else if(c.getFlying() != null ) {
+			if(c.getFlying().getJoueur() != this.joueur) {
 				ret = true;
 			}
 		}

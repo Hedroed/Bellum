@@ -31,7 +31,7 @@ import java.awt.event.*;
   * Calcule les zones de tirs et de deplacements du vehicule Selectinné
   * Autorise les deplacements de ce dernier
   */
-public class FDamier extends JPanel implements MouseListener,MouseMotionListener {
+public class FDamier {
 	
 	private Base[] bases;
 	private Image bridge;
@@ -43,33 +43,47 @@ public class FDamier extends JPanel implements MouseListener,MouseMotionListener
 	public static int LARGEUR;
 	public static int LONGUEUR;
 	public static int tileSize;
+	public static int posX, posY;
+	public static int width, height;
 	
 	private Case[][] damier;
 	private ArrayList<Case> zoneTirSelect = null;
 	private ArrayList<Case> zoneDepSelect = null;
 	private ArrayList<Case> zoneCibleSelect = null;
 	private Case caseSelec = null;
-
+	private Vehicule vehiculeSelect = null;
+	
 	private boolean affTir = true;
 	private boolean dark = false;
 	private boolean click = false;
 	
-	private Fenetre fenetre;
+	private JPanel pan;
 	
 	private int hoverCaseX;
 	private int hoverCaseY;
 	
 	private GameMessage message;
 	
-	public FDamier(FEtat fe, FRessource fr){
+	private VehiculeFactory factory;
+	
+	public FDamier(JPanel pan, FEtat fe, FRessource fr){
 		this.fRess = fr;
 		this.fEtat = fe;
+		this.pan = pan;
 		
-		this.addMouseListener(this);
-		this.addMouseMotionListener(this);
+		factory = new VehiculeFactory();
 		
-		this.setBackground(new Color(30,20,10));
-		this.setBorder(BorderFactory.createEtchedBorder());
+		tileSize = 46;
+		posX = 300;
+		posY = 50;
+		width = 200;
+		height = 700;
+		
+		// this.addMouseListener(this);
+		// this.addMouseMotionListener(this);
+		
+		// this.setBackground(new Color(30,20,10));
+		// this.setBorder(BorderFactory.createEtchedBorder());
 		
 		message = new GameMessage("ressources/DALEK.ttf","ressources/interface2.png",new Color(128,0,0));
 		
@@ -83,8 +97,10 @@ public class FDamier extends JPanel implements MouseListener,MouseMotionListener
 		LARGEUR = 9;
 		LONGUEUR = 15;
 		
-		this.setSize(new Dimension(LONGUEUR*46,LARGEUR*46));
-		this.setLayout(new GridLayout(LONGUEUR, LARGEUR,1,1));
+		// width = LONGUEUR*tileSize;
+		// height = LARGEUR*tileSize;
+		// this.setSize(new Dimension(LONGUEUR*46,LARGEUR*46));
+		// this.setLayout(new GridLayout(LONGUEUR, LARGEUR,1,1));
 		
 		Image baseUp = null;
 		Image baseDown = null;
@@ -112,7 +128,7 @@ public class FDamier extends JPanel implements MouseListener,MouseMotionListener
 				if(this.damier[i][j] == null) {
 					this.damier[i][j] = new Case(i,j,this);
 				}
-				this.add(this.damier[i][j]);
+				// this.add(this.damier[i][j]);
 			}
 		}
 
@@ -150,27 +166,46 @@ public class FDamier extends JPanel implements MouseListener,MouseMotionListener
 		LARGEUR = mL.getWidth();
 		LONGUEUR = mL.getHeight();
 		
-		this.setMinimumSize(new Dimension(LARGEUR*ImageSprite.tileSize,LONGUEUR*ImageSprite.tileSize));
-		this.setLayout(new GridLayout(LONGUEUR, LARGEUR,1,1));
+		
+		// this.setMinimumSize(new Dimension(LARGEUR*ImageSprite.tileSize,LONGUEUR*ImageSprite.tileSize));
+		// this.setLayout(new GridLayout(LONGUEUR, LARGEUR,1,1));
 
 		damier = mL.getDamier();
 		bases = mL.getBases();
 
 		this.bridge = mL.getImageBridge();
 		
-		for(int j=0; j<LONGUEUR; j++) {
-			for(int i=0; i<LARGEUR; i++) {
-				this.add(this.damier[i][j]);
-			}
-		}
+		// for(int j=0; j<LONGUEUR; j++) {
+			// for(int i=0; i<LARGEUR; i++) {
+				// this.add(this.damier[i][j]);
+			// }
+		// }
 		
 	}
 	
-	public void paintComponent(Graphics g){
+	public void testPosition() {
+		posX += (Math.random()*5)-2;
+		posY += (Math.random()*5)-2;
+	}
+	
+	public void calculeSize() {
+		height = LONGUEUR*tileSize;
+		width = LARGEUR*tileSize;
+	}
+	
+	public void setPosition(int w, int h) {
+		calculeSize();
+		posX = (w-width)/2;
+		posY = (h-height)/2;
+	}
+	
+	public void draw(Graphics g) {
 		// long start = System.nanoTime();
 		// g.drawImage(this.fond, 0, 0, this);
 		g.setColor(new Color(65,65,65));
-		g.fillRect(0,0,this.getWidth(),this.getHeight());
+		g.fillRect(posX,posY,width,height);
+		g.setColor(Color.black);
+		g.drawRect(posX-1,posY-1,width,height);
 		
 		for(int j=0; j<LONGUEUR; j++) {
 			for(int i=0; i<LARGEUR; i++) {
@@ -185,7 +220,7 @@ public class FDamier extends JPanel implements MouseListener,MouseMotionListener
 		
 		if(this.dark) {
 			g.setColor(new Color(0,0,0,128));
-			g.fillRect(0,0,this.getWidth(),this.getHeight());
+			g.fillRect(posX,posY,width,height);
 			
 			// draw caseExit on White :(
 			for(int j=0; j<LONGUEUR; j++) {
@@ -193,7 +228,7 @@ public class FDamier extends JPanel implements MouseListener,MouseMotionListener
 					if(damier[i][j].isExit()) {
 						if(((CaseExit)damier[i][j]).isWhite()) {
 							g.setColor(new Color(255,255,255,128));
-							g.fillRect(i*ImageSprite.tileSize+2,j*ImageSprite.tileSize+2,ImageSprite.tileSize, ImageSprite.tileSize);
+							g.fillRect((i*tileSize)+posX,(j*tileSize)+posY,tileSize, tileSize);
 						}
 					}
 				}
@@ -211,55 +246,17 @@ public class FDamier extends JPanel implements MouseListener,MouseMotionListener
 
 	public void addVehicule(Exit s, TypeVec t, Joueur jo) {
 		if(this.damier[s.getX()][s.getY()].isEmpty()) {
-			if(t == TypeVec.helicopter) {
-				addHelicopter(s,jo);
-			}
-			else {
-				this.damier[s.getX()][s.getY()].placeVehicule(vehiculeFactory(t.name(),s,jo));
-			}
-			this.repaint();
+			
+			Vehicule newVec = factory.getVehiculeByType(t,s.getAngle(),this,pan,jo);
+			jo.addVec(newVec);
+			
+			damier[s.getX()][s.getY()].addVehicule(newVec);
+			newVec.enter();
+			pan.repaint();
 		}
 		else {
 			System.out.println("Erreur :: ajoute de vehicule sur un autre");
 		}
-	}
-	
-	private Vehicule vehiculeFactory(String n, Exit s, Joueur jo) {
-		Vehicule ret = null;
-		switch (n) {
-			case "mangouste":
-				ret = new Mangouste(s.getAngle(), (FDamier)this, jo);
-				break;
-			case "warthog": 
-				ret = new Warthog(s.getAngle(), (FDamier)this, jo);
-				break;
-			case "scorpion":        
-				ret = new Scorpion(s.getAngle(), (FDamier)this, jo);
-				break;
-			case "walker":        
-				ret = new Walker(s.getAngle(), (FDamier)this, jo);
-				break;
-			case "bridger":        
-				ret = new Bridger(s.getAngle(), (FDamier)this, jo);
-				break;
-			case "turret":        
-				ret = new Turret(s.getAngle(), (FDamier)this, jo);
-				break;
-			case "activeTurret":        
-				ret = new ActiveTurret(s.getAngle(), (FDamier)this, jo);
-				break;
-			default:
-				System.out.println("Erreur :: nom inconnu");
-				break;
-		}
-		jo.addVec(ret);
-		return ret;
-	}
-	
-	private void addHelicopter(Exit s, Joueur jo) {
-		Helicopter ret = new Helicopter(s.getAngle(),(FDamier)this,jo);
-		jo.addVec(ret);
-		this.damier[s.getX()][s.getY()].placeHelicopter(ret);
 	}
 	
 	public void addObstacle(int x, int y) {
@@ -271,18 +268,13 @@ public class FDamier extends JPanel implements MouseListener,MouseMotionListener
 	/**	methode appelee par une case quand elle est clickee
 	  * declache tout les calcule de selection
 	  */
-	public void caseClicked(Case c) {
-		
-		// System.out.println("Taille fdamier :"+this.getWidth()+":"+this.getHeight());
+	public void caseClicked(Case c, Vehicule vec) {
 		
 		if(this.caseSelec == null) {
-			if(c.getVehicule() != null && !c.getVehicule().isDead()) {
+			if(vec != null && !vec.isDead()) {
 				//selectionne la case et sont vehicule
-				if(c.getVehicule().isActif()) {
-					this.caseSelec = c;
-					this.caseSelec.setSelect(true);
-					this.fEtat.setActiveVehicule(c.getVehicule());
-					this.calculeZones();
+				if(vec.isActif()) {
+					select(c,vec);
 				}
 			}
 		}
@@ -297,23 +289,14 @@ public class FDamier extends JPanel implements MouseListener,MouseMotionListener
 						// System.out.println("Est un case de deplacement");
 
 						//deplace le vehicule
-						this.caseSelec.getVehicule().deplacement(this.caseSelec, c);
-						if(this.caseSelec.getVehicule().getType() == TypeVec.helicopter) {
-							c.setHelicopter((Helicopter)this.caseSelec.getVehicule());
-							this.caseSelec.setHelicopter(null);
-						}
-						else {
-							c.setVehicule(this.caseSelec.getVehicule());
-							this.caseSelec.setVehicule(null);
-						}
+						vehiculeSelect.deplacement(this.caseSelec, c);
 						
-						//deselectionne
-						this.caseSelec.setSelect(false);
-						this.caseSelec = c;
-						this.caseSelec.setSelect(true);
-						this.calculeZones();
+						caseSelec.removeVehicule(vehiculeSelect);
+						c.addVehicule(vehiculeSelect);
 						
-						c.getVehicule().newCase(c);
+						select(c,vehiculeSelect);
+						
+						vehiculeSelect.newCase(c);
 						
 						end = true;
 						break;
@@ -332,24 +315,23 @@ public class FDamier extends JPanel implements MouseListener,MouseMotionListener
 							t.start();
 							// this.fenetre.fin();
 						}
-						this.caseSelec.getVehicule().tir();
+						vehiculeSelect.tir();
 						//deselectionne
 						this.unselect();
 						
 						end = true;
 						break;
 					}
-					else if(c == cCible && !cCible.getVehicule().isDead()) {
-						if(cCible.isHelicopter()) {
-							cCible.getHelicopter().attaque();
+					else if(c == cCible) {
+						
+						if(c.getFlying() != null) {
+							c.getFlying().attaque();
 						}
 						else {
-							cCible.getVehicule().attaque();
+							c.getVehicule().attaque();
 						}
-						this.caseSelec.getVehicule().tir();
-						//deselectionne
-						this.unselect();
-						
+						vehiculeSelect.tir();
+						unselect();
 						end = true;
 						break;
 					}
@@ -361,21 +343,16 @@ public class FDamier extends JPanel implements MouseListener,MouseMotionListener
 				if(c == this.caseSelec) {
 					this.unselect();
 				}
-				else if(c.getVehicule() != null) { //est un autre vehicule
-					if(c.getVehicule().isActif()) {
-						this.caseSelec.setSelect(false);
-						this.caseSelec = c;
-						this.caseSelec.setSelect(true);
-						this.fEtat.setActiveVehicule(c.getVehicule());
-						this.calculeZones();
-					}
+				else if(vec != null && vec.isActif()) { //est un autre vehicule
+					select(c,vec);
 				}
 			}
 			
 		}
-		
-		this.fEtat.repaint();
-		this.repaint();
+
+				
+
+		pan.repaint();
 	}
 	
 	public class AnimeExplosion implements Runnable {
@@ -391,13 +368,16 @@ public class FDamier extends JPanel implements MouseListener,MouseMotionListener
 			for(int i = 0;i<48;i++) {
 				
 				b.update();
-				repaint();
+				testPosition();//effet de vibration a l'explosion
+				pan.repaint();
 				try {
 				  Thread.sleep(60);
 				} catch (InterruptedException e) {
 				  e.printStackTrace();
 				}
 			}
+			((GamePane)pan).setPosition();
+			pan.repaint();
 			
 		}
 	}
@@ -406,9 +386,23 @@ public class FDamier extends JPanel implements MouseListener,MouseMotionListener
 		if(this.caseSelec != null) {
 			this.caseSelec.setSelect(false);
 			this.caseSelec = null;
-			this.fEtat.setActiveVehicule(null);
-			this.calculeZones();
 		}
+		if(vehiculeSelect != null) {
+			vehiculeSelect = null;
+			fEtat.setActiveVehicule(null);
+		}
+		this.calculeZones();
+	}
+	
+	public void select(Case c, Vehicule v) {
+		if(caseSelec != null) {
+			caseSelec.setSelect(false);
+		}
+		caseSelec = c;
+		caseSelec.setSelect(true);
+		vehiculeSelect = v;
+		fEtat.setActiveVehicule(vehiculeSelect);
+		calculeZones();
 	}
 
 	/** calcule les zones de tirs et de deplacement du vehicule de la case selectionnée
@@ -419,7 +413,7 @@ public class FDamier extends JPanel implements MouseListener,MouseMotionListener
 			//vidage de tableaux
 			this.clearTable();
 		}
-		else if(this.caseSelec != null) {
+		else if(caseSelec != null && vehiculeSelect != null) {
 
 			//vidage de tableaux
 			this.clearTable();
@@ -430,9 +424,9 @@ public class FDamier extends JPanel implements MouseListener,MouseMotionListener
 			ArrayList<Case> zoneCible = new ArrayList<Case>();
 			Case c;
 			int xx,yy;
-			int portee = this.caseSelec.getVehicule().getType().getPortee();
+			int portee = vehiculeSelect.getType().getPortee();
 			
-			if(this.caseSelec.getVehicule().getTirRestant() > 0) {
+			if(vehiculeSelect.getTirRestant() > 0) {
 				//cree tableau zonetir contenant toutes les cases ou il peu tirer
 				for(int i1 = -1; i1 <= 1; i1++) {
 					for(int i2 = -1; i2 <= 1; i2++) {
@@ -443,7 +437,7 @@ public class FDamier extends JPanel implements MouseListener,MouseMotionListener
 							if((xx >= 0 && xx < LARGEUR) && (yy >=0 && yy < LONGUEUR)) {
 								c = this.damier[xx][yy];
 								if(c != this.caseSelec) {
-									if(this.caseSelec.getVehicule().canShoot(c)) {
+									if(vehiculeSelect.canShoot(c)) {
 										zoneCible.add(c);
 										break;
 									}
@@ -473,9 +467,9 @@ public class FDamier extends JPanel implements MouseListener,MouseMotionListener
 				this.zoneCibleSelect = zoneCible;
 			}
 			
-			if(this.caseSelec.getVehicule().getDepRestant() > 0) {
+			if(vehiculeSelect.getDepRestant() > 0) {
 				//calcule de la zone de deplacement
-				int dep = this.caseSelec.getVehicule().getDepRestant();
+				int dep = vehiculeSelect.getDepRestant();
 				ArrayList<Case> zoneDep = new ArrayList<Case>();
 				this.deplacementRec(dep,zoneDep,this.caseSelec);
 
@@ -522,7 +516,7 @@ public class FDamier extends JPanel implements MouseListener,MouseMotionListener
 
 					if((xx >= 0 && xx < LARGEUR) && (yy >=0 && yy < LONGUEUR)) {
 						ca = this.damier[xx][yy];
-						if(ca != c && this.caseSelec.getVehicule().canMove(ca)) {
+						if(ca != c && vehiculeSelect.canMove(ca)) {
 							dep.add(ca);
 							deplacementRec(i-1,dep,ca);
 						}
@@ -536,18 +530,9 @@ public class FDamier extends JPanel implements MouseListener,MouseMotionListener
 	public void killMe(Vehicule v) {
 		for(int j=0; j<LONGUEUR; j++) {
 			for(int i=0; i<LARGEUR; i++) {
-				if(v.getType() == TypeVec.helicopter) {
-					if(this.damier[i][j].getHelicopter() == v) {
-						this.damier[i][j].setHelicopter(null);
-					}
-				}
-				else {
-					if(this.damier[i][j].getVehicule() == v) {
-						this.damier[i][j].setVehicule(null);
-					}
-				}
+				damier[i][j].removeVehicule(v);
 				this.calculeZones();
-				this.repaint();
+				pan.repaint();
 			}
 		}
 	}
@@ -555,7 +540,7 @@ public class FDamier extends JPanel implements MouseListener,MouseMotionListener
 	public void setAffTir(boolean b) {
 		this.affTir = b;
 		this.calculeZones();
-		this.repaint();
+		pan.repaint();
 	}
 	
 	public Joueur getActiveJoueur() {
@@ -582,72 +567,87 @@ public class FDamier extends JPanel implements MouseListener,MouseMotionListener
 		click = true;
 	}
 	
-	public void sortirVehicule(Point p, JComponent c) {
+	public void sortirVehicule(Case c, TransferVec t) {
 		click = false;
-		TransferVec t = ((DragImage) c).getTransfer();
 		
-		int x = (int) (p.getX()-2)/ImageSprite.tileSize;
-		int y = (int) (p.getY()-2)/ImageSprite.tileSize;
-		
-		if(x >= 0 && x < LARGEUR && y >= 0 && y < LONGUEUR) {
-			if(damier[x][y].isExit() && t.canExtract(getActiveJoueur())) {
-				
-				Exit e = ((CaseExit)damier[x][y]).getExit();
-				
-				if(this.damier[e.getX()][e.getY()].isEmpty()) {
+		if(c.isExit() && t.canExtract(((CaseExit)c).getJoueur())) {
 			
-					System.out.println("Sortie de vehicule :"+t.getType().name());
-					this.addVehicule(e,t.getType(), t.getJoueur());
-					t.isExited();
-					
-					calculeZones();
-				}
+			Exit e = ((CaseExit)c).getExit();
+			
+			if(damier[e.getX()][e.getY()].isEmpty()) {
 		
-				this.fRess.repaint();
-				// System.out.println("transfer truc :"+v+" sortie "+e);
+				System.out.println("Sortie de vehicule :"+t.getType().name());
+				this.addVehicule(e,t.getType(), t.getJoueur());
+				t.isExited();
+				
+				calculeZones();
 			}
+	
+			pan.repaint();
+			// System.out.println("transfer truc :"+v+" sortie "+e);
 		}
 		
 	}
 	
-	
+	public Case getCase(int x, int y) {
+		Case ret = null;
+		if(x >= posX && y >= posY && x < posX+width && y < posY+height) {
+			
+			click = false;
+			// System.out.println(e.paramString());
+			
+			int i = (int) (x-posX)/tileSize;
+			int j = (int) (y-posY)/tileSize;
+			
+			if(i >= 0 && i < LARGEUR && j >= 0 && j < LONGUEUR) {
+				ret = damier[i][j];
+			}
+		}
+		return ret;
+	}
 	
 	//Mouse Listener
-	public void mouseClicked(MouseEvent e) {}
-
-    public void mouseReleased(MouseEvent e) {}
-
-    public void mouseEntered(MouseEvent e) {}
-
     public void mouseExited(MouseEvent e) {
 		if(hoverCaseX != -1) {
 			damier[hoverCaseX][hoverCaseY].mouseExited();
 			hoverCaseX = -1;
 			hoverCaseY = -1;
-			this.repaint();
+			pan.repaint();
 		}
 	}
-
+	
     public void mousePressed(MouseEvent e) {
-		click = false;
-		// System.out.println(e.paramString());
-		
-		int x = (int) (e.getX()-2)/ImageSprite.tileSize;
-		int y = (int) (e.getY()-2)/ImageSprite.tileSize;
-		
-		if(x >= 0 && x < LARGEUR && y >= 0 && y < LONGUEUR) {
-			caseClicked(damier[x][y]);
+		Case c = getCase(e.getX(),e.getY());
+		if(c != null) {
+			click = false;
+			
+			Vehicule v = null;
+
+			if(c.getVehicule() != null && c.getFlying() != null) {
+				if(e.getButton() == MouseEvent.BUTTON1) {
+					v = c.getVehicule();
+				}
+				else {
+					v = c.getFlying();
+				}
+			}
+			else if(c.getFlying() != null) {
+				v = c.getFlying();
+			}
+			else {
+				v = c.getVehicule();
+			}
+			
+			caseClicked(c,v);
 		}
     }
 	
 	//Mouse Motion Listener
-	public void mouseDragged(MouseEvent e) {}
-	
 	public void mouseMoved(MouseEvent e) {
 		// System.out.println(e.paramString());
 		
-		int x = (int) (e.getX()-2)/ImageSprite.tileSize;
-		int y = (int) (e.getY()-2)/ImageSprite.tileSize;
+		int x = (int) (e.getX()-posX)/tileSize;
+		int y = (int) (e.getY()-posY)/tileSize;
 		
 		if(x >= 0 && x < LARGEUR && y >= 0 && y < LONGUEUR) {
 			if(x != hoverCaseX || y != hoverCaseY) {
@@ -659,7 +659,7 @@ public class FDamier extends JPanel implements MouseListener,MouseMotionListener
 				hoverCaseY = y;
 				// System.out.println("new hover :"+x+" :: "+y);
 				
-				this.repaint();
+				pan.repaint();
 			}
 		}
 		

@@ -2,21 +2,11 @@ package main;
 
 import joueur.Joueur;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JLabel;
-
-import javax.swing.JOptionPane;
-import javax.swing.JColorChooser;
-
-import glass.*;
 
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
@@ -45,8 +35,6 @@ public class Fenetre extends JFrame implements KeyListener {
 	private MapSelecterState mapSelecterPanel;
 	private OptionState optionState;
 	
-	private MyGlassPane glass;
-	
 	private CardLayout cL;
 	private String currentPane;
 	private boolean gameRunning = false;
@@ -70,12 +58,11 @@ public class Fenetre extends JFrame implements KeyListener {
 	public void init(){
 		
 		this.container = new JPanel();
-		this.glass = new MyGlassPane();
 		this.cL = new CardLayout();
 		
 		menuPane = new MenuPane(this);
 		playerSelecterPanel = new PlayersSelecterState(this);
-		gamePanel = new GamePane(this,glass);
+		gamePanel = new GamePane(this);
 		mapSelecterPanel = new MapSelecterState(this);
 		optionState = new OptionState(this);
 		setSize(OptionState.sizeX,OptionState.sizeY);
@@ -91,7 +78,6 @@ public class Fenetre extends JFrame implements KeyListener {
 		container.add(mapSelecterPanel,MAP);
 		currentPane = MENU;
 		
-		this.setGlassPane(glass);
 		this.setContentPane(container);
 		
 		this.addKeyListener(this);
@@ -122,9 +108,8 @@ public class Fenetre extends JFrame implements KeyListener {
 	public void goGame() {
 		cL.show(this.container,GAME);
 		requestFocus();
+		gamePanel.setPosition();
 		currentPane = GAME;
-		gameRunning = true;
-		menuPane.setGameRunning(true);
 		repaint();
 	}
 	
@@ -186,9 +171,7 @@ public class Fenetre extends JFrame implements KeyListener {
 			goMenu();
 		}
 		else if(currentPane.equals(GAME)) {
-			if(e.getKeyCode() == KeyEvent.VK_SPACE) {
-				gamePanel.nextTurn();
-			}
+			gamePanel.keyPressed(e.getKeyCode());
 		}
 		else if(currentPane.equals(MENU)) {
 			if(e.getKeyCode() == KeyEvent.VK_UP) {
@@ -204,6 +187,11 @@ public class Fenetre extends JFrame implements KeyListener {
 		else if(currentPane.equals(MAP)) {
 			if(e.getKeyCode() == KeyEvent.VK_ENTER) {
 				goPlayer();
+			}
+		}
+		else if(currentPane.equals(PLAYERS)) {
+			if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+				startGame();
 			}
 		}
 		

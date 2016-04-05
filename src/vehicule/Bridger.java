@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
+import javax.swing.JPanel;
 
 public class Bridger extends Vehicule{
 
@@ -22,9 +23,9 @@ public class Bridger extends Vehicule{
 	public final int cols = 4;
 	
 
-	public Bridger(int a, FDamier f, Joueur jo) {
+	public Bridger(int a, FDamier f,JPanel pan, Joueur jo) {
 		// System.out.println("Creation mangouste");
-		super(f, jo, a, TypeVec.bridger);
+		super(pan, f, jo, a, TypeVec.bridger);
 		this.makeImage();
 	}
 	
@@ -40,22 +41,21 @@ public class Bridger extends Vehicule{
 		else if(c.isRiver()) {
 			ret = true;
 		}
-		else if(c.isVehicule()) { //is other vehicule
+		else if(c.getVehicule() != null) { //is other vehicule
 			ret = false;
 		}
-		else if(c.isHelicopter()) {
-			if(c.getVehicule().getJoueur() == this.getJoueur()) {
-				ret = true;
-			}
-			else {
-				ret = false;
-			}
+		else if(c.getFlying() != null && c.getFlying().getJoueur() == this.getJoueur()) {
+			ret = true;
 		}
 		else if(c.isEmpty()){
 			ret = true;
 		}
 		
 		return ret;
+	}
+	
+	public boolean isFlying() {
+		return false;
 	}
 	
 	public void makeImage() {
@@ -111,8 +111,8 @@ public class Bridger extends Vehicule{
 	public void newCase(Case c) {
 		if(c.isRiver() && !c.haveBridge()) {
 			c.setBridge(true);
-			this.pan.unselect();
-			this.pan.killMe(this);
+			this.damier.unselect();
+			this.damier.killMe(this);
 		}
 	}
 	

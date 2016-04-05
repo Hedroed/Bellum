@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
+import javax.swing.JPanel;
 
 public class Helicopter extends Vehicule{
 
@@ -22,16 +23,16 @@ public class Helicopter extends Vehicule{
 	public final int cols = 2;
 	
 
-	public Helicopter(int a, FDamier f, Joueur jo) {
+	public Helicopter(int a, FDamier f,JPanel pan, Joueur jo) {
 		// System.out.println("Creation mangouste");
-		super(f, jo, a, TypeVec.helicopter);
+		super(pan,f, jo, a, TypeVec.helicopter);
 		this.makeImage();
 	}
 	
 	public boolean canMove(Case c) {
 		boolean ret = false;
 		
-		if(c.getVehicule() == this) {
+		if(c.getFlying() == this) {
 			ret = false;
 		}
 		else if(c.isBase()) {
@@ -40,13 +41,13 @@ public class Helicopter extends Vehicule{
 		else if(c.isRiver()) {
 			ret = true;
 		}
-		else if(c.isHelicopter()) {
+		else if(c.getFlying() != null) {
 			ret = false;
 		}
 		else if(c.isEmpty()){
 			ret = true;
 		}
-		else if(c.isVehicule()) { //is other vehicule
+		else if(c.getVehicule() != null) { //is other vehicule
 			if(c.getVehicule().getJoueur() != this.getJoueur()) {
 				ret = false;
 			}
@@ -56,6 +57,10 @@ public class Helicopter extends Vehicule{
 		}
 		
 		return ret;
+	}
+	
+	public boolean isFlying() {
+		return true;
 	}
 	
 	public void makeImage() {

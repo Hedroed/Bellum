@@ -70,7 +70,7 @@ public class PlaySound {
 	}
 	
 	public void playContinuously() {
-		if(clip != null && !clip.isRunning() && OptionState.soundVolume != -60) {
+		if(clip != null && !clip.isRunning() && OptionState.musicVolume != -60) {
 			stop();
 			clip.loop(Clip.LOOP_CONTINUOUSLY);
 			clip.start();

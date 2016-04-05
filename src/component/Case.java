@@ -33,7 +33,7 @@ public class Case extends JPanel{
 	private boolean isBridge;
 	private Vehicule vehicule;
 	private Base base;
-	private Helicopter helicopter;
+	private Vehicule flying;
 	private Vehicule mainVec;
 	private Obstacle obstacle;
 	protected FDamier fDamier;
@@ -46,7 +46,7 @@ public class Case extends JPanel{
 	private boolean hover = false;
 	
 	public Case(int x, int y, FDamier fd) {
-		this.setPreferredSize(new Dimension(ImageSprite.tileSize-1,ImageSprite.tileSize-1));
+		this.setPreferredSize(new Dimension(FDamier.tileSize-1,FDamier.tileSize-1));
 		this.xCoord = x;
 		this.yCoord = y;
 		this.fDamier = fd;
@@ -58,9 +58,9 @@ public class Case extends JPanel{
 	public void drawBack(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
 		
-		int tileSize = ImageSprite.tileSize;
-		int x = 2+(xCoord*(tileSize));
-		int y = 2+((tileSize)*yCoord);
+		int tileSize = FDamier.tileSize;
+		int x = FDamier.posX+(xCoord*(tileSize));
+		int y = FDamier.posY+((tileSize)*yCoord);
 		
 		AffineTransform scale = new AffineTransform();
 		scale.translate(x,y);
@@ -88,45 +88,45 @@ public class Case extends JPanel{
 	}
 	
 	public void draw(Graphics g) {	
-		int tileSize = ImageSprite.tileSize-1;
-		int x = 2+(xCoord*(tileSize+1));
-		int y = 2+((tileSize+1)*yCoord);
+		int tileSize = FDamier.tileSize;
+		int x = FDamier.posX+(xCoord*(tileSize));
+		int y = FDamier.posY+((tileSize)*yCoord);
 		
 		//dessine le contour 
 		if(this.hover && this.base == null) {
 			g.setColor(new Color(255,255,255,140));
-			g.fillRect(x, y, tileSize, tileSize);
+			g.fillRect(x, y, tileSize-1, tileSize-1);
 		}
 		if(this.deplacement) {
 			g.setColor(Color.blue);
-			g.drawRect(x,y,tileSize-1,tileSize-1);
+			g.drawRect(x,y,tileSize-2,tileSize-2);
 			if(this.tir) {
 				g.setColor(Color.red);
-				g.drawRect(x+1,y+1,tileSize-3,tileSize-3);
+				g.drawRect(x+1,y+1,tileSize-4,tileSize-4);
 			}
 		}
 		else if(this.cible) {
 			g.setColor(Color.red);
-			g.fillRect(x,y,tileSize,tileSize);
+			g.fillRect(x,y,tileSize-1,tileSize-1);
 		}
 		else if(this.tir) {
 			g.setColor(Color.red);
-			g.drawRect(x,y,tileSize-1,tileSize-1);
+			g.drawRect(x,y,tileSize-2,tileSize-2);
 		}
 		else if(this.select) {
 			g.setColor(Color.green);
-			g.drawRect(x,y,tileSize-1,tileSize-1);
+			g.drawRect(x,y,tileSize-2,tileSize-2);
 		}
 		
 		//dessine les differents vehicule 
-		if(this.vehicule != null) {
-			this.vehicule.draw(g,x,y);
+		if(vehicule != null) {
+			vehicule.draw(g,x,y);
 		}
-		if(this.helicopter != null) {
-			this.helicopter.draw(g,x,y);
+		if(flying != null) {
+			flying.draw(g,x,y);
 		}
-		else if(this.obstacle != null) {
-			this.obstacle.draw(g,x,y);
+		else if(obstacle != null) {
+			obstacle.draw(g,x,y);
 		}
 	}
 	
@@ -143,7 +143,7 @@ public class Case extends JPanel{
 		else if(this.isBase()){
 			ret = false;
 		}
-		else if(this.helicopter != null) {
+		else if(this.flying != null) {
 			ret = false;
 		}
 		return ret;
@@ -151,7 +151,6 @@ public class Case extends JPanel{
 	
 	// methode de bordure
 	public void setCible(boolean b){
-	
 		this.cible = b;
 	}
 	
@@ -188,44 +187,38 @@ public class Case extends JPanel{
 	
 	// methode de Vehicule	
 	public Vehicule getVehicule(){
-		return this.mainVec;
+		return vehicule;
 	}
 	
-	public void placeVehicule(Vehicule v) {
-		if (v != null){
-			
-			this.vehicule = v;
-			v.enter();
-			this.mainVec = v;
-		}
+	public Vehicule getFlying() {
+		return flying;
 	}
 	
-	public void setVehicule(Vehicule v){
-		
-		this.vehicule = v;
-		if (v != null){
-			this.mainVec = v;
+	public void addVehicule(Vehicule v) {
+		if(v != null) {
+			if(v.isFlying()) {
+				flying = v;
+			}
+			else {
+				vehicule = v;
+			}
 		}
 		else {
-			this.setDefaultMainVec();
+			System.out.println("addVehicule : Vehicule null");
 		}
 	}
 	
-	public boolean isVehicule() {
-		return (this.vehicule != null);
-	}
-	
-	
-	
-	private void setDefaultMainVec() {
-		if(this.helicopter != null) {
-			this.mainVec = this.helicopter;
-		}
-		else if(this.vehicule != null) {
-			this.mainVec = this.vehicule;
+	public void removeVehicule(Vehicule v) {
+		if(v != null) {
+			if(v.isFlying() && flying == v) {
+				flying = null;
+			}
+			else if(vehicule == v) {
+				vehicule = null;
+			}
 		}
 		else {
-			this.mainVec = null;
+			System.out.println("removeVehicule : Vehicule null");
 		}
 	}
 	
@@ -242,33 +235,6 @@ public class Case extends JPanel{
 	
 	public boolean isObtacle() {
 		return (this.obstacle != null);
-	}
-	
-	// methode d'helicopter
-	public Helicopter getHelicopter(){
-		return this.helicopter;
-	}
-	
-	public void setHelicopter(Helicopter h){
-		this.helicopter = h;
-		if (h != null){
-			this.mainVec = h;
-		}
-		else {
-			this.setDefaultMainVec();
-		}
-	}
-	
-	public void placeHelicopter(Helicopter h) {
-		if (h != null){
-			this.helicopter = h;
-			h.enter();
-			this.mainVec = h;
-		}
-	}
-	
-	public boolean isHelicopter() {
-		return (this.helicopter != null);
 	}
 	
 	// methode pour la riviere
@@ -340,20 +306,4 @@ public class Case extends JPanel{
 	public void mouseExited() {
 		this.hover = false;
 	}
-	
-    public void mousePressed(MouseEvent e) {
-		// System.out.println("Clique sur case en "+this.xCoord+" : "+this.yCoord);
-		
-		if(this.vehicule != null && this.helicopter != null) {
-			if(e.getButton() == MouseEvent.BUTTON1) {
-				this.mainVec = this.vehicule;
-			}
-			else {
-				this.mainVec = this.helicopter;
-			}
-		}
-		
-		this.fDamier.caseClicked(this);
-		
-    }
 }

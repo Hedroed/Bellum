@@ -28,8 +28,6 @@ public class CaseExit extends Case {
 		
 	}
 	
-
-	
 	public boolean isExit() {
 		return true;
 	}
@@ -61,13 +59,8 @@ public class CaseExit extends Case {
 	public void draw(Graphics g){ 
 		super.draw(g);
 		
-		// int tileSize = ImageSprite.tileSize;
-		// int x = 2+(xCoord*(tileSize));
-		// int y = 2+((tileSize)*yCoord);
-		
-		// if(this.canExitVehicule) {
-			// g.setColor(new Color(255,255,255,128));
-			// g.fillRect(x,y,tileSize, tileSize);
-		// }
+		// int tileSize = FDamier.tileSize;
+		// int x = FDamier.posX+(xCoord*(tileSize));
+		// int y = FDamier.posY+((tileSize)*yCoord);
 	}
 }

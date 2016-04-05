@@ -232,7 +232,6 @@ public class OptionState extends JPanel implements MouseListener{
 			}
 		}
 		if(x >= center-130 && x < center+130 && y >= h-55 && y < h-25) {
-			System.out.println("back button");
 			fenetre.goMenu();
 			save();
 		}

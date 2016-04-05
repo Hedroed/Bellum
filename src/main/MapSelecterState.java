@@ -28,6 +28,7 @@ public class MapSelecterState extends JPanel implements MouseListener{
 	
 	private Image marbre;
 	private Image img;
+	private Font f1;
 	
 	public MapSelecterState(Fenetre f) {
 		this.fenetre = f;
@@ -41,6 +42,11 @@ public class MapSelecterState extends JPanel implements MouseListener{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+        try {
+            f1 = Font.createFont(Font.PLAIN, new File("ressources/DALEK.ttf"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 		
 		time = "normal";
 		
@@ -95,13 +101,6 @@ public class MapSelecterState extends JPanel implements MouseListener{
 		
 		
 		//draw left text
-		Font f1 = null;
-        try {
-            f1 = Font.createFont(Font.TRUETYPE_FONT, new File("ressources/DALEK.ttf"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-		
 		f1 = f1.deriveFont(55f);
 		g.setColor(new Color(128,0,0));
 		g.setFont(f1);
@@ -234,12 +233,10 @@ public class MapSelecterState extends JPanel implements MouseListener{
 			else if(x >= right && x < right+260) {	
 				if(y >= h-85 && y < h-55 && currentMap != null) {
 					//click valid button
-					System.out.println("OK !!");
 					fenetre.goPlayer();
 				}
 				else if(y >= h-45 && y < h-15) {
 					//click back button
-					System.out.println("Back !!");
 					fenetre.goMenu();
 				}
 				else if(y >= h-125 && y < h-95) {

@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
+import javax.swing.JPanel;
 
 public class ActiveTurret extends Vehicule{
 
@@ -22,13 +23,17 @@ public class ActiveTurret extends Vehicule{
 	public final int cols = 1;
 	
 
-	public ActiveTurret(int a, FDamier f, Joueur jo) {
+	public ActiveTurret(int a, FDamier f,JPanel pan, Joueur jo) {
 		// System.out.println("Creation mangouste");
-		super(f, jo, a, TypeVec.activeTurret);
+		super(pan,f, jo, a, TypeVec.activeTurret);
 		this.makeImage();
 	}
 	
 	public boolean canMove(Case c) {
+		return false;
+	}
+	
+	public boolean isFlying() {
 		return false;
 	}
 	

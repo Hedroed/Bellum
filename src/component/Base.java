@@ -2,6 +2,7 @@ package component;
 
 import joueur.Joueur;
 import component.*;
+import main.FDamier;
 
 import java.awt.Image;
 import java.awt.Color;
@@ -56,10 +57,10 @@ public class Base {
 	}
 	
 	public void draw(java.awt.Graphics g) {
-		int tileSize = ImageSprite.tileSize;
+		int tileSize = FDamier.tileSize;
 		
-		int x = 2+(posX*tileSize);
-		int y = 2+(posY*tileSize);
+		int x = FDamier.posX+(posX*tileSize);
+		int y = FDamier.posY+(posY*tileSize);
 		
 		Graphics2D g2 = (Graphics2D) g;
 		

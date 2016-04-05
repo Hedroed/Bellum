@@ -1,5 +1,7 @@
 package component;
 
+import main.*;
+
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
@@ -44,7 +46,7 @@ public class Obstacle{
 		
 		Graphics2D g2 = (Graphics2D) g;
 		
-		int tileSize = ImageSprite.tileSize;
+		int tileSize = FDamier.tileSize;
 		AffineTransform scale = new AffineTransform();
 		scale.translate(x,y);
 		scale.scale((double) (tileSize-3)/43,(double) (tileSize-3)/43);
