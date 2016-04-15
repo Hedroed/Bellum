@@ -306,4 +306,58 @@ public class Case extends JPanel{
 	public void mouseExited() {
 		this.hover = false;
 	}
+	
+	public void mousePressed(MouseEvent e) {
+		
+		if(cible) {
+			if(isBase()) {
+				base.attack();
+			}
+			else  {
+				if(flying != null && !flying.isDead()) {
+					flying.attaque();
+				}
+				else {
+					vehicule.attaque();
+					if(vehicule.getLife() <= 0) {
+						vehicule.isDeadOn(this);
+					}
+				}
+			}
+			fDamier.getVehiculeSelect().tir();
+			fDamier.unselect();
+		}
+		else if(deplacement){
+			
+			Vehicule vec = fDamier.getVehiculeSelect();
+
+			vec.depDecount(fDamier.getCaseSelect(),this);
+			vec.deplacement(fDamier.getCaseSelect(),this);
+
+			fDamier.select(this);
+			
+		}
+		else if(select) {
+			fDamier.unselect();
+		}
+		else {
+			fDamier.unselect();
+			fDamier.select(this);
+			if(flying != null && vehicule != null) {
+				if(e.getButton() == MouseEvent.BUTTON3 && flying.isActif()) {
+					fDamier.select(flying);
+				}
+				else if(vehicule.isActif()){
+					fDamier.select(vehicule);
+				}
+			}
+			else if(flying != null && flying.isActif()) {
+				fDamier.select(flying);
+			}
+			else if(vehicule != null && vehicule.isActif()) {
+				fDamier.select(vehicule);
+			}
+		}
+		
+	}
 }

@@ -18,9 +18,6 @@ import java.util.Scanner;
 import java.io.UnsupportedEncodingException;
 
 import java.awt.Image;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 
 public class FEtat{
 
@@ -31,6 +28,7 @@ public class FEtat{
 	private FDamier fDamier;
 	
 	private Vehicule vActive;
+	private Case cActive;
 	
 	public FEtat(){
 	
@@ -76,6 +74,10 @@ public class FEtat{
 			}
 			g.drawString(s,20,300);
 		}
+		else if(cActive != null){
+			g.setColor(new Color(128,0,0));
+			g.drawString(cActive.toString(),20,200);
+		}
 		
 		
 		//check buttun
@@ -96,9 +98,10 @@ public class FEtat{
 	public void setFDamier(FDamier f){
 		this.fDamier = f;
 	}
-
-	public void setActiveVehicule(Vehicule v){
-		this.vActive = v;
+	
+	public void newSelect() {
+		vActive = fDamier.getVehiculeSelect();
+		cActive = fDamier.getCaseSelect();
 	}
 
 }

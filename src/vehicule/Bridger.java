@@ -108,12 +108,17 @@ public class Bridger extends Vehicule{
 		this.setImage(image);*/
 	}
 	
-	public void newCase(Case c) {
-		if(c.isRiver() && !c.haveBridge()) {
-			c.setBridge(true);
+	public void deplacement(Case cD, Case cA) {
+		
+		if(cA.isRiver() && !cA.haveBridge()) {
+			cA.setBridge(true);
 			this.damier.unselect();
-			this.damier.killMe(this);
+			cD.removeVehicule(this);
 		}
+		else {
+			super.deplacement(cD,cA);
+		}
+		
 	}
 	
 }

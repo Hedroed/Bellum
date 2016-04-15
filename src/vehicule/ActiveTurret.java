@@ -22,10 +22,19 @@ public class ActiveTurret extends Vehicule{
 	public final int rows = 1;
 	public final int cols = 1;
 	
+	private Walker walker;
 
 	public ActiveTurret(int a, FDamier f,JPanel pan, Joueur jo) {
 		// System.out.println("Creation mangouste");
 		super(pan,f, jo, a, TypeVec.activeTurret);
+		this.makeImage();
+	}
+	
+	public ActiveTurret(Walker w, int life) {
+		// System.out.println("Creation mangouste");
+		super(w.pan,w.damier, w.getJoueur(), w.getAngle(), TypeVec.activeTurret);
+		this.life = life;
+		this.walker = w;
 		this.makeImage();
 	}
 	
@@ -86,5 +95,10 @@ public class ActiveTurret extends Vehicule{
 		}
 		
 		this.setImage(image);*/
+	}
+	
+	public void isDeadOn(Case c) {
+		c.addVehicule(walker);
+		System.out.println("place le walker");
 	}
 }

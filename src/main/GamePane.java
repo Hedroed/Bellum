@@ -13,6 +13,7 @@ import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import java.awt.event.*;
+import java.awt.Cursor;
 
 public class GamePane extends JPanel implements MouseListener,MouseMotionListener,MouseWheelListener {
 	
@@ -65,14 +66,14 @@ public class GamePane extends JPanel implements MouseListener,MouseMotionListene
 		this.setPosition();
 		this.fRessource.startGame();
 		
-		// fDamier.addVehicule(new Exit(5,5,54), TypeVec.scorpion, players[0]);
-		// fDamier.addVehicule(new Exit(2,12,90), TypeVec.mangouste, players[1]);
+		this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		
+		fDamier.addVehicule(new Exit(4,4,0), TypeVec.turret, players[0]);
+		fDamier.addVehicule(new Exit(7,4,90), TypeVec.walker, players[0]);
 		// fDamier.addVehicule(new Exit(4,7,90), TypeVec.helicopter, players[0]);
 	}
 	
-	public void paintComponent(Graphics g) {
-		// System.out.println("paint game");
-		
+	public void paintComponent(Graphics g) {		
 		g.setColor(Color.white);
 		g.fillRect(0,0,getWidth(),getHeight());
 		g.setFont(f1);
@@ -89,10 +90,15 @@ public class GamePane extends JPanel implements MouseListener,MouseMotionListene
 		
 	}
 	
+	public void update() {
+	}
+	
 	public void setDragImage(DragImage d, int x, int y) {
 		dragImage = d;
 		mouseX = x;
 		mouseY = y;
+		
+		this.setCursor(new Cursor(Cursor.MOVE_CURSOR));
 		
 		fDamier.setDark(true);
 	}
@@ -101,9 +107,7 @@ public class GamePane extends JPanel implements MouseListener,MouseMotionListene
 		
 		int w = getWidth();
 		int h = getHeight();
-		
-		// System.out.println("taille game "+w+" :: "+h);
-		
+			
 		fRessource.setPosition(w-111,0,110,h-1);
 		fEtat.setPosition(0,0,200,h-1);
 		fDamier.setPosition(w,h);
@@ -120,12 +124,15 @@ public class GamePane extends JPanel implements MouseListener,MouseMotionListene
 			//check position pour sortir un vehicule
 			Case c = fDamier.getCase(e.getX(), e.getY());
 			if(c != null) {
-				fDamier.sortirVehicule(c,dragImage.getTransfer());
+				boolean b = fDamier.sortirVehicule(c,dragImage.getTransfer());
+				if(b) {
+					dragImage.defaultPos();
+				}
 			}
 			
+			this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 			dragImage.restore();
 			dragImage = null;
-			repaint();
 		}
 	}
 
@@ -141,7 +148,6 @@ public class GamePane extends JPanel implements MouseListener,MouseMotionListene
 		if(e.getButton() == MouseEvent.BUTTON2) {
 			if(e.getClickCount() == 2) {
 				setPosition();
-				repaint();
 			}
 			lastMiddleX = e.getX();
 			lastMiddleY = e.getY();
@@ -149,7 +155,6 @@ public class GamePane extends JPanel implements MouseListener,MouseMotionListene
 		else {
 			if(e.getButton() == MouseEvent.BUTTON3) {
 				fDamier.unselect();
-				repaint();
 			}
 			fDamier.mousePressed(e);
 			fRessource.mousePressed(e);
@@ -175,11 +180,9 @@ public class GamePane extends JPanel implements MouseListener,MouseMotionListene
 				// if(FDamier.posY < 0) {FDamier.posY = 0;}
 				// if(FDamier.posY > getHeight()-FDamier.height) {FDamier.posY = getHeight()-FDamier.height;}
 			}
-			repaint();
 		}
 		if(dragImage != null) {
 			dragImage.setPosition(e.getX()-mouseX, e.getY()-mouseY);
-			repaint();
 		}
 	}
 	
@@ -192,25 +195,25 @@ public class GamePane extends JPanel implements MouseListener,MouseMotionListene
 		// System.out.println(e.paramString());
 		int wheel = e.getWheelRotation();
 		
+		int scale = 4;
 		if(wheel > 0 && FDamier.tileSize > 30) {
-			FDamier.tileSize-=3;
-			FDamier.posX += FDamier.LARGEUR;
-			FDamier.posY += FDamier.LONGUEUR;
+			FDamier.tileSize-=scale;
+			FDamier.posX += (scale/2)*FDamier.LARGEUR;
+			FDamier.posY += (scale/2)*FDamier.LONGUEUR;
 		}
 		else if(wheel < 0 && FDamier.tileSize < 80) {
-			FDamier.tileSize+=3;
-			FDamier.posX -= FDamier.LARGEUR;
-			FDamier.posY -= FDamier.LONGUEUR;
+			FDamier.tileSize+=scale;
+			FDamier.posX -= (scale/2)*FDamier.LARGEUR;
+			FDamier.posY -= (scale/2)*FDamier.LONGUEUR;
 			
 		}
 		// System.out.println("tile size :"+FDamier.tileSize);
 		fDamier.calculeSize();
-		repaint();
 	}
 	
 	public void keyPressed(int keyCode) {
 		if(keyCode == KeyEvent.VK_SPACE) {
-			if(System.currentTimeMillis() - lastSpacePress > 500) {
+			if(System.currentTimeMillis() - lastSpacePress > 1000) {
 				fRessource.activeTurn();
 				lastSpacePress = System.currentTimeMillis();
 			} 
@@ -227,7 +230,6 @@ public class GamePane extends JPanel implements MouseListener,MouseMotionListene
 		else if(keyCode == KeyEvent.VK_LEFT) {
 			FDamier.posX-=5;
 		}
-		repaint();
 	}
 	
 }

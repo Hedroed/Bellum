@@ -13,8 +13,9 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.awt.Font;
 import java.awt.event.*;
+import java.util.ArrayList;
 
-public class PlayersSelecterState extends JPanel implements MouseListener{
+public class PlayersSelecterState extends JPanel implements MouseListener,MouseWheelListener{
 	private Fenetre fenetre;
 	
 	private Image background;
@@ -23,12 +24,15 @@ public class PlayersSelecterState extends JPanel implements MouseListener{
 	private Joueur[] players;
 	
 	private Font f1;
-	private PlayerSelecterPane[] selecterTab;
+	private ArrayList<PlayerSelecterPane> selecterTab;
+	private ArrayList<Drawable> tab;
+	private ScrollingState centerPane;
 	
 	public PlayersSelecterState(Fenetre f) {
 		this.fenetre = f;
 		
 		addMouseListener(this);
+		addMouseWheelListener(this);
 		
 		inter = ImageSprite.createImage("ressources/interface.png");
 		
@@ -42,12 +46,14 @@ public class PlayersSelecterState extends JPanel implements MouseListener{
 	
 	public void init(int nbPlayer) {
 		this.players = new Joueur[nbPlayer];
-		this.selecterTab = new PlayerSelecterPane[nbPlayer];
+		this.tab = new ArrayList<Drawable>(nbPlayer);
 		
 		for(int i=0; i<players.length; i++) {
 			players[i] = new Joueur("Joueur "+(i+1),null,null);
-			selecterTab[i] = new PlayerSelecterPane(getWidth()/2-300,80+(i*120),players[i]);
+			tab.add(new PlayerSelecterPane(0,(i*120),players[i]));
 		}
+		
+		centerPane = new ScrollingState((getWidth()/2)-300,80,600,getHeight()-185,tab);
 		
 	}
 	
@@ -65,9 +71,10 @@ public class PlayersSelecterState extends JPanel implements MouseListener{
 		g.setColor(new Color(128,0,0));
 		g.drawString("Players",center-80,50);
 		
-		for(PlayerSelecterPane p : selecterTab) {
-			p.draw(g);
-		}
+		// for(PlayerSelecterPane p : selecterTab) {
+			// p.draw(g);
+		// }
+		centerPane.draw(g);
 		
 		//back and start buttun
 		f1 = f1.deriveFont(20f);
@@ -101,10 +108,11 @@ public class PlayersSelecterState extends JPanel implements MouseListener{
 		int center = this.getWidth()/2;
 		int h = this.getHeight();
 		
-		if(y >= 80 && y < (players.length*120)+80) {
+		if(y >= 80 && y < centerPane.getHeight()+80) {
 			
-			int iPlayer = (y-80)/120;
-			selecterTab[iPlayer].mousePressed(e);
+			centerPane.mousePressed(e);
+			// int iPlayer = (y-80)/120;
+			// selecterTab.get(iPlayer).mousePressed(e);
 		}
 		else if(x >= center-130 && x < center+130 && y >= h-55 && y < h-25) {
 			fenetre.goMap();
@@ -112,8 +120,10 @@ public class PlayersSelecterState extends JPanel implements MouseListener{
 		else if(x >= center-130 && x < center+130 && y >= h-95 && y < h-65) {
 			fenetre.startGame();
 		}
-		
-		repaint();
-		// fenetre.goGame();
+	}
+	
+	public void	mouseWheelMoved(MouseWheelEvent e) {
+		// System.out.println(e.paramString());
+		centerPane.mouseWheelMoved(e);
 	}
 }

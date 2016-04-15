@@ -23,12 +23,12 @@ public class Joueur {
 		this.color = c;
 		this.race = r;
 		
-		this.vecRestant.add(new TransferVec(TypeVec.mangouste,3,this));
-		this.vecRestant.add(new TransferVec(TypeVec.warthog,2,this));
-		this.vecRestant.add(new TransferVec(TypeVec.scorpion,1,this));
-		this.vecRestant.add(new TransferVec(TypeVec.helicopter,2,this));
-		this.vecRestant.add(new TransferVec(TypeVec.walker,5,this));
-		this.vecRestant.add(new TransferVec(TypeVec.bridger,1,this));
+		this.vecRestant.add(new TransferVec(TypeVec.mangouste,6,this));//3
+		this.vecRestant.add(new TransferVec(TypeVec.warthog,4,this));//2
+		this.vecRestant.add(new TransferVec(TypeVec.scorpion,2,this));//1
+		this.vecRestant.add(new TransferVec(TypeVec.helicopter,4,this));//2
+		this.vecRestant.add(new TransferVec(TypeVec.walker,10,this));//5
+		this.vecRestant.add(new TransferVec(TypeVec.bridger,2,this));//1
 		// this.vecRestant.add(new TransferVec(TypeVec.turret,1,this));
 		// this.vecRestant.add(new TransferVec(TypeVec.activeTurret,1,this));
 	}

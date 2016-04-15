@@ -90,7 +90,6 @@ public class FRessource {
 		this.fillRessources();
 		this.fDamier.unselect();
 		this.fDamier.next();
-		pan.repaint();
 	}
 	
 	public void startGame() {
@@ -129,7 +128,7 @@ public class FRessource {
 			
 			if(x >= 25 && x < 25+64 && y >= 20 && y < height-60) {
 				int i = (int) (y-posY-20)/83;
-				DragImage drag = dragList.get(i);
+				DragImage drag = dragList.get(i);//check depassement
 				drag.begin();
 				((GamePane)pan).setDragImage(drag,(x+posX)-drag.getX(),(y+posY)-drag.getY());
 			}

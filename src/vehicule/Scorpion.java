@@ -26,6 +26,7 @@ public class Scorpion extends Vehicule{
 	public Scorpion(int a, FDamier f,JPanel pan, Joueur jo) {
 		// System.out.println("Creation mangouste");
 		super(pan,f, jo, a, TypeVec.scorpion);
+		explosionScale = 20;
 		this.makeImage();
 	}
 	

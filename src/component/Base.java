@@ -20,7 +20,7 @@ public class Base {
 	private int baseTileX = 5, baseTileY = 2;
 	
 	private int vie = 4;	
-	private int indExplose;
+	private double indExplose;
 	
 	public Base(int x, int y, Joueur jo, Image i) {
 		this.joueur = jo;
@@ -34,21 +34,15 @@ public class Base {
 	}
 	
 	public void attack() {
-		if(this.vie > 0) {
-			this.vie--;
+		this.vie--;
+		if(this.vie <= 0) {
+			indExplose = 0;
 		}
 		System.out.println("Vie de la base : "+this.vie);
 	}
 	
 	public int getVie() {
 		return this.vie;
-	}
-	
-	public void update() {
-		indExplose++;
-		if(indExplose >= 48) {
-			indExplose = 47;
-		}
 	}
 	
 	public void setBaseTile(int x, int y) {
@@ -78,7 +72,10 @@ public class Base {
 		}
 		
 		if(vie <= 0) {
-			g.drawImage(ImageSprite.baseExplosion[indExplose],(x-128)+(tileSize*baseTileX)/2,(y-128)+(tileSize*baseTileY)/2,null);
+			indExplose+=0.5;
+			if(indExplose < 48) {
+				g.drawImage(ImageSprite.baseExplosion[(int)indExplose],(x-128)+(tileSize*baseTileX)/2,(y-128)+(tileSize*baseTileY)/2,null);
+			}
 		}
 	}
 }

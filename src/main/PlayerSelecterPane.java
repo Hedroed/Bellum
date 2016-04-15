@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.awt.event.MouseEvent;
 
-public class PlayerSelecterPane{
+public class PlayerSelecterPane implements ColorChooseEvent,Drawable{
 	
 	private Vehicule vec;
 	private MyColorChooser mcc;
@@ -22,7 +22,7 @@ public class PlayerSelecterPane{
 	
 	public PlayerSelecterPane(int x, int y, Joueur player) {
 		this.player = player;
-		mcc = new MyColorChooser(x+130,y+20,200,80);
+		mcc = new MyColorChooser(x+130,y+20,200,80,this);
 		vec = new Mangouste(0,null,null,player);
 		
 		posX = x;
@@ -56,12 +56,40 @@ public class PlayerSelecterPane{
 		return player;
 	}
 	
-	public void mousePressed(MouseEvent e) {
+	public void colorChoose(Color c) {
+		System.out.println("Couleur selectionne :"+c) ;
 		
-		if(e.getX() >= posX+130 && e.getX() < posX+330 && e.getY() >= posY+20 && e.getY() < posY+100) {
+		player.setColor(mcc.getColor());
+		vec.makeImage();
+	}
+	
+	public int getX() {
+		return posX;
+	}
+	
+	public void setX(int x) {
+		posX = x;
+		mcc.setX(x+130);
+	}
+	
+	public int getY() {
+		return posY;
+	}
+	
+	public void setY(int y) {
+		posY = y;
+		mcc.setY(y+20);
+	}
+	
+	public void mousePressed(MouseEvent e) {
+		int x = e.getX();
+		int y = e.getY();
+		
+		System.out.println("click en "+e.getY()+" posY en "+posY);
+		
+		if(x >= posX+130 && x < posX+330 && y >= posY+20 && y < posY+100) {
+			System.out.println("click zone couleur");
 			mcc.mousePressed(e);
-			player.setColor(mcc.getColor());
-			vec.makeImage();
 		}
 	}
 }

@@ -27,6 +27,8 @@ public class OptionState extends JPanel implements MouseListener{
 	
 	private int fullscreen;
 	
+	private MyCheckButton check;
+	
 	private File optionFile;
 	
 	private int[][] screen;
@@ -62,6 +64,8 @@ public class OptionState extends JPanel implements MouseListener{
 		screen[3][1] = 860;
 		
 		optionSave();
+		
+		check = new MyCheckButton((sizeX/2)-65,140,130,30,"fullscreen");
 	}
 	
 	public void optionSave() {
@@ -124,8 +128,7 @@ public class OptionState extends JPanel implements MouseListener{
 		g.drawString(sizeX+" x "+sizeY,center-(length/2),120);
 		
 		//fullscreen option
-		g.drawString("fullscreen",center-45,157);
-		g.drawImage(ImageSprite.createImage("ressources/check"+fullscreen+".png"),center-65,140,null);
+		check.draw(g);
 		
 		int volumePercent = (100/45)*(musicVolume+60);
 		length = metrics.stringWidth("Music Volume : "+ volumePercent);
@@ -163,7 +166,7 @@ public class OptionState extends JPanel implements MouseListener{
 	}
 	
 	public void save() {
-		if(fullscreen == 0) {
+		if(!check.isCheck()) {
 			fenetre.setSize(sizeX,sizeY);
 			// fenetre.setUndecorated(false);
 		}
@@ -211,12 +214,7 @@ public class OptionState extends JPanel implements MouseListener{
 				soundVolume = -40+(volX*5);
 			}
 			else if(y >= 140 && y < 160) {
-				if(fullscreen == 0) {
-					fullscreen = 1;
-				}
-				else {
-					fullscreen = 0;
-				}
+				check.mousePressed(e);
 			}
 			else if(y >= 100 && y < 130) {
 				for(int i=0; i< screen.length; i++) {
@@ -235,8 +233,6 @@ public class OptionState extends JPanel implements MouseListener{
 			fenetre.goMenu();
 			save();
 		}
-		
-		repaint();
 	}
 	
 }

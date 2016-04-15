@@ -38,11 +38,11 @@ public class Helicopter extends Vehicule{
 		else if(c.isBase()) {
 			ret = false;
 		}
-		else if(c.isRiver()) {
-			ret = true;
-		}
 		else if(c.getFlying() != null) {
 			ret = false;
+		}
+		else if(c.isRiver() && !c.haveBridge()) {
+			ret = true;
 		}
 		else if(c.isEmpty()){
 			ret = true;

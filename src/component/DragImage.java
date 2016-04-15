@@ -14,7 +14,9 @@ import javax.imageio.ImageIO;
 public class DragImage{
 	
 	private int width, height;
-	private int posX, posY;
+	private double posX, posY;
+	private int reelX, reelY;
+	private double dx,dy;
 	
 	private int defaultX, defaultY;
 	
@@ -25,6 +27,8 @@ public class DragImage{
 		transfer = t;
 		posX = x;
 		posY = y;
+		reelX = x;
+		reelY = y;
 		width = 64;
 		height = 74;
 		
@@ -39,15 +43,29 @@ public class DragImage{
 	}
 	
 	public void draw(Graphics g){
-		g.drawImage(image,posX,posY,null);
+		
+		if(Math.abs(posX-reelX) > 5 || Math.abs(posY-reelY) > 5) {
+			posX += dx;
+			posY += dy;
+		}
+		else {
+			posX = reelX;
+			posY = reelY;
+			dx = 0;
+			dy = 0;
+		}
+		
+		g.drawImage(image,(int)posX,(int)posY,null);
 		g.setColor(new Color(128,0,0));
 		g.setFont(g.getFont().deriveFont(13f));
-		g.drawString("x"+this.transfer.getNbRestant(),posX+25,posY+74);
+		g.drawString("x"+this.transfer.getNbRestant(),(int)posX+25,(int)posY+74);
 	}
 	
 	public void setPosition(int x, int y) {
 		posX = x;
 		posY = y;
+		reelX = x;
+		reelY = y;
 	}
 	
 	public TransferVec getTransfer() {
@@ -55,20 +73,29 @@ public class DragImage{
 	}
 	
 	public void begin() {
-		defaultX = posX;
-		defaultY = posY;
+		defaultX = reelX;
+		defaultY = reelY;
 	}
 	
 	public void restore() {
+		reelX = defaultX;
+		reelY = defaultY;
+		dx = (reelX - posX)/10;
+		dy = (reelY - posY)/10;
+	}
+	
+	public void defaultPos() {
+		reelX = defaultX;
+		reelY = defaultY;
 		posX = defaultX;
 		posY = defaultY;
 	}
 	
 	public int getX() {
-		return posX;
+		return (int)posX;
 	}
 	
 	public int getY() {
-		return posY;
+		return (int)posY;
 	}
 }

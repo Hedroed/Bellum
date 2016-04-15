@@ -201,7 +201,7 @@ public class MapLoader {
 				ret.setRiverRamp();
 				break;
 			case OBSTACLE:        
-				Obstacle o = new Obstacle();
+				Obstacle o = new Obstacle((int) (Math.random()*2));
 				ret.setObstacle(o);
 				break;
 			case BRIDGE:        

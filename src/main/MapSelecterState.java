@@ -228,7 +228,6 @@ public class MapSelecterState extends JPanel implements MouseListener{
 				if(y >= h-45 && y < h-15) {
 					refresh();
 				}
-				repaint();
 			}
 			else if(x >= right && x < right+260) {	
 				if(y >= h-85 && y < h-55 && currentMap != null) {
@@ -247,7 +246,6 @@ public class MapSelecterState extends JPanel implements MouseListener{
 						System.out.println("button >");
 					}
 				}
-				repaint();
 			}
 			
 		}

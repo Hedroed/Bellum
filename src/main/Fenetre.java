@@ -19,7 +19,7 @@ import java.awt.CardLayout;
   *	Elle cree les 3 sous partie de l'interface: damier, etat et ressource
   * On control toutes les methodes d'ici
   */
-public class Fenetre extends JFrame implements KeyListener {
+public class Fenetre extends JFrame implements KeyListener,Runnable {
 	
 	public final String MENU = "0";
 	public final String GAME = "1";
@@ -82,6 +82,35 @@ public class Fenetre extends JFrame implements KeyListener {
 		
 		this.addKeyListener(this);
 		this.setVisible(true);
+		
+		new Thread(this).start();
+		
+	}
+	
+	public void run() {
+		long time;
+		long wait;
+		
+		while(true) {
+			time = System.nanoTime();
+			
+			repaint();
+			if(gameRunning) {
+				gamePanel.update();
+			}
+			
+			wait = 33-((System.nanoTime()-time)/1000000);
+			if(wait < 0) {
+				wait = 5;
+				System.out.println("trop long");
+			}
+			// System.out.println("wait "+wait);
+			try {
+				Thread.sleep(wait);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public static void main(String[] args) {

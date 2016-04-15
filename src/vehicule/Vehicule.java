@@ -24,23 +24,25 @@ public abstract class Vehicule {
 	private static PlaySound soundExplose = new PlaySound("ressources/explosion.wav",OptionState.soundVolume);
 	
 	private Image image;
-	private BufferedImage[] explosions;
 	private boolean mort = false;
 	private int ind;
 
 	private int angle;
 	private int posX = 1;
 	private int posY = 1;
+	protected int coordX, coordY;
 	protected JPanel pan;
 	protected FDamier damier;
 	protected TypeVec type;
 	private Joueur joueur;
 
-	private int life;
+	protected int life;
 	private int tirRestant;
 	private int depRestant;
 	private boolean actif = true;
-
+	
+	protected int explosionScale;
+	
 	public Vehicule(JPanel pan, FDamier damier, Joueur jo, int a, TypeVec t) {
 		// System.out.println("Creation vehicule "+t.name()+" ["+a+"]");
 		this.pan = pan;
@@ -50,6 +52,8 @@ public abstract class Vehicule {
 		this.type = t;
 
 		this.life = t.getVieMax();
+		
+		explosionScale = 8;
 	}
 
 	public void draw(Graphics g, int x, int y){
@@ -75,12 +79,16 @@ public abstract class Vehicule {
 		}
 		//explosion si mort
 		if(this.mort) {
-			if(this.ind <= 81) {
+			ind++;
+			if(this.ind < 81) {
 				AffineTransform scale = new AffineTransform();
-				scale.translate(x,y);
-				scale.scale((double) (tileSize-3)/45,(double) (tileSize-3)/45);
+				scale.translate(x-(explosionScale/2),y-(explosionScale/2));
+				scale.scale((double) (tileSize+explosionScale)/45,(double) (tileSize+explosionScale)/45);
 				// scale.scale(1.2,1.2);
 				g2D.drawImage(ImageSprite.explosion[this.ind],scale,null);
+			}
+			else if(this.ind == 81) {
+				dead();
 			}
 		}
 		else {
@@ -112,9 +120,17 @@ public abstract class Vehicule {
 	}
 	
 	public void moveTo(int x, int y){
-
-		this.posX = x;
-		this.posY = y;
+		
+		this.coordX = x;
+		this.coordY = y;
+	}
+	
+	public int getCoordX() {
+		return coordX;
+	}
+	
+	public int getCoordY() {
+		return coordY;
 	}
 
 	//accesseur et modifieur
@@ -155,18 +171,14 @@ public abstract class Vehicule {
 	}
 
 	public boolean isActif() {
-		return this.actif;
-	}
-	
-	public void setActif(boolean b) {
-		this.actif = b;
+		return this.actif && !isDead();
 	}
 	
 	public Image getImage() {
 		return this.image;
 	}
 
-	public void setImage(Image i) {
+	protected void setImage(Image i) {
 		this.image = i;
 	}
 	
@@ -177,16 +189,14 @@ public abstract class Vehicule {
 			System.out.println("Vehicule "+this.type.name()+" mort");
 
 			//animation mort
-			soundExplose.play();
-			Thread t = new Thread(new AnimeExplosion(this.pan,this));
-			t.start();
+			ind = 0;
 		}
 		else {
 			this.makeImage();
 		}
 	}
 	
-	public void deplacement(Case cD, Case cA) {
+	public void depDecount(Case cD, Case cA) {
 		int xx = cA.getXCoord() - cD.getXCoord(); 
 		int yy = cA.getYCoord() - cD.getYCoord(); 
 		
@@ -226,41 +236,12 @@ public abstract class Vehicule {
 	public abstract void makeImage();
 	
 	public abstract boolean isFlying();
-	
-	public void newCase(Case c) {}
-	
-	public class AnimeExplosion implements Runnable {
-		private JPanel pan;
-		private Vehicule v;
-
-		public AnimeExplosion(JPanel pan, Vehicule v) {
-			this.pan = pan;
-			this.v = v;
-		}
-
-		public void run() {
-
-			for(this.v.ind = 0;this.v.ind<81;this.v.ind++) {
-				pan.repaint();
-				try {
-				  Thread.sleep(10);
-				} catch (InterruptedException e) {
-				  e.printStackTrace();
-				}
-			}
-			ind = 80;
-			pan.repaint();
-			damier.killMe(this.v);
-		}
-	}
 
 	public int getLife() {
 		return this.life;
 	}
 
 	public void enter() {
-		
-		
 		Thread t = new Thread(new Runnable() {
 			public void run() {
 				int yDep = 0;
@@ -268,7 +249,6 @@ public abstract class Vehicule {
 				
 				if(angle == 0) {
 					for(posY = tileSize; posY > 1; posY--) {
-						pan.repaint();
 						try {
 						  Thread.sleep(15);
 						} catch (InterruptedException e) {
@@ -278,7 +258,6 @@ public abstract class Vehicule {
 				}
 				else if(angle == 270) {
 					for(posX = tileSize; posX > 1; posX--) {
-						pan.repaint();
 						try {
 						  Thread.sleep(15);
 						} catch (InterruptedException e) {
@@ -288,7 +267,6 @@ public abstract class Vehicule {
 				}
 				else if(angle == 90) {
 					for(posX = -tileSize; posX < 1; posX++) {
-						pan.repaint();
 						try {
 						  Thread.sleep(15);
 						} catch (InterruptedException e) {
@@ -298,7 +276,6 @@ public abstract class Vehicule {
 				}
 				else {
 					for(posY = -tileSize; posY < 1; posY++) {
-						pan.repaint();
 						try {
 						  Thread.sleep(15);
 						} catch (InterruptedException e) {
@@ -306,7 +283,6 @@ public abstract class Vehicule {
 						}
 					}
 				}
-				pan.repaint();
 
 			}
 		});
@@ -343,5 +319,28 @@ public abstract class Vehicule {
 		}
 		
 		return ret;
+	}
+	
+	// public boolean canMoveOn(Case c) {
+		// boolean ret = true;
+		// if(isFlying() && c.getFlying() != null) {
+			// ret = false;
+		// }
+		// else if(!isFlying() && c.getVehicule() != null){
+			// ret = false;
+		// }
+		// return ret;
+	// }
+	
+	public void isDeadOn(Case c) {}
+	
+	public void deplacement(Case cD, Case cA) {
+		cA.addVehicule(this);
+		cD.removeVehicule(this);
+	}
+	
+	public void dead() {
+		damier.killMe(this);
+		damier.calculeZones();
 	}
 }

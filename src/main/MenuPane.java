@@ -65,7 +65,6 @@ public class MenuPane extends JPanel implements MouseListener,MouseMotionListene
 			current = 0;
 		}
 		this.soundChange.play();
-		this.repaint();
 	}
 	
 	public void up() {
@@ -78,7 +77,6 @@ public class MenuPane extends JPanel implements MouseListener,MouseMotionListene
 			current = options[i].length -1;
 		}
 		this.soundChange.play();
-		this.repaint();
 	}
 	
 	public void close() {
@@ -178,7 +176,6 @@ public class MenuPane extends JPanel implements MouseListener,MouseMotionListene
 		if(i >= 0 && i < iMax) {
 			current = (int)i;
 			fenetre.clickMenu();
-			repaint();
 		}
 		
 		if(e.getY() < 64 && e.getX() > getWidth()-64) {
@@ -191,7 +188,6 @@ public class MenuPane extends JPanel implements MouseListener,MouseMotionListene
 				musicOff = true;
 				music = ImageSprite.createImage("ressources/musicOff.png");
 			}
-			repaint();
 		}
 	}
 	
@@ -211,7 +207,6 @@ public class MenuPane extends JPanel implements MouseListener,MouseMotionListene
 		if(i >= 0 && i < iMax && current != (int)i) {
 			current = (int)i;
 			soundChange.play();
-			repaint();
 		}
 	}
 }

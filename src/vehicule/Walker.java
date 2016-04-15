@@ -26,18 +26,14 @@ public class Walker extends Vehicule{
 	public Walker(int a, FDamier f, JPanel pan, Joueur jo) {
 		// System.out.println("Creation mangouste");
 		super(pan,f, jo, a, TypeVec.walker);
+		explosionScale = -4;
 		this.makeImage();
 	}
 	
 	public boolean canMove(Case c) {
 		boolean ret = false;
 		
-		if(c.isBase()) {
-			if(c.getBase().getJoueur() != this.getJoueur()) {
-				ret = true;
-			}
-		}
-		else if(c.getVehicule() != null){
+		if(c.getVehicule() != null){
 			if(c.getVehicule().getJoueur() == this.getJoueur() && c.getVehicule().getType() == TypeVec.turret) {
 				ret = true;
 			}
@@ -47,6 +43,11 @@ public class Walker extends Vehicule{
 		}
 		else if(c.isRiver() && !c.haveBridge()) {
 			ret = c.isRiverRamp();
+		}
+		else if(c.isBase()) {
+			if(c.getBase().getJoueur() != this.getJoueur()) {
+				ret = true;
+			}
 		}
 		else if(c.getFlying() != null && c.getFlying().getJoueur() == this.getJoueur()) {
 			ret = true;
@@ -110,16 +111,45 @@ public class Walker extends Vehicule{
 		this.setImage(image);
 	}
 	
-	public void newCase(Case c) {
-		if(c.isBase()) {
+	public boolean canShoot(Case c) {
+		boolean ret = super.canShoot(c);
+		
+		if(ret && c.isBase()) {
+			if(getDepRestant() > 0) {
+				ret = false;
+			}
+		}
+		
+		return ret;
+	}
+	
+	public void deplacement(Case cD, Case cA) {
+		boolean ret = true;
+		
+		if(cA.getVehicule() != null && cA.getVehicule().getType() == TypeVec.turret) {
+			
+			System.out.println("active tourelle");
+			int life = cA.getVehicule().getLife();
+			ActiveTurret newTurret = new ActiveTurret(this,life);
+			newTurret.debutTour();
+			getJoueur().addVec(newTurret);
+			
+			cA.addVehicule(newTurret);
+			cD.removeVehicule(this);			
+			
+			this.damier.select(newTurret);
+		}
+		else if(cA.isBase()) {
 			
 			System.out.println("attaque de base");
-			if(c.getBase().getJoueur() != this.getJoueur()) {
-				c.getBase().attack();
-				c.getBase().attack();
-			}
+			cA.getBase().attack();
+			cA.getBase().attack();
+			
+			cD.removeVehicule(this);
 			this.damier.unselect();
-			this.damier.killMe(this);
+		}
+		else {
+			super.deplacement(cD,cA);
 		}
 	}
 }

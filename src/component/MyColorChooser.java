@@ -2,19 +2,18 @@ package component;
 
 import main.*;
 
-import javax.swing.*;
-import java.awt.*;
-
+import java.awt.Color;
+import java.awt.Graphics;
+import java.util.ArrayList;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
-public class MyColorChooser {
+public class MyColorChooser implements Drawable{
 	
 	private Color[] colors = new Color[8];
 	private Color currentColor = null;
-	private Color blockColor = null;
+	private ArrayList<Color> blockColors;
 	
-	private int command;
+	private ColorChooseEvent colorEvent;
 	
 	private int width;
 	private int height;
@@ -28,6 +27,8 @@ public class MyColorChooser {
 		this.posX = x;
 		this.posY = y;
 		
+		blockColors = new ArrayList<Color>();
+		
 		colors[0] = Color.white;
 		colors[1] = Color.black;
 		colors[2] = Color.red;
@@ -39,16 +40,18 @@ public class MyColorChooser {
 		
 	}
 	
-	public void setCommand(int c) {
-		this.command = c;
-	}
-	
-	public int getCommand() {
-		return this.command;
+	public MyColorChooser(int x, int y, int width, int height, ColorChooseEvent cce) {
+		this(x,y,width,height);
+		
+		colorEvent = cce;
 	}
 	
 	public Color getColor() {
 		return currentColor;
+	}
+	
+	public void setColorChooseEvent(ColorChooseEvent cce) {
+		colorEvent = cce;
 	}
 	
 	public void draw(Graphics g) {
@@ -58,7 +61,7 @@ public class MyColorChooser {
 		for(int i=0; i<4; i++) {
 			for(int j=0; j<2; j++) {
 				Color c = colors[(i*2)+j];
-				if(c.equals(blockColor)) {
+				if(blockColors.indexOf(c) != -1) {
 					c = c.darker();
 					c = c.darker();
 					c = c.darker();
@@ -78,14 +81,56 @@ public class MyColorChooser {
 		}
 	}
 	
-	public void block(Color c) {
+	public void addBlockColor(Color c) {
+		boolean trouve = false;
 		for(Color color : this.colors) {
 			if(color.equals(c)) {
-				blockColor = color;
+				for(Color color2 : blockColors) {
+					if(color2.equals(c)) {
+						trouve = true;
+					}
+				}
+				if(!trouve) {
+					blockColors.add(color);
+				}
+				return;
 			}
 		}
 	}
-
+	
+	public void removeBlockColor(Color c) {
+		for(Color color : this.colors) {
+			if(color.equals(c)) {
+				for(Color color2 : blockColors) {
+					if(color2.equals(c)) {
+						blockColors.remove(color2);
+					}
+				}
+				return;
+			}
+		}
+	}
+	
+	public void removeAllBlockColor() {
+		blockColors.clear();
+	}
+	
+	public void setX(int x) {
+		posX = x;
+	}
+	
+	public void setY(int y) {
+		posY = y;
+	}
+	
+	public int getX() {
+		return posX;
+	}
+	
+	public int getY() {
+		return posY;
+	}
+	
 	public void mousePressed(MouseEvent e) {
 		if(e.getButton() == MouseEvent.BUTTON1) {
 			int iColor = (int) ((e.getX()-posX)-5)/((width-5)/4);
@@ -94,8 +139,12 @@ public class MyColorChooser {
 			System.out.println("x:"+iColor+" y:"+jColor);
 			
 			Color c = colors[(iColor*2)+jColor];
-			if(!c.equals(blockColor)) {
+			
+			if(blockColors.indexOf(c) == -1) {
 				currentColor = c;
+				if(colorEvent != null) {
+					colorEvent.colorChoose(c);
+				}
 			}
 		}
 	}

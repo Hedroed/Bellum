@@ -17,16 +17,26 @@ import java.awt.image.BufferedImage;
 
 
 public class Obstacle{
+
+	public static final int ROCHER = 0;
+	public static final int ARBRE = 1;
+
 	private BufferedImage image;
 	private int angle;
 	private int posX = 1;
 	private int posY = 1;
 	// private JPanel pan;
 
-	public Obstacle() {
+	public Obstacle(int type) {
 		// System.out.println("Creation obstacle");
 		try {
-			this.image = ImageIO.read(new File("ressources/rocher.png"));
+			if(type == ROCHER) {
+				this.image = ImageIO.read(new File("ressources/rocher.png"));
+			}
+			else {
+				this.image = ImageIO.read(new File("ressources/tree.png"));
+			}
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -49,7 +59,7 @@ public class Obstacle{
 		int tileSize = FDamier.tileSize;
 		AffineTransform scale = new AffineTransform();
 		scale.translate(x,y);
-		scale.scale((double) (tileSize-3)/43,(double) (tileSize-3)/43);
+		scale.scale((double) (tileSize-3)/image.getWidth(null),(double) (tileSize-3)/image.getHeight(null));
 		
 		g2.drawImage(image, scale, null);
 	}
