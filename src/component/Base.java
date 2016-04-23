@@ -33,16 +33,30 @@ public class Base {
 		return this.joueur;
 	}
 	
-	public void attack() {
+	public void attack(int n) {
 		this.vie--;
 		if(this.vie <= 0) {
-			indExplose = 0;
+			if(n != -1) {
+				indExplose = -n;
+			}
+			else {
+				indExplose = 0;
+			}
 		}
 		System.out.println("Vie de la base : "+this.vie);
 	}
 	
+	public void kill() {
+		vie = 0;
+		indExplose = 0;
+	}
+	
 	public int getVie() {
 		return this.vie;
+	}
+	
+	public boolean isDead() {
+		return vie <= 0;
 	}
 	
 	public void setBaseTile(int x, int y) {
@@ -52,9 +66,8 @@ public class Base {
 	
 	public void draw(java.awt.Graphics g) {
 		int tileSize = FDamier.tileSize;
-		
-		int x = FDamier.posX+(posX*tileSize);
-		int y = FDamier.posY+(posY*tileSize);
+		int x = posX*tileSize;
+		int y = posY*tileSize;
 		
 		Graphics2D g2 = (Graphics2D) g;
 		
@@ -73,7 +86,7 @@ public class Base {
 		
 		if(vie <= 0) {
 			indExplose+=0.5;
-			if(indExplose < 48) {
+			if(indExplose < 48 && indExplose >= 0) {
 				g.drawImage(ImageSprite.baseExplosion[(int)indExplose],(x-128)+(tileSize*baseTileX)/2,(y-128)+(tileSize*baseTileY)/2,null);
 			}
 		}

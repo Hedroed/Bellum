@@ -59,38 +59,40 @@ public class Case extends JPanel{
 		Graphics2D g2 = (Graphics2D) g;
 		
 		int tileSize = FDamier.tileSize;
-		int x = FDamier.posX+(xCoord*(tileSize));
-		int y = FDamier.posY+((tileSize)*yCoord);
+		int x = xCoord*tileSize;
+		int y = yCoord*tileSize;
 		
-		AffineTransform scale = new AffineTransform();
-		scale.translate(x,y);
-		scale.scale((double) (tileSize-1)/64,(double) (tileSize-1)/64);
-		
-		//dessine le fond de la case
-		if(isRiverRamp) {
-			g2.drawImage(ImageSprite.mapSprite[2],scale,null);
-		}
-		else if(isRiver) {
-			g2.drawImage(ImageSprite.mapSprite[6+idRiver],scale,null);
-		}
-		else {
-			g2.drawImage(ImageSprite.mapSprite[idEmpty],scale,null);
-		}
-		
-		if(isBridge) {
-			if(idRiver == 1) {
-				g2.drawImage(ImageSprite.mapSprite[4],scale,null);
+		// if(x+tileSize > FDamier.drawX && y+tileSize > FDamier.drawY && x < FDamier.drawX2 && y < FDamier.drawY2) {
+			AffineTransform scale = new AffineTransform();
+			scale.translate(x,y);
+			scale.scale((double) (tileSize-1)/64,(double) (tileSize-1)/64);
+			
+			//dessine le fond de la case
+			if(isRiverRamp) {
+				g2.drawImage(ImageSprite.mapSprite[2],scale,null);
+			}
+			else if(isRiver) {
+				g2.drawImage(ImageSprite.mapSprite[6+idRiver],scale,null);
 			}
 			else {
-				g2.drawImage(ImageSprite.mapSprite[3],scale,null);
+				g2.drawImage(ImageSprite.mapSprite[idEmpty],scale,null);
 			}
-		}
+			
+			if(isBridge) {
+				if(idRiver == 1) {
+					g2.drawImage(ImageSprite.mapSprite[4],scale,null);
+				}
+				else {
+					g2.drawImage(ImageSprite.mapSprite[3],scale,null);
+				}
+			}
+		// }
 	}
 	
 	public void draw(Graphics g) {	
 		int tileSize = FDamier.tileSize;
-		int x = FDamier.posX+(xCoord*(tileSize));
-		int y = FDamier.posY+((tileSize)*yCoord);
+		int x = xCoord*tileSize;
+		int y = yCoord*tileSize;
 		
 		//dessine le contour 
 		if(this.hover && this.base == null) {
@@ -176,6 +178,12 @@ public class Case extends JPanel{
 		return this.deplacement;
 	}
 	
+	public void clearBorder() {
+		tir = false;
+		deplacement = false;
+		cible = false;
+	}
+	
 	public void setSelect(boolean b){
 	
 		this.select = b;
@@ -233,7 +241,7 @@ public class Case extends JPanel{
 		}
 	}
 	
-	public boolean isObtacle() {
+	public boolean isObstacle() {
 		return (this.obstacle != null);
 	}
 	
@@ -310,22 +318,22 @@ public class Case extends JPanel{
 	public void mousePressed(MouseEvent e) {
 		
 		if(cible) {
+			
+			int n = fDamier.getVehiculeSelect().shoot(this);
 			if(isBase()) {
-				base.attack();
+				base.attack(n);
 			}
 			else  {
 				if(flying != null && !flying.isDead()) {
-					flying.attaque();
+					flying.attaque(n);
 				}
 				else {
-					vehicule.attaque();
-					if(vehicule.getLife() <= 0) {
-						vehicule.isDeadOn(this);
-					}
+					vehicule.attaque(n);
 				}
 			}
 			fDamier.getVehiculeSelect().tir();
 			fDamier.unselect();
+			fDamier.checkEndGame();
 		}
 		else if(deplacement){
 			
@@ -344,17 +352,17 @@ public class Case extends JPanel{
 			fDamier.unselect();
 			fDamier.select(this);
 			if(flying != null && vehicule != null) {
-				if(e.getButton() == MouseEvent.BUTTON3 && flying.isActif()) {
+				if(e.getButton() == MouseEvent.BUTTON3) {
 					fDamier.select(flying);
 				}
-				else if(vehicule.isActif()){
+				else{
 					fDamier.select(vehicule);
 				}
 			}
-			else if(flying != null && flying.isActif()) {
+			else if(flying != null) {
 				fDamier.select(flying);
 			}
-			else if(vehicule != null && vehicule.isActif()) {
+			else if(vehicule != null) {
 				fDamier.select(vehicule);
 			}
 		}

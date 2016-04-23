@@ -23,9 +23,9 @@ public class Turret extends Vehicule{
 	public final int cols = 1;
 	
 
-	public Turret(int a, FDamier f, JPanel pan, Joueur jo) {
+	public Turret(int a, FDamier f, Joueur jo) {
 		// System.out.println("Creation mangouste");
-		super(pan, f, jo, a, TypeVec.turret);
+		super(f, jo, a, TypeVec.turret);
 		this.makeImage();
 	}
 	

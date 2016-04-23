@@ -13,6 +13,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
+import java.awt.Graphics;
+import java.awt.event.MouseEvent;
 
 public class Helicopter extends Vehicule{
 
@@ -22,10 +24,13 @@ public class Helicopter extends Vehicule{
 	public final int rows = 1;
 	public final int cols = 2;
 	
-
-	public Helicopter(int a, FDamier f,JPanel pan, Joueur jo) {
+	private boolean turretRelease;
+	
+	public Helicopter(int a, FDamier f, Joueur jo) {
 		// System.out.println("Creation mangouste");
-		super(pan,f, jo, a, TypeVec.helicopter);
+		super(f, jo, a, TypeVec.helicopter);
+		weapon  = new CanonWeapon(3);
+		turretRelease = false;
 		this.makeImage();
 	}
 	
@@ -112,5 +117,40 @@ public class Helicopter extends Vehicule{
 		}
 		
 		this.setImage(image);*/
+	}
+	
+	public void drawSpecial(Graphics g) {
+		
+		g.setColor(new Color(128,0,0));
+		
+		if(!turretRelease) {
+			
+			g.drawString("Turret can be launch",10,20);
+			if(getTirRestant() >= 1) {
+				g.fillRoundRect(35,30,120,50,10,10);
+				g.setColor(new Color(255,235,175));
+				g.drawString("Launch",67,62);
+			}
+		}
+		else {
+			g.drawString("No more Turret",10,20);
+		}
+		
+	}
+	
+	public void pressSpecial(MouseEvent e) {
+		
+		if(!turretRelease && getTirRestant() >= 1) {
+			Case c = damier.getCaseCoord(coordX,coordY);
+			System.out.println("Case pour tourelle "+c);
+			if(!c.isRiver() && !c.isBase() && !c.isObstacle() && c.getVehicule() == null) {
+				Turret t = new Turret(getAngle(),damier,getJoueur());
+				t.moveTo(coordX,coordY);
+				c.addVehicule(t);
+				tir();
+				damier.calculeZones();
+				turretRelease = true;
+			}
+		}
 	}
 }

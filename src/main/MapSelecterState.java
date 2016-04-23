@@ -18,6 +18,7 @@ public class MapSelecterState extends JPanel implements MouseListener{
 	
 	private String[] mapList;
 	private File currentMap;
+	private int currentInd;
 	private int nbPlayers;
 	private String time;
 	
@@ -69,6 +70,7 @@ public class MapSelecterState extends JPanel implements MouseListener{
 	public void selectMap(int i) {
 		if(i >= 0 && i < mapFiles.size()) {
 			currentMap = mapFiles.get(i);
+			currentInd = i;
 			img = null;
 			
 			String imageName = getPartName(currentMap.getName())+".png";
@@ -249,6 +251,27 @@ public class MapSelecterState extends JPanel implements MouseListener{
 			}
 			
 		}
+	}
+	
+	public void keyPressed(int keyCode) {
+		
+		if(keyCode == KeyEvent.VK_DOWN) {
+			
+			if(currentInd < mapFiles.size()-1) {
+				currentInd++;
+				selectMap(currentInd);
+			}
+		}
+		else if(keyCode == KeyEvent.VK_UP) {
+			if(currentInd > 0) {
+				currentInd--;
+				selectMap(currentInd);
+			}
+		}
+		else if(keyCode == KeyEvent.VK_ENTER) {
+			fenetre.goPlayer();
+		}
+		
 	}
 	
 }

@@ -23,9 +23,10 @@ public class Warthog extends Vehicule{
 	public final int cols = 4;
 	
 	
-	public Warthog(int a, FDamier f,JPanel pan, Joueur jo) {
+	public Warthog(int a, FDamier f, Joueur jo) {
 		// System.out.println("Creation mangouste");
-		super(pan, f, jo, a, TypeVec.warthog);
+		super(f, jo, a, TypeVec.warthog);
+		weapon = new CanonWeapon(4);
 		this.makeImage();
 	}
 	

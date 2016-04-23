@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.event.MouseEvent;
 
 import org.json.*;
 import java.util.Scanner;
@@ -21,7 +22,6 @@ import java.awt.Image;
 
 public class FEtat{
 
-	private Dimension size = new Dimension(200,700);
 	private int width, height;
 	private int posX, posY;
 	
@@ -73,12 +73,16 @@ public class FEtat{
 				s = dep+" case";
 			}
 			g.drawString(s,20,300);
+			
+			Graphics g2 = g.create();
+			g2.translate(posX,posY+340);
+			vActive.drawEtat(g2);
+			
 		}
 		else if(cActive != null){
 			g.setColor(new Color(128,0,0));
 			g.drawString(cActive.toString(),20,200);
 		}
-		
 		
 		//check buttun
 		g.setColor(new Color(223,118,11));
@@ -102,6 +106,21 @@ public class FEtat{
 	public void newSelect() {
 		vActive = fDamier.getVehiculeSelect();
 		cActive = fDamier.getCaseSelect();
+	}
+	
+	public void mousePressed(MouseEvent e) {
+		int x = e.getX();
+		int y = e.getY();
+		
+		if(x >= posX && y >= posY && x < posX+width && y < posY+height) {
+			
+			if(vActive != null) {
+				vActive.pressSpecial(e);
+			}
+			
+		}
+		
+		
 	}
 
 }

@@ -95,9 +95,9 @@ public class Fenetre extends JFrame implements KeyListener,Runnable {
 			time = System.nanoTime();
 			
 			repaint();
-			if(gameRunning) {
-				gamePanel.update();
-			}
+			// if(gameRunning) {
+				// gamePanel.update();
+			// }
 			
 			wait = 33-((System.nanoTime()-time)/1000000);
 			if(wait < 0) {
@@ -152,6 +152,12 @@ public class Fenetre extends JFrame implements KeyListener,Runnable {
 		repaint();
 	}
 	
+	public void endGame() {
+		gameRunning = false;
+		menuPane.setGameRunning(false);
+		goMenu();
+	}
+	
 	public void goMap() {
 		cL.show(this.container,MAP);
 		this.currentPane = MAP;
@@ -164,22 +170,6 @@ public class Fenetre extends JFrame implements KeyListener,Runnable {
 		this.currentPane = OPTION;
 		requestFocus();
 		repaint();
-	}
-	
-	public void clickMenu() {
-		if(menuPane.getCurrent() == MenuPane.PLAY) {
-			goMap();
-			// new PlaySound("ressources/select.wav",-30).play();
-		}
-		else if(menuPane.getCurrent() == MenuPane.EXIT) {
-			System.exit(0);
-		}
-		else if(menuPane.getCurrent() == MenuPane.CONTINUE) {
-			goGame();
-		}
-		else if(menuPane.getCurrent() == MenuPane.OPTION) {
-			goOption();
-		}
 	}
 	
 	public void toggleMusic() {
@@ -200,23 +190,16 @@ public class Fenetre extends JFrame implements KeyListener,Runnable {
 			goMenu();
 		}
 		else if(currentPane.equals(GAME)) {
+			// System.out.println(e.paramString());
 			gamePanel.keyPressed(e.getKeyCode());
 		}
 		else if(currentPane.equals(MENU)) {
-			if(e.getKeyCode() == KeyEvent.VK_UP) {
-				this.menuPane.up();
-			}
-			else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
-				this.menuPane.down();
-			}
-			else if(e.getKeyCode() == KeyEvent.VK_ENTER) {
-				clickMenu();
-			}
+			menuPane.keyPressed(e.getKeyCode());
 		}
 		else if(currentPane.equals(MAP)) {
-			if(e.getKeyCode() == KeyEvent.VK_ENTER) {
-				goPlayer();
-			}
+			
+			mapSelecterPanel.keyPressed(e.getKeyCode());
+			
 		}
 		else if(currentPane.equals(PLAYERS)) {
 			if(e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -228,17 +211,5 @@ public class Fenetre extends JFrame implements KeyListener,Runnable {
 	
 	public void keyReleased(KeyEvent e) {}
 	public void	keyTyped(KeyEvent e) {}
-	
-	// public void actionPerformed(ActionEvent e) {
-		// System.out.println(e.paramString());
-		
-		// if(((JButton)e.getSource()).getActionCommand().equals("ok")) {
-			// System.out.println("bouton ok");
-			// startGame();
-		// }
-		// else {
-			// goMenu();
-		// }
-	// }
 	
 }

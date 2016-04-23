@@ -38,3 +38,19 @@ La molette permet de zoomer ! Et un double clique molette centrer le damier.
 Quelques modifications invisibles qui me permetteront par la suite de créer des animations de déplacement de véhicule.
 
 Résolution de bug qui permettait de sortir un véhicule depuis la base ennemie.
+
+UPDATE 0.4 et 0.5 - 23/04/2016 - 22.36pm
+
+On peut desormé finir une partie aprés l'explosion de la base un message de victoire s'affiche puis un retour au menu. La base explose
+
+quand tout les vehicules d'un joueur sont mort.
+
+Des obus et balles de fusil sont tirés par les vehicules cela depend de leur type d'arme.
+
+Une nouvelle map a était crée, elle est plus grande et à perme elle sera jouable avec plus de vehicules.
+
+Les hélicopter peuvent posser des tourelles inactive qui peuvent étre activé par un walker lorsqu'il ce deplace dessus.
+
+Les tourelles active ne peuvent pas se déplacer mais lorqu'elle se font detruire le walker réaparait sur la case.
+
+Des ajoutes de vehicules sont à venir... 

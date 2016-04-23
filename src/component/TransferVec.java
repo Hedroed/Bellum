@@ -34,6 +34,10 @@ public class TransferVec {
 		return this.joueur;
 	}
 	
+	public int getNumber() {
+		return nbRestant;
+	}
+	
 	public String toString() {
 		return "TransferVec [type:"+this.type.name()+", restant:"+this.nbRestant+", joueur:"+this.joueur+"]";
 	}

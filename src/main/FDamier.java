@@ -37,13 +37,15 @@ public class FDamier {
 	public static int LARGEUR;
 	public static int LONGUEUR;
 	public static int tileSize;
-	public static int posX, posY;
+	
 	public static int width, height;
+	public static int drawX,drawY,drawX2,drawY2;
+	
+	private int lastMiddleX,lastMiddleY;
+	
+	private int posX, posY;
 	
 	private Case[][] damier;
-	private ArrayList<Case> zoneTirSelect = null;
-	private ArrayList<Case> zoneDepSelect = null;
-	private ArrayList<Case> zoneCibleSelect = null;
 	private Case caseSelec = null;
 	private Vehicule vehiculeSelect = null;
 	
@@ -51,16 +53,20 @@ public class FDamier {
 	private boolean dark = false;
 	private int messageAffiche;
 	
-	private JPanel pan;
+	private GamePane pan;
 	
 	private int hoverCaseX;
 	private int hoverCaseY;
 	
 	private GameMessage message;
+	private Joueur winner = null;
+	private int winnerInd;
 	
 	private VehiculeFactory factory;
 	
-	public FDamier(JPanel pan, FEtat fe, FRessource fr){
+	private ArrayList<Animation> animations;
+	
+	public FDamier(GamePane pan, FEtat fe, FRessource fr){
 		this.fRess = fr;
 		this.fEtat = fe;
 		this.pan = pan;
@@ -72,6 +78,8 @@ public class FDamier {
 		posY = 50;
 		width = 200;
 		height = 700;
+		
+		animations = new ArrayList<Animation>();
 		
 		message = new GameMessage("ressources/DALEK.ttf","ressources/interface2.png",new Color(128,0,0));
 		
@@ -170,13 +178,32 @@ public class FDamier {
 		posY = (h-height)/2;
 	}
 	
+	public void zoom(int wheel) {
+		int scale = 4;
+		if(wheel > 0 && tileSize > 30) {
+			tileSize-=scale;
+			posX += (scale/2)*LARGEUR;
+			posY += (scale/2)*LONGUEUR;
+		}
+		else if(wheel < 0 && tileSize < 80) {
+			tileSize+=scale;
+			posX -= (scale/2)*LARGEUR;
+			posY -= (scale/2)*LONGUEUR;
+			
+		}
+		// System.out.println("tile size :"+FDamier.tileSize);
+		calculeSize();
+	}
+	
 	public void draw(Graphics g) {
-		// long start = System.nanoTime();
-
+		
+		g = g.create();
+		g.translate(posX,posY);
+		
 		g.setColor(new Color(65,65,65));
-		g.fillRect(posX,posY,width,height);
+		g.fillRect(0,0,width,height);
 		g.setColor(Color.black);
-		g.drawRect(posX-1,posY-1,width,height);
+		g.drawRect(-1,-1,width,height);
 		
 		for(int j=0; j<LONGUEUR; j++) {
 			for(int i=0; i<LARGEUR; i++) {
@@ -190,13 +217,30 @@ public class FDamier {
 			}
 		}
 		
+		Animation toRemove = null;
+		for(Animation a : animations) {
+			a.draw(g);
+			if(a.isEnd()) {
+				toRemove = a;
+			}
+		}
+		if(toRemove != null) {
+			animations.remove(toRemove);
+		}
+		
 		for(Base b : this.bases) {
 			b.draw(g);
 		}
 		
 		if(this.dark) {
 			g.setColor(new Color(0,0,0,128));
-			g.fillRect(posX,posY,width,height);
+			if(posX <= drawX && posY <= drawY && posX+width > drawX2 && posY+height > drawY2) {
+				g.fillRect(drawX,drawY,drawX2-drawX,drawY2-drawY);
+			}
+			else {
+				g.fillRect(0,0,width,height);
+			}
+			
 			
 			// draw caseExit on White :(
 			for(int j=0; j<LONGUEUR; j++) {
@@ -204,7 +248,7 @@ public class FDamier {
 					if(damier[i][j].isExit()) {
 						if(((CaseExit)damier[i][j]).isWhite()) {
 							g.setColor(new Color(255,255,255,128));
-							g.fillRect((i*tileSize)+posX,(j*tileSize)+posY,tileSize, tileSize);
+							g.fillRect(i*tileSize,j*tileSize,tileSize, tileSize);
 						}
 					}
 				}
@@ -212,7 +256,18 @@ public class FDamier {
 			
 		}
 		
-		if(messageAffiche < 30) {
+		if(winner != null) {
+			
+			winnerInd++;
+			if(winnerInd > 50) {
+				message.drawMessage(g,"Victoire","Du "+winner.getName());
+			}
+			if(winnerInd == 100) {
+				pan.endGame();
+			}
+			
+		}
+		else if(messageAffiche < 30) {
 			message.drawMessage(g,"Tour","Du "+getActiveJoueur().getName());
 			messageAffiche++;
 		}
@@ -220,14 +275,12 @@ public class FDamier {
 		// g.setFont(g.getFont().deriveFont(20f));
 		// g.drawString("Veh Select: "+vehiculeSelect+"    Case Select: "+caseSelec,posX+20,posY+height+20);
 		
-		// long end = System.nanoTime();
-		// System.out.println("Chargement :"+(end-start)/1000000);
 	}
 
 	public void addVehicule(Exit s, TypeVec t, Joueur jo) {
 		if(this.damier[s.getX()][s.getY()].isEmpty()) {
 			
-			Vehicule newVec = factory.getVehiculeByType(t,s.getAngle(),this,pan,jo);
+			Vehicule newVec = factory.getVehiculeByType(t,s.getAngle(),this,jo);
 			jo.addVec(newVec);
 			
 			damier[s.getX()][s.getY()].addVehicule(newVec);
@@ -244,101 +297,32 @@ public class FDamier {
 		Obstacle o = new Obstacle((int) (Math.random()*2));
 		this.damier[x][y].setObstacle(o);
 	}
-
-	/**	methode appelee par une case quand elle est clickee
-	  * declache tout les calcule de selection
-	  */
-	/*public void caseClicked(Case c, Vehicule vec) {
+	
+	public void addAnimation(Animation a) {
 		
-		if(this.caseSelec == null) {
-			if(vec != null && !vec.isDead()) {
-				//selectionne la case et sont vehicule
-				if(vec.isActif()) {
-					// select(c,vec);
-				}
-			}
+		if(a != null) {
+			animations.add(a);
 		}
-		else { //une case est selectionnee
-			
-			boolean end = false;
-			
-			//est deplacement
-			if(this.zoneDepSelect != null) {
-				for(Case cDep : this.zoneDepSelect) {
-					if(cDep == c) {
-						// System.out.println("Est un case de deplacement");
-
-						//deplace le vehicule
-						vehiculeSelect.deplacement(this.caseSelec, c);
-						
-						System.out.println("case select1 "+this.caseSelec);
-						if(vehiculeSelect.moveOn(c)) {
-							System.out.println("case select2 "+this.caseSelec);
-							this.caseSelec.removeVehicule(vehiculeSelect);
-						}
-						// c.addVehicule(vehiculeSelect);
-						// select(c,vehiculeSelect);
-						unselect();
-						
-						end = true;
-						break;
-					}
-				}
-			}
-			//est tir
-			if(!end && this.zoneCibleSelect != null) {
-				for(Case cCible : this.zoneCibleSelect) {
-					if(c == cCible && c.isBase()) {
-						cCible.getBase().attack();
-						if(cCible.getBase().getVie() <= 0) {
-							// System.out.println("Defaite de "+cCible.getBase().getJoueur().getName());
-							
-							// this.fenetre.fin();
-						}
-						vehiculeSelect.tir();
-						//deselectionne
-						unselect();
-						
-						end = true;
-						break;
-					}
-					else if(c == cCible) {
-						
-						if(c.getFlying() != null && !c.getFlying().isDead()) {
-							c.getFlying().attaque();
-						}
-						else {
-							c.getVehicule().attaque();
-						}
-						vehiculeSelect.tir();
-						unselect();
-						end = true;
-						break;
-					}
-				}
-			}
-			
-			if(!end) {
-				//est lui meme
-				if(c == this.caseSelec) {
-					this.unselect();
-				}
-				else if(vec != null && vec.isActif()) { //est un autre vehicule
-					// select(c,vec);
-				}
-			}
-			
-		}
-	}*/
+		
+	}
 	
 	public void unselect() {
 		if(this.caseSelec != null) {
 			this.caseSelec.setSelect(false);
 			this.caseSelec = null;
 		}
-		if(vehiculeSelect != null) {
+
+		vehiculeSelect = null;
+		
+		fEtat.newSelect();
+	}
+	
+	public void unselect(Vehicule v) {
+		if(vehiculeSelect == v) {
 			vehiculeSelect = null;
 		}
+		
+		
 		fEtat.newSelect();
 	}
 	
@@ -372,7 +356,7 @@ public class FDamier {
 	  * place ces zones dans les tableaux attribut de FDamier
 	  */
 	public void calculeZones() {
-		System.out.println("calcule zone");
+		// System.out.println("calcule zone");
 		
 		if(caseSelec != null && vehiculeSelect != null) {
 
@@ -380,61 +364,17 @@ public class FDamier {
 			this.clearTable();
 
 			//calcule de la zone de tire
-			
-			zoneTirSelect = new ArrayList<Case>();
-			zoneCibleSelect = new ArrayList<Case>();
-			Case c;
-			int xx,yy;
-			int portee = vehiculeSelect.getType().getPortee();
-			
-			if(vehiculeSelect.getTirRestant() > 0) {
-				//cree tableau zonetir contenant toutes les cases ou il peu tirer
-				for(int i1 = -1; i1 <= 1; i1++) {
-					for(int i2 = -1; i2 <= 1; i2++) {
-						for(int i = 1; i <= portee; i++){
-							xx = this.caseSelec.getXCoord()+(i1*i);
-							yy = this.caseSelec.getYCoord()+(i2*i);
-
-							if((xx >= 0 && xx < LARGEUR) && (yy >=0 && yy < LONGUEUR)) {
-								c = this.damier[xx][yy];
-								if(c != this.caseSelec) {
-									if(vehiculeSelect.canShoot(c)) {
-										zoneCibleSelect.add(c);
-										break;
-									}
-									else if(!c.isEmpty()) {
-										break;
-									}
-									else {
-										zoneTirSelect.add(c);
-									}
-								}
-							}
-						}
-					}
-				}
-			
-				//active les bordures de ces cases
-				if(this.affTir) {
-					for(Case ca : zoneTirSelect){
-						ca.setTir(true);
-					}
-				}
-
-				for(Case ca : zoneCibleSelect){
-					ca.setCible(true);
-				}
-			}
+			vehiculeSelect.calculeTir(caseSelec);
 			
 			if(vehiculeSelect.getDepRestant() > 0) {
 				//calcule de la zone de deplacement
 				int dep = vehiculeSelect.getDepRestant();
-				zoneDepSelect = new ArrayList<Case>();
-				this.deplacementRec(dep,zoneDepSelect,this.caseSelec);
+				// zoneDepSelect = new ArrayList<Case>();
+				this.deplacementRec(dep,this.caseSelec);
 
-				for(Case ca : zoneDepSelect){
-					ca.setDeplacement(true);
-				}
+				// for(Case ca : zoneDepSelect){
+					// ca.setDeplacement(true);
+				// }
 			}
 			
 		}
@@ -445,27 +385,15 @@ public class FDamier {
 	}
 
 	private void clearTable() {
-		if(this.zoneTirSelect != null && !this.zoneTirSelect.isEmpty()) {
-			for(Case ca : this.zoneTirSelect){
-				ca.setTir(false);
-			}
-			this.zoneTirSelect = null;
-		}
-		if(this.zoneCibleSelect != null && !this.zoneCibleSelect.isEmpty()) {
-			for(Case ca : this.zoneCibleSelect){
-				ca.setCible(false);
-				this.zoneCibleSelect = null;
+		for(int j=0; j<LONGUEUR; j++) {
+			for(int i=0; i<LARGEUR; i++) {
+				damier[i][j].clearBorder();
 			}
 		}
-		if(this.zoneDepSelect != null && !this.zoneDepSelect.isEmpty()) {
-			for(Case ca : this.zoneDepSelect){
-				ca.setDeplacement(false);
-				this.zoneDepSelect = null;
-			}
-		}
+		
 	}
 
-	private boolean deplacementRec(int i, ArrayList<Case> dep,Case c){
+	private boolean deplacementRec(int i,Case c){
 		boolean ret = false;
 		int xx,yy;
 		Case ca;
@@ -480,23 +408,14 @@ public class FDamier {
 					if((xx >= 0 && xx < LARGEUR) && (yy >=0 && yy < LONGUEUR)) {
 						ca = this.damier[xx][yy];
 						if(ca != c && vehiculeSelect.canMove(ca)) {
-							dep.add(ca);
-							deplacementRec(i-1,dep,ca);
+							ca.setDeplacement(true);
+							deplacementRec(i-1,ca);
 						}
 					}
 				}
 			}
 		}
 		return ret;
-	}
-
-	public void killMe(Vehicule v) {
-		int i = v.getCoordX();
-		int j = v.getCoordY();
-		if(i >= 0 && i < LARGEUR && j >= 0 && j < LONGUEUR) {
-			damier[i][j].removeVehicule(v);
-			// this.calculeZones();
-		}
 	}
 
 	public void setAffTir(boolean b) {
@@ -567,6 +486,48 @@ public class FDamier {
 		return ret;
 	}
 	
+	public Case getCaseCoord(int x, int y) {
+		Case ret = null;
+		
+		if(x >= 0 && x < LARGEUR && y >= 0 && y < LONGUEUR) {
+			ret = damier[x][y];
+		}
+		
+		return ret;
+	}
+	
+	public void checkEndGame() {
+		
+		ArrayList<Joueur> enVie = new ArrayList<Joueur> ();
+		
+		for(Base b : bases) {
+			Joueur j = b.getJoueur();
+			
+			int nbVec = j.getVehicules().size();
+			for(TransferVec tv : j.getVecRestant()) {
+				nbVec += tv.getNumber();
+			}
+			System.out.println("Joueur : "+j+" reste "+nbVec+"vehicule");
+			if(nbVec == 0) {
+				b.kill();
+			}
+			
+			if(!b.isDead()) {
+				enVie.add(j);
+			}
+		}
+		
+		if(enVie.size() == 1) {
+			winner = enVie.get(0);
+			winnerInd = 0;
+			System.out.println("Le gagnant est "+winner);
+		}
+		
+		
+	}
+	
+	
+	
 	//Mouse Listener
     public void mouseExited(MouseEvent e) {
 		if(hoverCaseX != -1) {
@@ -577,36 +538,22 @@ public class FDamier {
 	}
 	
     public void mousePressed(MouseEvent e) {
-		Case c = getCase(e.getX(),e.getY());
-		
-		
-		if(c != null) {
-			
-			c.mousePressed(e);
-			calculeZones();
-			
-			messageAffiche = 30;
-			
-			/*
-			Vehicule v = null;
-
-			if(c.getVehicule() != null && c.getFlying() != null) {
-				if(e.getButton() == MouseEvent.BUTTON1) {
-					v = c.getVehicule();
-				}
-				else {
-					v = c.getFlying();
-				}
-			}
-			else if(c.getFlying() != null) {
-				v = c.getFlying();
-			}
-			else {
-				v = c.getVehicule();
-			}
-			
-			caseClicked(c,v);*/
+		if(e.getButton() == MouseEvent.BUTTON2) {
+			lastMiddleX = e.getX();
+			lastMiddleY = e.getY();
 		}
+		else {
+			Case c = getCase(e.getX(),e.getY());
+			
+			if(c != null) {
+				
+				c.mousePressed(e);
+				calculeZones();
+				
+				messageAffiche = 30;
+			}
+		}
+		
     }
 	
 	//Mouse Motion Listener
@@ -629,5 +576,51 @@ public class FDamier {
 			}
 		}
 		
+	}
+	
+	public void mouseDragged(MouseEvent e) {
+		int y = e.getY();
+		int x = e.getX();
+		int dx = (x - lastMiddleX);
+		int dy = (y - lastMiddleY);
+		if(dx != 0 || dy != 0) {
+			lastMiddleX = x;
+			lastMiddleY = y;
+			posX += dx;
+			posY += dy;
+			// if(FDamier.posX < (FDamier.width-(getWidth()-200-110)-200) {FDamier.posX = 0;}
+			// if(FDamier.posX > getWidth()-FDamier.width) {FDamier.posX = getWidth()-FDamier.width;}
+			// if(FDamier.posY < 0) {FDamier.posY = 0;}
+			// if(FDamier.posY > getHeight()-FDamier.height) {FDamier.posY = getHeight()-FDamier.height;}
+		}
+		
+	}
+	
+	//MouseWheelListener
+	public void	mouseWheelMoved(MouseWheelEvent e) {
+		zoom(e.getWheelRotation());
+	}
+	
+	
+	//keyListener
+	public void keyPressed(int keyCode) {
+		if(keyCode == KeyEvent.VK_UP) {
+			posY-= 10;
+		}
+		else if(keyCode == KeyEvent.VK_DOWN) {
+			posY+=10;
+		}
+		else if(keyCode == KeyEvent.VK_RIGHT) {
+			posX+=10;
+		}
+		else if(keyCode == KeyEvent.VK_LEFT) {
+			posX-=10;
+		}
+		else if(keyCode == KeyEvent.VK_ADD) {
+			zoom(-1);
+		}
+		else if(keyCode == KeyEvent.VK_SUBTRACT) {
+			zoom(1);
+		}
 	}
 }

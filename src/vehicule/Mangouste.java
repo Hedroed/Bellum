@@ -23,9 +23,10 @@ public class Mangouste extends Vehicule{
 	public final int cols = 4;
 	
 
-	public Mangouste(int a, FDamier f,JPanel pan , Joueur jo) {
+	public Mangouste(int a, FDamier f, Joueur jo) {
 		// System.out.println("Creation mangouste");
-		super(pan,f, jo, a, TypeVec.mangouste);
+		super(f, jo, a, TypeVec.mangouste);
+		weapon = new ShotgunWeapon(2);
 		this.makeImage();
 	}
 	

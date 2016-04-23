@@ -58,9 +58,5 @@ public class CaseExit extends Case {
 	
 	public void draw(Graphics g){ 
 		super.draw(g);
-		
-		// int tileSize = FDamier.tileSize;
-		// int x = FDamier.posX+(xCoord*(tileSize));
-		// int y = FDamier.posY+((tileSize)*yCoord);
 	}
 }

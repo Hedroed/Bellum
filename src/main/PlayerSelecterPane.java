@@ -23,7 +23,7 @@ public class PlayerSelecterPane implements ColorChooseEvent,Drawable{
 	public PlayerSelecterPane(int x, int y, Joueur player) {
 		this.player = player;
 		mcc = new MyColorChooser(x+130,y+20,200,80,this);
-		vec = new Mangouste(0,null,null,player);
+		vec = new Mangouste(0,null,player);
 		
 		posX = x;
 		posY = y;

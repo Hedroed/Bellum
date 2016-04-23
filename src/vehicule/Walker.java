@@ -23,9 +23,10 @@ public class Walker extends Vehicule{
 	public final int cols = 2;
 	
 
-	public Walker(int a, FDamier f, JPanel pan, Joueur jo) {
+	public Walker(int a, FDamier f, Joueur jo) {
 		// System.out.println("Creation mangouste");
-		super(pan,f, jo, a, TypeVec.walker);
+		super(f, jo, a, TypeVec.walker);
+		weapon = new ShotgunWeapon(1);
 		explosionScale = -4;
 		this.makeImage();
 	}
@@ -130,20 +131,26 @@ public class Walker extends Vehicule{
 			
 			System.out.println("active tourelle");
 			int life = cA.getVehicule().getLife();
+			
+			coordX = cA.getXCoord();
+			coordY = cA.getYCoord();
+			
 			ActiveTurret newTurret = new ActiveTurret(this,life);
+			newTurret.moveTo(coordX,coordY);
 			newTurret.debutTour();
 			getJoueur().addVec(newTurret);
 			
 			cA.addVehicule(newTurret);
-			cD.removeVehicule(this);			
+			cD.removeVehicule(this);
+			
 			
 			this.damier.select(newTurret);
 		}
 		else if(cA.isBase()) {
 			
 			System.out.println("attaque de base");
-			cA.getBase().attack();
-			cA.getBase().attack();
+			cA.getBase().attack(0);
+			cA.getBase().attack(0);
 			
 			cD.removeVehicule(this);
 			this.damier.unselect();

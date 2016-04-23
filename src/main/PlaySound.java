@@ -38,7 +38,7 @@ public class PlaySound {
 	}
 	
 	public void setVolume(int volume) {
-		System.out.println("vol :"+volume);
+		// System.out.println("vol :"+volume);
 		if(volume > -60 && volume <= 5) {
 			gainControl.setValue((float)volume-discount);
 			this.playContinuously();
@@ -60,7 +60,7 @@ public class PlaySound {
 	public void play() {
 		if(gainControl.getValue() != (float)OptionState.soundVolume-discount) {
 			gainControl.setValue((float)OptionState.soundVolume-discount);
-			System.out.println("change vol");
+			// System.out.println("change vol");
 		}
 		if(clip != null && !clip.isRunning() && OptionState.soundVolume != -40) {
 			stop();

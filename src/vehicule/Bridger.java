@@ -23,9 +23,9 @@ public class Bridger extends Vehicule{
 	public final int cols = 4;
 	
 
-	public Bridger(int a, FDamier f,JPanel pan, Joueur jo) {
+	public Bridger(int a, FDamier f, Joueur jo) {
 		// System.out.println("Creation mangouste");
-		super(pan, f, jo, a, TypeVec.bridger);
+		super(f, jo, a, TypeVec.bridger);
 		this.makeImage();
 	}
 	

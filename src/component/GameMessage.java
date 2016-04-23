@@ -32,8 +32,8 @@ public class GameMessage {
 	}
 	
 	public void drawMessage(Graphics g, String message, String subMessage) {
-		int centerX = FDamier.posX+(FDamier.width/2);
-		int centerY = FDamier.posY+(FDamier.height/2);
+		int centerX = FDamier.width/2;
+		int centerY = FDamier.height/2;
 		
 		g.setColor(c1);
 		g.drawImage(gameInterface,centerX-200,centerY-100,400,200,null);

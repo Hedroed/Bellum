@@ -154,6 +154,22 @@ public class MenuPane extends JPanel implements MouseListener,MouseMotionListene
 		}
 	}
 	
+	public void clickMenu() {
+		if(getCurrent() == PLAY) {
+			fenetre.goMap();
+			// new PlaySound("ressources/select.wav",-30).play();
+		}
+		else if(getCurrent() == EXIT) {
+			System.exit(0);
+		}
+		else if(getCurrent() == CONTINUE) {
+			fenetre.goGame();
+		}
+		else if(getCurrent() == OPTION) {
+			fenetre.goOption();
+		}
+	}
+	
 	public void mouseClicked(MouseEvent e) {}
 
     public void mouseReleased(MouseEvent e) {}
@@ -175,7 +191,7 @@ public class MenuPane extends JPanel implements MouseListener,MouseMotionListene
 		
 		if(i >= 0 && i < iMax) {
 			current = (int)i;
-			fenetre.clickMenu();
+			clickMenu();
 		}
 		
 		if(e.getY() < 64 && e.getX() > getWidth()-64) {
@@ -207,6 +223,19 @@ public class MenuPane extends JPanel implements MouseListener,MouseMotionListene
 		if(i >= 0 && i < iMax && current != (int)i) {
 			current = (int)i;
 			soundChange.play();
+		}
+	}
+	
+	//KeyListener
+	public void keyPressed(int keyCode) {
+		if(keyCode == KeyEvent.VK_UP) {
+			up();
+		}
+		else if(keyCode == KeyEvent.VK_DOWN) {
+			down();
+		}
+		else if(keyCode == KeyEvent.VK_ENTER) {
+			clickMenu();
 		}
 	}
 }

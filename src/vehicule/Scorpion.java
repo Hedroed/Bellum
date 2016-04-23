@@ -23,10 +23,11 @@ public class Scorpion extends Vehicule{
 	public final int cols = 6;
 	
 
-	public Scorpion(int a, FDamier f,JPanel pan, Joueur jo) {
+	public Scorpion(int a, FDamier f, Joueur jo) {
 		// System.out.println("Creation mangouste");
-		super(pan,f, jo, a, TypeVec.scorpion);
+		super(f, jo, a, TypeVec.scorpion);
 		explosionScale = 20;
+		weapon = new CanonWeapon(6);
 		this.makeImage();
 	}
 	

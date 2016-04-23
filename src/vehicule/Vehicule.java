@@ -17,7 +17,7 @@ import java.awt.Graphics2D;
 import java.awt.AlphaComposite;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
-
+import java.awt.event.MouseEvent;
 
 public abstract class Vehicule {
 	
@@ -31,7 +31,6 @@ public abstract class Vehicule {
 	private int posX = 1;
 	private int posY = 1;
 	protected int coordX, coordY;
-	protected JPanel pan;
 	protected FDamier damier;
 	protected TypeVec type;
 	private Joueur joueur;
@@ -41,11 +40,11 @@ public abstract class Vehicule {
 	private int depRestant;
 	private boolean actif = true;
 	
+	protected Weapon weapon;
 	protected int explosionScale;
 	
-	public Vehicule(JPanel pan, FDamier damier, Joueur jo, int a, TypeVec t) {
+	public Vehicule(FDamier damier, Joueur jo, int a, TypeVec t) {
 		// System.out.println("Creation vehicule "+t.name()+" ["+a+"]");
-		this.pan = pan;
 		this.damier = damier;
 		this.joueur = jo;
 		this.angle = a;
@@ -74,20 +73,15 @@ public abstract class Vehicule {
 		rotate.scale((double) (tileSize-3)/64,(double) (tileSize-3)/64);
 		rotate.rotate(angleR,image.getWidth(null)/2,image.getHeight(null)/2);
 
-		if(this.ind < 30) {
-			g2D.drawImage(image, rotate, null);
-		}
+		
+		g2D.drawImage(image, rotate, null);
+		
 		//explosion si mort
 		if(this.mort) {
-			ind++;
-			if(this.ind < 81) {
-				AffineTransform scale = new AffineTransform();
-				scale.translate(x-(explosionScale/2),y-(explosionScale/2));
-				scale.scale((double) (tileSize+explosionScale)/45,(double) (tileSize+explosionScale)/45);
-				// scale.scale(1.2,1.2);
-				g2D.drawImage(ImageSprite.explosion[this.ind],scale,null);
+			if(ind < 30) {
+				ind++;
 			}
-			else if(this.ind == 81) {
+			if(ind >= 30) {
 				dead();
 			}
 		}
@@ -119,12 +113,30 @@ public abstract class Vehicule {
 		g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 	}
 	
+	public void drawEtat(Graphics g) {
+		
+		if(weapon != null) {
+			weapon.draw(g);
+		}
+		g.translate(0,50);
+		drawSpecial(g);
+		
+	}
+	
+	public void drawSpecial(Graphics g) {
+		
+	}
+	
+	public void pressSpecial(MouseEvent e) {
+	}
+	
 	public void moveTo(int x, int y){
 		
 		this.coordX = x;
 		this.coordY = y;
 	}
 	
+	//accesseur et modifieur
 	public int getCoordX() {
 		return coordX;
 	}
@@ -133,7 +145,6 @@ public abstract class Vehicule {
 		return coordY;
 	}
 
-	//accesseur et modifieur
 	public void setX(int x){
 		this.posX = x;
 	}
@@ -182,14 +193,27 @@ public abstract class Vehicule {
 		this.image = i;
 	}
 	
-	public void attaque() {
+	public Weapon getWeapon() {
+		return weapon;
+	}
+	
+	public void attaque(int n) {
 		this.life--;
 		if(this.life <= 0) {
 			this.mort = true;
-			System.out.println("Vehicule "+this.type.name()+" mort");
-
+			joueur.removeVec(this);
+			System.out.println("Vehicule "+this.type.name()+" mort sur la case "+damier.getCaseCoord(coordX,coordY));
+			
 			//animation mort
-			ind = 0;
+			if(n != -1) {
+				ind = -n;
+				damier.addAnimation(new AnimationExplosion(coordX,coordY,explosionScale,n));
+			}
+			else {
+				ind = 0;
+				damier.addAnimation(new AnimationExplosion(coordX,coordY,explosionScale,0));
+			}
+			
 		}
 		else {
 			this.makeImage();
@@ -208,12 +232,44 @@ public abstract class Vehicule {
 		return this.depRestant;
 	}
 	
+	public int shoot(Case c) {
+		int ret = 0;
+		
+		if(weapon != null) {
+			Animation a = weapon.getAnimation(damier.getCaseCoord(coordX,coordY),c);
+			if(a != null) {
+				damier.addAnimation(a);
+				ret = a.getTime();
+			}
+		}
+		
+		
+		
+		return ret;
+	}
+	
 	public void tir() {
 		this.tirRestant--;
 	}
 	
 	public int getTirRestant() {
 		return this.tirRestant;
+	}
+	
+	public void calculeTir(Case center) {
+		
+		if(weapon != null && center != null) {
+			if(actif && tirRestant > 0) {
+				weapon.placeShooting(damier,center,this);
+			}
+			else if(!actif){
+				weapon.placeFake(damier,center,this);
+			}
+		}
+		else {
+			System.out.println("calculeTir vehicule weapon ou center null");
+		}
+		
 	}
 	
 	public void debutTour() {
@@ -321,26 +377,15 @@ public abstract class Vehicule {
 		return ret;
 	}
 	
-	// public boolean canMoveOn(Case c) {
-		// boolean ret = true;
-		// if(isFlying() && c.getFlying() != null) {
-			// ret = false;
-		// }
-		// else if(!isFlying() && c.getVehicule() != null){
-			// ret = false;
-		// }
-		// return ret;
-	// }
-	
-	public void isDeadOn(Case c) {}
-	
 	public void deplacement(Case cD, Case cA) {
 		cA.addVehicule(this);
 		cD.removeVehicule(this);
+		coordX = cA.getXCoord();
+		coordY = cA.getYCoord();
 	}
 	
 	public void dead() {
-		damier.killMe(this);
+		damier.getCaseCoord(coordX,coordY).removeVehicule(this);
 		damier.calculeZones();
 	}
 }
