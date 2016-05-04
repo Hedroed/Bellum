@@ -277,10 +277,10 @@ public class FDamier {
 		
 	}
 
-	public void addVehicule(Exit s, TypeVec t, Joueur jo) {
+	public void addVehicule(Exit s, String name, Joueur jo) {
 		if(this.damier[s.getX()][s.getY()].isEmpty()) {
 			
-			Vehicule newVec = factory.getVehiculeByType(t,s.getAngle(),this,jo);
+			Vehicule newVec = factory.getVehiculeByName(name,s.getAngle(),this,jo);
 			jo.addVec(newVec);
 			
 			damier[s.getX()][s.getY()].addVehicule(newVec);
@@ -457,8 +457,8 @@ public class FDamier {
 			
 			if(damier[e.getX()][e.getY()].isEmpty()) {
 		
-				System.out.println("Sortie de vehicule :"+t.getType().name());
-				this.addVehicule(e,t.getType(), t.getJoueur());
+				// System.out.println("Sortie de vehicule :"+t.getType().name());
+				this.addVehicule(e,t.getName(), t.getJoueur());
 				t.isExited();
 				
 				calculeZones();
@@ -505,9 +505,9 @@ public class FDamier {
 			
 			int nbVec = j.getVehicules().size();
 			for(TransferVec tv : j.getVecRestant()) {
-				nbVec += tv.getNumber();
+				nbVec += tv.getNbRestant();
 			}
-			System.out.println("Joueur : "+j+" reste "+nbVec+"vehicule");
+			// System.out.println("Joueur : "+j+" reste "+nbVec+"vehicule");
 			if(nbVec == 0) {
 				b.kill();
 			}
@@ -520,7 +520,7 @@ public class FDamier {
 		if(enVie.size() == 1) {
 			winner = enVie.get(0);
 			winnerInd = 0;
-			System.out.println("Le gagnant est "+winner);
+			System.out.println("Le gagnant est "+winner.getName());
 		}
 		
 		

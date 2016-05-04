@@ -77,6 +77,7 @@ public class FRessource {
 	
 	public void activeTurn() {
 		players[joueurActif].deactiveAll();
+		this.fDamier.setDark(false);
 		
 		joueurActif++;
 		if(joueurActif >= players.length) {
@@ -89,6 +90,7 @@ public class FRessource {
 		
 		this.fillRessources();
 		this.fDamier.unselect();
+		
 		this.fDamier.next();
 	}
 	

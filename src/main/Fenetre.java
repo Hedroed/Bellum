@@ -1,6 +1,7 @@
 package main;
 
 import joueur.Joueur;
+import component.*;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -144,7 +145,16 @@ public class Fenetre extends JFrame implements KeyListener,Runnable {
 	
 	public void startGame() {
 		cL.show(this.container,GAME);
-		gamePanel.newGame(playerSelecterPanel.getJoueur(),mapSelecterPanel.getMap());
+		
+		Joueur[] players = playerSelecterPanel.getJoueur();
+		if(mapSelecterPanel.getResources() != null) {
+			for(Joueur j : players) {
+				j.setVecRestant(mapSelecterPanel.getResources());
+			}
+		}
+		
+		gamePanel.newGame(players,mapSelecterPanel.getMap());
+		
 		requestFocus();
 		currentPane = GAME;
 		gameRunning = true;

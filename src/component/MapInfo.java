@@ -6,7 +6,6 @@ public class MapInfo {
 	
 	private boolean error;
 	
-
 	private String name;
 	private int width, height;
 	private int players;

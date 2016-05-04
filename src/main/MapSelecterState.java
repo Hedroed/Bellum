@@ -3,6 +3,7 @@ package main;
 import component.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -20,10 +21,14 @@ public class MapSelecterState extends JPanel implements MouseListener{
 	private File currentMap;
 	private int currentInd;
 	private int nbPlayers;
-	private String time;
+	
+	private HashMap<String, ArrayList<TransferVec>> listVehicules;
+	private int indTV;
+	private String[] keysTV;
 	
 	private File mapDirectory;
 	private ArrayList<File> mapFiles;
+	private MapInfo info;
 	
 	private Fenetre fenetre;
 	
@@ -49,8 +54,6 @@ public class MapSelecterState extends JPanel implements MouseListener{
             e.printStackTrace();
         }
 		
-		time = "normal";
-		
 		refresh();
 	}
 	
@@ -59,7 +62,7 @@ public class MapSelecterState extends JPanel implements MouseListener{
 		this.mapFiles.clear();
 		
 		for(File f : tab) {
-			if(isMap(f.getName())) {
+			if(isMap(f)) {
 				this.mapFiles.add(f);
 			}
 		}
@@ -72,15 +75,33 @@ public class MapSelecterState extends JPanel implements MouseListener{
 			currentMap = mapFiles.get(i);
 			currentInd = i;
 			img = null;
-			
-			String imageName = getPartName(currentMap.getName())+".png";
+			info = new MapInfo("maps/"+currentMap.getName()+"/map.map");
 
-			if(fileExist(imageName)) {
+			try {
+				img = ImageIO.read(new File("maps/"+currentMap.getName()+"/img.png"));
+			} catch (IOException ioe) {
+				// ioe.printStackTrace();
+				System.out.println("Le fichier image n'existe pas");
 				try {
-					img = ImageIO.read(new File("maps/"+imageName));
-				} catch (IOException ioe) {
-					ioe.printStackTrace();
+					img = ImageIO.read(new File("ressources/defaultImage.png"));
 				}
+				catch(IOException e) {
+					e.printStackTrace();
+				}
+			}
+			try {
+				ResourcesLoader rl = new ResourcesLoader("maps/"+currentMap.getName()+"/resources");
+				listVehicules = rl.getResourcesVehicules();
+				
+				keysTV = new String[listVehicules.keySet().size()];
+				keysTV = listVehicules.keySet().toArray(keysTV);
+				indTV = 0;
+				
+			} catch (IOException ioe) {
+				// ioe.printStackTrace();
+				System.out.println("Le fichier resources vehicules n'existe pas");
+				listVehicules = null;
+				keysTV = null;
 			}
 		}
 	}
@@ -141,7 +162,6 @@ public class MapSelecterState extends JPanel implements MouseListener{
 				g.drawImage(img,center+10,90,256,256,null);
 			}
 			
-			MapInfo info = new MapInfo("maps/"+currentMap.getName());
 			g.drawString("Name : "+info.getName(),center+10,400);
 			nbPlayers = info.getPlayers();
 			g.drawString("Players : "+nbPlayers,center+10,430);
@@ -153,9 +173,15 @@ public class MapSelecterState extends JPanel implements MouseListener{
 			g.fillRect(center+20,h-125,20,30);
 			g.fillRect(center+260,h-125,20,30);
 			g.setColor(new Color(128,0,0));
-			g.drawString("normal",center+110,h-102);
-			g.drawString("<",center+27,h-102);
-			g.drawString(">",center+267,h-102);
+			if(keysTV != null) {
+				g.drawString(keysTV[indTV],center+110,h-102);
+				g.drawString("<",center+27,h-102);
+				g.drawString(">",center+267,h-102);
+			}
+			else {
+				g.drawString("Normal",center+110,h-102);
+			}
+			
 			
 			//bellum buttun
 			g.setColor(new Color(223,118,11));
@@ -166,33 +192,51 @@ public class MapSelecterState extends JPanel implements MouseListener{
 		
 	}
 	
-	private boolean isMap(String s) {
-		int dot = s.lastIndexOf('.');
-		s = s.substring(dot+1);
-		return s.equals("map");
-	}
-	
-	private boolean fileExist(String s) {
-		File[] tab = mapDirectory.listFiles();
+	private boolean isMap(File dir) {
 		boolean ret = false;
 		
-		for(File f : tab) {
-			if(f.getName().equals(s)) {
-				ret = true;
-				break;
+		if(dir.isDirectory()) {
+			File[] tab = dir.listFiles();
+			for(File f : tab) {
+				if(f.getName().equals("map.map")) {
+					ret = true;
+				}
 			}
 		}
 		return ret;
 	}
 	
-	private String getPartName(String s) {
-		int dot = s.lastIndexOf('.');
-		s = s.substring(0,dot);
-		return s;
-	}
+	// private boolean fileExist(String s) {
+		// File[] tab = mapDirectory.listFiles();
+		// boolean ret = false;
+		
+		// for(File f : tab) {
+			// if(f.getName().equals(s)) {
+				// ret = true;
+				// break;
+			// }
+		// }
+		// return ret;
+	// }
+	
+	// private String getPartName(String s) {
+		// int dot = s.lastIndexOf('.');
+		// s = s.substring(0,dot);
+		// return s;
+	// }
 	
 	public String getMap() {
-		return currentMap.getName();
+		return currentMap.getName()+"/map.map";
+	}
+	
+	public ArrayList<TransferVec> getResources() {
+		ArrayList<TransferVec> ret = null;
+		
+		if(listVehicules != null) {
+			ret = listVehicules.get(keysTV[indTV]);
+		}
+		
+		return ret;
 	}
 	
 	public int getNbPlayers() {
@@ -242,10 +286,22 @@ public class MapSelecterState extends JPanel implements MouseListener{
 				}
 				else if(y >= h-125 && y < h-95) {
 					if(x < center+50) {
-						System.out.println("button <");
+						// System.out.println("button <");
+						if(indTV > 0) {
+							indTV--;
+						}
+						else {
+							indTV = keysTV.length-1;
+						}
 					}
 					else if(x < center+280) {
-						System.out.println("button >");
+						// System.out.println("button >");
+						if(indTV < keysTV.length-1) {
+							indTV++;
+						}
+						else {
+							indTV = 0;
+						}
 					}
 				}
 			}

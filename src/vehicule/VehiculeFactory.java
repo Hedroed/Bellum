@@ -5,6 +5,10 @@ import main.FDamier;
 
 import javax.swing.JPanel;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.io.*;
+
 public class VehiculeFactory {
 	
 	
@@ -42,4 +46,38 @@ public class VehiculeFactory {
 		return ret;
 		
 	}
+	
+	public Vehicule getVehiculeByName(String name, int angle, FDamier damier, Joueur joueur) {
+		Class toBuild = null;
+		
+		try {
+			toBuild = Class.forName("vehicule."+name);
+		}
+		catch(ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		Constructor[] builders = toBuild.getConstructors();
+
+		Object[] param = {
+			angle, damier, joueur
+		};
+		
+		Vehicule v = null;
+		try {
+			v = (Vehicule) builders[0].newInstance(param);
+		}
+		catch (InstantiationException e) {
+			e.printStackTrace();
+		}
+		catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		
+		return v;
+	}
+	
 }

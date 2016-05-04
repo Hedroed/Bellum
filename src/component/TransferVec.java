@@ -5,13 +5,25 @@ import vehicule.TypeVec;
 
 public class TransferVec {
 	private TypeVec type;
+	private String nameVec;
 	private int nbRestant;
 	private Joueur joueur;
 	
-	public TransferVec(TypeVec t, int nb, Joueur jo) {
-		this.type = t;
+	public TransferVec(String name, int nb, Joueur jo) {
+		// this.type = t;
+		this.nameVec = name;
 		this.joueur = jo;
 		this.nbRestant = nb;
+	}
+	
+	public TransferVec(String vecName, int nb) {
+		System.out.println("    Add "+nb+" "+vecName);
+		nameVec = vecName;
+		nbRestant = nb;
+	}
+	
+	public void setJoueur(Joueur j) {
+		joueur = j;
 	}
 	
 	public TypeVec getType() {
@@ -34,8 +46,8 @@ public class TransferVec {
 		return this.joueur;
 	}
 	
-	public int getNumber() {
-		return nbRestant;
+	public String getName() {
+		return nameVec;
 	}
 	
 	public String toString() {
@@ -46,5 +58,11 @@ public class TransferVec {
 		if(this.nbRestant > 0) {
 			this.nbRestant--;
 		}
+	}
+	
+	public TransferVec clone() {
+		
+		return new TransferVec(nameVec,nbRestant,joueur);
+		
 	}
 }

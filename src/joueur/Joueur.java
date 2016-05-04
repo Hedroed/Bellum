@@ -14,7 +14,7 @@ public class Joueur {
 	
 	private String race;
 	
-	private ArrayList<Vehicule> vecActif = new ArrayList<Vehicule>();
+	private ArrayList<Vehicule> vecActif;
 	//liste des vehicules et de leur nombre
 	private ArrayList<TransferVec> vecRestant = new ArrayList<TransferVec>();
 	
@@ -23,14 +23,28 @@ public class Joueur {
 		this.color = c;
 		this.race = r;
 		
-		this.vecRestant.add(new TransferVec(TypeVec.mangouste,3,this));//3
-		this.vecRestant.add(new TransferVec(TypeVec.warthog,2,this));//2
-		this.vecRestant.add(new TransferVec(TypeVec.scorpion,1,this));//1
-		this.vecRestant.add(new TransferVec(TypeVec.helicopter,2,this));//2
-		this.vecRestant.add(new TransferVec(TypeVec.walker,5,this));//5
-		this.vecRestant.add(new TransferVec(TypeVec.bridger,1,this));//1
+		vecActif = new ArrayList<Vehicule>();
+		this.vecRestant.add(new TransferVec("Mangouste",3,this));//3
+		this.vecRestant.add(new TransferVec("Warthog",2,this));//2
+		this.vecRestant.add(new TransferVec("Scorpion",1,this));//1
+		this.vecRestant.add(new TransferVec("Helicopter",2,this));//2
+		this.vecRestant.add(new TransferVec("Walker",5,this));//5
+		this.vecRestant.add(new TransferVec("Bridger",1,this));//1
 		// this.vecRestant.add(new TransferVec(TypeVec.turret,1,this));
 		// this.vecRestant.add(new TransferVec(TypeVec.activeTurret,1,this));
+	}
+	
+	public Joueur(String n, Color c, String r, ArrayList<TransferVec> tv) {
+		this.name = n;
+		this.color = c;
+		this.race = r;
+		
+		vecRestant = tv;
+		
+		for(TransferVec t : vecRestant) {
+			t.setJoueur(this);
+		}
+		
 	}
 	
 	public Joueur(String n, Color c) {
@@ -93,5 +107,15 @@ public class Joueur {
 	
 	public ArrayList<TransferVec> getVecRestant() { //retourne les vehicules restant du joueur 
 		return this.vecRestant;
+	}
+	
+	public void setVecRestant(ArrayList<TransferVec> resources) { 
+		this.vecRestant = new ArrayList<TransferVec>();
+		for(TransferVec tv : resources) {
+			vecRestant.add(tv.clone());
+		}
+		for(TransferVec tv : vecRestant) {
+			tv.setJoueur(this);
+		}
 	}
 }
