@@ -41,13 +41,14 @@ public class OptionState extends JPanel implements MouseListener{
 	public OptionState(Fenetre f) {
 		this.fenetre = f;
 		
-		optionFile = new File("option");
+		optionFile = new File("bellum.conf");
 		this.addMouseListener(this);
 		
 		marbre = ImageSprite.createImage("ressources/interface.png");
 		
         try {
-            f1 = Font.createFont(Font.TRUETYPE_FONT, new File("ressources/DALEK.ttf"));
+            InputStream in = getClass().getResourceAsStream("ressources/DALEK.ttf"); 
+            f1 = Font.createFont(Font.TRUETYPE_FONT, in);
 			f1 = f1.deriveFont(20f);
         } catch (Exception e) {
             e.printStackTrace();

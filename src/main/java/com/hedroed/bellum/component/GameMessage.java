@@ -7,7 +7,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Color;
 import java.awt.Image;
-import java.io.File;
+import java.io.InputStream;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
@@ -20,12 +20,14 @@ public class GameMessage {
 	public GameMessage(String fontName, String interfaceName, Color mainColor) {
 		this.c1 = mainColor;
 		try {
-            f1 = Font.createFont(Font.PLAIN, new File(fontName));
+            InputStream in = getClass().getResourceAsStream(fontName);
+            f1 = Font.createFont(Font.PLAIN, in);
         } catch (Exception e) {
             e.printStackTrace();
         }
 		try {
-			gameInterface = ImageIO.read(new File(interfaceName));
+            InputStream in = getClass().getResourceAsStream(interfaceName);
+			gameInterface = ImageIO.read(in);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

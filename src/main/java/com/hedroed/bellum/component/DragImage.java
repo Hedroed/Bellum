@@ -7,7 +7,7 @@ import java.awt.Graphics;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.io.InputStream;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
@@ -33,8 +33,10 @@ public class DragImage{
 		height = 74;
 		
 		BufferedImage bigImage = null;
+
 		try {
-			bigImage = ImageIO.read(new File("ressources/"+t.getName()+".png"));
+		    InputStream in = getClass().getResourceAsStream("ressources/"+t.getName()+".png"); 
+			bigImage = ImageIO.read(in);
 			image = bigImage.getSubimage(0,0,64,64);
 		} catch (IOException e) {
 			e.printStackTrace();

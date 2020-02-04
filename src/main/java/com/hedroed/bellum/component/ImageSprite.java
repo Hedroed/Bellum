@@ -2,7 +2,7 @@ package com.hedroed.bellum.component;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.io.InputStream;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
@@ -20,7 +20,8 @@ public class ImageSprite {
 		Image[] ret = new Image[r * c];
 		
 		try {
-			image = ImageIO.read(new File(filePath));
+		    InputStream in = ImageSprite.class.getClassLoader().getResourceAsStream(filePath);
+			image = ImageIO.read(in);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -38,9 +39,12 @@ public class ImageSprite {
 	
 	public static Image createImage(String filePath) {
 		System.out.println("load :"+filePath);
+		
+
 		Image ret = null;
 		try {
-			ret = ImageIO.read(new File(filePath));
+		    InputStream in = ImageSprite.class.getClassLoader().getResourceAsStream(filePath);
+			ret = ImageIO.read(in);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

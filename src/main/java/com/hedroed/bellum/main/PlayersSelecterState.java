@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.io.File;
+import java.io.InputStream;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.awt.Font;
@@ -37,7 +37,8 @@ public class PlayersSelecterState extends JPanel implements MouseListener,MouseW
 		inter = ImageSprite.createImage("ressources/interface.png");
 		
         try {
-            f1 = Font.createFont(Font.PLAIN, new File("ressources/DALEK.ttf"));
+            InputStream in = getClass().getResourceAsStream("ressources/DALEK.ttf");
+            f1 = Font.createFont(Font.PLAIN, in);
         } catch (Exception e) {
             e.printStackTrace();
         }

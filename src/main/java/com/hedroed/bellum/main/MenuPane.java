@@ -4,7 +4,7 @@ import com.hedroed.bellum.component.ImageSprite;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.io.InputStream;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.awt.Color;
@@ -103,7 +103,8 @@ public class MenuPane extends JPanel implements MouseListener,MouseMotionListene
 		//draw text
 		Font f1 = null;
         try {
-            f1 = Font.createFont(Font.TRUETYPE_FONT, new File("ressources/DALEK.ttf"));
+            InputStream in = getClass().getResourceAsStream("ressources/DALEK.ttf"); 
+            f1 = Font.createFont(Font.TRUETYPE_FONT, in);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -1,6 +1,6 @@
 package com.hedroed.bellum.main;
 
-import java.io.File;
+import java.io.InputStream;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -14,13 +14,13 @@ public class PlaySound {
 	
 	public PlaySound(String s) {
 		
-		File file = new File(s);
 		
 		try {
+		    InputStream in = getClass().getResourceAsStream(s);
 			clip = AudioSystem.getClip();
-			clip.open(AudioSystem.getAudioInputStream(file));
+			clip.open(AudioSystem.getAudioInputStream(in));
 		} catch(Exception e) {
-			System.out.println("Error :: Clip (file: "+file+")");
+			System.out.println("Error :: Clip (file: "+s+")");
 			e.printStackTrace();
 		}
 		

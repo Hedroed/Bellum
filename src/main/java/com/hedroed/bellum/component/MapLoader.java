@@ -72,7 +72,8 @@ public class MapLoader {
 			
 			for(int i=0; i<nbBase; i++) {
 				s = in.readLine();
-				basesImage.add(ImageIO.read(new File("ressources/"+s)));
+                InputStream inBaseImage = getClass().getResourceAsStream("ressources/"+s); 
+				basesImage.add(ImageIO.read(inBaseImage));
 				int lx = Character.getNumericValue(in.read());
 				int ly = Character.getNumericValue(in.read());
 				longueurBase[i][0] = lx;
@@ -83,7 +84,8 @@ public class MapLoader {
 			s = in.readLine();
 			ImageSprite.mapSprite = ImageSprite.createSprite(65,65,2,6,"ressources/"+s);
 			s = in.readLine();
-			bridge = ImageIO.read(new File("ressources/"+s));
+            InputStream inBridgeImage = getClass().getResourceAsStream("ressources/"+s); 
+			bridge = ImageIO.read(inBridgeImage);
 			
 			//element de la map
 			for(int i=0; i<height; i++) {

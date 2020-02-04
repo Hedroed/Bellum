@@ -3,7 +3,7 @@ package com.hedroed.bellum.component;
 import com.hedroed.bellum.main.*;
 
 import java.awt.Image;
-import java.io.File;
+import java.io.InputStream;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.awt.Color;
@@ -31,10 +31,12 @@ public class Obstacle{
 		// System.out.println("Creation obstacle");
 		try {
 			if(type == ROCHER) {
-				this.image = ImageIO.read(new File("ressources/rocher.png"));
+                InputStream in = getClass().getResourceAsStream("ressources/rocher.png"); 
+				this.image = ImageIO.read(in);
 			}
 			else {
-				this.image = ImageIO.read(new File("ressources/tree.png"));
+                InputStream in = getClass().getResourceAsStream("ressources/tree.png"); 
+				this.image = ImageIO.read(in);
 			}
 			
 		} catch (IOException e) {

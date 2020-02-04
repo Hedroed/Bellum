@@ -7,7 +7,7 @@ import com.hedroed.bellum.vehicule.*;
 import java.awt.Graphics;
 import java.awt.Font;
 import java.awt.Color;
-import java.io.File;
+import java.io.InputStream;
 import java.io.IOException;
 import java.awt.event.MouseEvent;
 
@@ -29,7 +29,8 @@ public class PlayerSelecterPane implements ColorChooseEvent,Drawable{
 		posY = y;
 		
 		try {
-            f1 = Font.createFont(Font.PLAIN, new File("ressources/DALEK.ttf"));
+            InputStream in = getClass().getResourceAsStream("ressources/DALEK.ttf");
+            f1 = Font.createFont(Font.PLAIN, in);
         } catch (Exception e) {
             e.printStackTrace();
         }

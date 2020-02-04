@@ -6,7 +6,7 @@ import com.hedroed.bellum.main.*;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.io.InputStream;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.awt.Color;
@@ -43,7 +43,8 @@ public class Turret extends Vehicule{
 		BufferedImage image = null;
 		
 		try {
-			bigImage = ImageIO.read(new File(this.type.getLien()));
+			InputStream in = getClass().getResourceAsStream(this.type.getLien());
+			bigImage = ImageIO.read(in);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

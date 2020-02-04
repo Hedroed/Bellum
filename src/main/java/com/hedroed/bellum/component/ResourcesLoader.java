@@ -17,7 +17,8 @@ public class ResourcesLoader {
 		vecList = new HashMap<String,ArrayList<TransferVec>>();
 		
 
-		in = new BufferedReader(new FileReader(fileName));
+        InputStream inputStream = getClass().getResourceAsStream(fileName); 
+		in = new BufferedReader(new InputStreamReader(inputStream));
 		
 		String line = in.readLine();
 		while(line != null) {

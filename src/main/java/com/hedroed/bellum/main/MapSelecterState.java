@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.io.File;
+import java.io.InputStream;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.awt.Font;
@@ -44,12 +44,14 @@ public class MapSelecterState extends JPanel implements MouseListener{
 		this.addMouseListener(this);
 		
 		try {
-			marbre = ImageIO.read(new File("ressources/interface.png"));
+            InputStream in = getClass().getResourceAsStream("ressources/interface.png"); 
+			marbre = ImageIO.read(in);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
         try {
-            f1 = Font.createFont(Font.PLAIN, new File("ressources/DALEK.ttf"));
+            InputStream in = getClass().getResourceAsStream("ressources/DALEK.ttf"); 
+            f1 = Font.createFont(Font.PLAIN, in);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -78,12 +80,14 @@ public class MapSelecterState extends JPanel implements MouseListener{
 			info = new MapInfo("maps/"+currentMap.getName()+"/map.map");
 
 			try {
-				img = ImageIO.read(new File("maps/"+currentMap.getName()+"/img.png"));
+                InputStream in = getClass().getResourceAsStream("maps/"+currentMap.getName()+"/img.png"); 
+				img = ImageIO.read(in);
 			} catch (IOException ioe) {
 				// ioe.printStackTrace();
 				System.out.println("Le fichier image n'existe pas");
 				try {
-					img = ImageIO.read(new File("ressources/defaultImage.png"));
+                    InputStream in = getClass().getResourceAsStream("ressources/defaultImage.png"); 
+					img = ImageIO.read(in);
 				}
 				catch(IOException e) {
 					e.printStackTrace();

@@ -8,7 +8,7 @@ import com.hedroed.bellum.vehicule.*;
 import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.Font;
-import java.io.File;
+import java.io.InputStream;
 import java.io.IOException;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
@@ -40,9 +40,10 @@ public class GamePane extends JPanel implements MouseListener,MouseMotionListene
 		this.addMouseWheelListener(this);
 		
 		debug = new Debug();
-		
+
 		try {
-            f1 = Font.createFont(Font.PLAIN, new File("ressources/DALEK.ttf"));
+            InputStream in = getClass().getResourceAsStream("ressources/DALEK.ttf"); 
+            f1 = Font.createFont(Font.PLAIN, in);
         } catch (Exception e) {
             e.printStackTrace();
         }

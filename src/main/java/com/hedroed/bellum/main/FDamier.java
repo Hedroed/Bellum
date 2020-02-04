@@ -11,7 +11,6 @@ import javax.swing.JPanel;
 import java.awt.Point;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
@@ -95,10 +94,12 @@ public class FDamier {
 		
 		Image baseUp = null;
 		Image baseDown = null;
+        Class class_ = getClass();
+
 		try {
-			baseDown = ImageIO.read(new File("ressources/baseDown.png"));
-			baseUp = ImageIO.read(new File("ressources/baseUp.png"));
-			bridge = ImageIO.read(new File("ressources/pont.png"));
+			baseDown = ImageIO.read(class_.getResourceAsStream("ressources/baseDown.png"));
+			baseUp = ImageIO.read(class_.getResourceAsStream("ressources/baseUp.png"));
+			bridge = ImageIO.read(class_.getResourceAsStream("ressources/pont.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
