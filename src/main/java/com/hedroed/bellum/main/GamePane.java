@@ -42,7 +42,7 @@ public class GamePane extends JPanel implements MouseListener,MouseMotionListene
 		debug = new Debug();
 
 		try {
-            InputStream in = getClass().getResourceAsStream("ressources/DALEK.ttf"); 
+            InputStream in = getClass().getResourceAsStream("/ressources/DALEK.ttf"); 
             f1 = Font.createFont(Font.PLAIN, in);
         } catch (Exception e) {
             e.printStackTrace();
@@ -84,9 +84,13 @@ public class GamePane extends JPanel implements MouseListener,MouseMotionListene
 		g.fillRect(0,0,getWidth(),getHeight());
 		g.setFont(f1);
 		
-		fDamier.draw(g);
-		fRessource.draw(g);
-		fEtat.draw(g);
+        try {
+            fDamier.draw(g);
+            fRessource.draw(g);
+            fEtat.draw(g);
+        } catch (java.lang.NullPointerException e) {
+            System.exit(0);
+        }
 		
 		if(dragImage != null) {
 			dragImage.draw(g);

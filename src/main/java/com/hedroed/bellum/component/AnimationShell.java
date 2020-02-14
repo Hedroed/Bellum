@@ -34,7 +34,7 @@ public class AnimationShell extends Animation {
 		setTime((int)len*2);
 		
 		// System.out.println("Creation obus en case "+x+" :: "+y);
-		image = ImageSprite.createImage("ressources/obus.png");
+		image = ImageSprite.createImage("/ressources/obus.png");
 	}
 	
 	public AnimationShell(int x, int y, int x2, int y2,boolean b) {
@@ -55,7 +55,7 @@ public class AnimationShell extends Animation {
 		setTime((int)len/15);
 		
 		System.out.println("Creation obus en "+x+" :: "+y+" dx: "+dx+" dy: "+dy);
-		image = ImageSprite.createImage("ressources/obus.png");
+		image = ImageSprite.createImage("/ressources/obus.png");
 	}
 	
 	public void draw(Graphics g) {

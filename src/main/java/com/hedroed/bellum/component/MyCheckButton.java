@@ -28,10 +28,10 @@ public class MyCheckButton implements Drawable {
 	
 	private void makeImage() {
 		if(check) {
-			img = ImageSprite.createImage("ressources/check1.png");
+			img = ImageSprite.createImage("/ressources/check1.png");
 		}
 		else {
-			img = ImageSprite.createImage("ressources/check0.png");
+			img = ImageSprite.createImage("/ressources/check0.png");
 		}
 	}
 	

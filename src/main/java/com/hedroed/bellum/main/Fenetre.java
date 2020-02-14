@@ -68,7 +68,7 @@ public class Fenetre extends JFrame implements KeyListener, Runnable {
 		optionState = new OptionState(this);
 		setSize(OptionState.sizeX,OptionState.sizeY);
 		
-		backSound = new PlaySound("ressources/bellum.wav",OptionState.musicVolume);
+		backSound = new PlaySound("/ressources/bellum.wav",OptionState.musicVolume);
 		backSound.playContinuously();
 		
 		container.setLayout(cL);

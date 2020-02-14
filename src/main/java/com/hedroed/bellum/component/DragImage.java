@@ -35,7 +35,7 @@ public class DragImage{
 		BufferedImage bigImage = null;
 
 		try {
-		    InputStream in = getClass().getResourceAsStream("ressources/"+t.getName()+".png"); 
+		    InputStream in = getClass().getResourceAsStream("/ressources/"+t.getName()+".png"); 
 			bigImage = ImageIO.read(in);
 			image = bigImage.getSubimage(0,0,64,64);
 		} catch (IOException e) {

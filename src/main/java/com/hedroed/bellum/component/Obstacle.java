@@ -31,11 +31,11 @@ public class Obstacle{
 		// System.out.println("Creation obstacle");
 		try {
 			if(type == ROCHER) {
-                InputStream in = getClass().getResourceAsStream("ressources/rocher.png"); 
+                InputStream in = getClass().getResourceAsStream("/ressources/rocher.png"); 
 				this.image = ImageIO.read(in);
 			}
 			else {
-                InputStream in = getClass().getResourceAsStream("ressources/tree.png"); 
+                InputStream in = getClass().getResourceAsStream("/ressources/tree.png"); 
 				this.image = ImageIO.read(in);
 			}
 			

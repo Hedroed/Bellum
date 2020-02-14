@@ -72,7 +72,7 @@ public class MapLoader {
 			
 			for(int i=0; i<nbBase; i++) {
 				s = in.readLine();
-                InputStream inBaseImage = getClass().getResourceAsStream("ressources/"+s); 
+                InputStream inBaseImage = getClass().getResourceAsStream("/ressources/"+s); 
 				basesImage.add(ImageIO.read(inBaseImage));
 				int lx = Character.getNumericValue(in.read());
 				int ly = Character.getNumericValue(in.read());
@@ -82,9 +82,9 @@ public class MapLoader {
 			}
 			
 			s = in.readLine();
-			ImageSprite.mapSprite = ImageSprite.createSprite(65,65,2,6,"ressources/"+s);
+			ImageSprite.mapSprite = ImageSprite.createSprite(65,65,2,6,"/ressources/"+s);
 			s = in.readLine();
-            InputStream inBridgeImage = getClass().getResourceAsStream("ressources/"+s); 
+            InputStream inBridgeImage = getClass().getResourceAsStream("/ressources/"+s); 
 			bridge = ImageIO.read(inBridgeImage);
 			
 			//element de la map

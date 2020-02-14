@@ -1,6 +1,7 @@
 package com.hedroed.bellum.main;
 
 import java.io.InputStream;
+import java.io.BufferedInputStream;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -17,8 +18,9 @@ public class PlaySound {
 		
 		try {
 		    InputStream in = getClass().getResourceAsStream(s);
+            InputStream bufferedIn = new BufferedInputStream(in);
 			clip = AudioSystem.getClip();
-			clip.open(AudioSystem.getAudioInputStream(in));
+			clip.open(AudioSystem.getAudioInputStream(bufferedIn));
 		} catch(Exception e) {
 			System.out.println("Error :: Clip (file: "+s+")");
 			e.printStackTrace();

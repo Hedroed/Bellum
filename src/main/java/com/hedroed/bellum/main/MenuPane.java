@@ -44,10 +44,10 @@ public class MenuPane extends JPanel implements MouseListener,MouseMotionListene
 		this.fenetre = f;
 	
 		this.title = "Bellum";
-		this.soundChange = new PlaySound("ressources/menu.wav",-30,10);
+		this.soundChange = new PlaySound("/ressources/menu.wav",-30,10);
 		this.setBackground(Color.black);
 		
-		music = ImageSprite.createImage("ressources/music.png");
+		music = ImageSprite.createImage("/ressources/music.png");
 		
 		this.addMouseMotionListener(this);
 		this.addMouseListener(this);
@@ -103,7 +103,7 @@ public class MenuPane extends JPanel implements MouseListener,MouseMotionListene
 		//draw text
 		Font f1 = null;
         try {
-            InputStream in = getClass().getResourceAsStream("ressources/DALEK.ttf"); 
+            InputStream in = getClass().getResourceAsStream("/ressources/DALEK.ttf"); 
             f1 = Font.createFont(Font.TRUETYPE_FONT, in);
         } catch (Exception e) {
             e.printStackTrace();
@@ -158,7 +158,7 @@ public class MenuPane extends JPanel implements MouseListener,MouseMotionListene
 	public void clickMenu() {
 		if(getCurrent() == PLAY) {
 			fenetre.goMap();
-			// new PlaySound("ressources/select.wav",-30).play();
+			// new PlaySound("/ressources/select.wav",-30).play();
 		}
 		else if(getCurrent() == EXIT) {
 			System.exit(0);
@@ -199,11 +199,11 @@ public class MenuPane extends JPanel implements MouseListener,MouseMotionListene
 			fenetre.toggleMusic();
 			if(musicOff) {
 				musicOff = false;
-				music = ImageSprite.createImage("ressources/music.png");
+				music = ImageSprite.createImage("/ressources/music.png");
 			}
 			else {
 				musicOff = true;
-				music = ImageSprite.createImage("ressources/musicOff.png");
+				music = ImageSprite.createImage("/ressources/musicOff.png");
 			}
 		}
 	}

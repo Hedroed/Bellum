@@ -8,10 +8,10 @@ import javax.imageio.ImageIO;
 
 public class ImageSprite {
 	
-	public static Image[] explosion = createSprite(45,45,9,9,"ressources/explosion.png");
-	public static Image[] mapSprite ;//= createSprite(65,65,2,6,"ressources/spriteMap.png");
-	public static Image[] baseExplosion = createSprite(256,256,1,48,"ressources/baseExplosion.png");
-	public static Image menuBackground = createImage("ressources/bg_menu.jpg");
+	public static Image[] explosion = createSprite(45,45,9,9,"/ressources/explosion.png");
+	public static Image[] mapSprite ;//= createSprite(65,65,2,6,"/ressources/spriteMap.png");
+	public static Image[] baseExplosion = createSprite(256,256,1,48,"/ressources/baseExplosion.png");
+	public static Image menuBackground = createImage("/ressources/bg_menu.jpg");
 	
 	public static Image[] createSprite(int w, int h,int r, int c, String filePath) {
 		System.out.println("load :"+filePath);
@@ -20,7 +20,7 @@ public class ImageSprite {
 		Image[] ret = new Image[r * c];
 		
 		try {
-		    InputStream in = ImageSprite.class.getClassLoader().getResourceAsStream(filePath);
+		    InputStream in = ImageSprite.class.getResourceAsStream(filePath);
 			image = ImageIO.read(in);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -43,7 +43,7 @@ public class ImageSprite {
 
 		Image ret = null;
 		try {
-		    InputStream in = ImageSprite.class.getClassLoader().getResourceAsStream(filePath);
+		    InputStream in = ImageSprite.class.getResourceAsStream(filePath);
 			ret = ImageIO.read(in);
 		} catch (IOException e) {
 			e.printStackTrace();

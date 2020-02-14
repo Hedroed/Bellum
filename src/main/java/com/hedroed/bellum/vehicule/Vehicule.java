@@ -20,7 +20,7 @@ import java.awt.event.MouseEvent;
 
 public abstract class Vehicule {
 	
-	private static PlaySound soundExplose = new PlaySound("ressources/explosion.wav",OptionState.soundVolume);
+	private static PlaySound soundExplose = new PlaySound("/ressources/explosion.wav",OptionState.soundVolume);
 	
 	private Image image;
 	private boolean mort = false;

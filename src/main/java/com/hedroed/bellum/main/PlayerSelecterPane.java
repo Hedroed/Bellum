@@ -29,7 +29,7 @@ public class PlayerSelecterPane implements ColorChooseEvent,Drawable{
 		posY = y;
 		
 		try {
-            InputStream in = getClass().getResourceAsStream("ressources/DALEK.ttf");
+            InputStream in = getClass().getResourceAsStream("/ressources/DALEK.ttf");
             f1 = Font.createFont(Font.PLAIN, in);
         } catch (Exception e) {
             e.printStackTrace();

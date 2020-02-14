@@ -80,7 +80,7 @@ public class FDamier {
 		
 		animations = new ArrayList<Animation>();
 		
-		message = new GameMessage("ressources/DALEK.ttf","ressources/interface2.png",new Color(128,0,0));
+		message = new GameMessage("/ressources/DALEK.ttf","/ressources/interface2.png",new Color(128,0,0));
 		
 	}
 	
@@ -97,13 +97,13 @@ public class FDamier {
         Class class_ = getClass();
 
 		try {
-			baseDown = ImageIO.read(class_.getResourceAsStream("ressources/baseDown.png"));
-			baseUp = ImageIO.read(class_.getResourceAsStream("ressources/baseUp.png"));
-			bridge = ImageIO.read(class_.getResourceAsStream("ressources/pont.png"));
+			baseDown = ImageIO.read(class_.getResourceAsStream("/ressources/baseDown.png"));
+			baseUp = ImageIO.read(class_.getResourceAsStream("/ressources/baseUp.png"));
+			bridge = ImageIO.read(class_.getResourceAsStream("/ressources/pont.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		ImageSprite.mapSprite = ImageSprite.createSprite(65,65,2,6,"ressources/spriteMap.png");
+		ImageSprite.mapSprite = ImageSprite.createSprite(65,65,2,6,"/ressources/spriteMap.png");
 		
 		damier = new Case[LARGEUR][LONGUEUR];
 		

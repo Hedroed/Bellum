@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.io.InputStream;
+import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.awt.Font;
@@ -44,13 +45,13 @@ public class MapSelecterState extends JPanel implements MouseListener{
 		this.addMouseListener(this);
 		
 		try {
-            InputStream in = getClass().getResourceAsStream("ressources/interface.png"); 
+            InputStream in = getClass().getResourceAsStream("/ressources/interface.png"); 
 			marbre = ImageIO.read(in);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
         try {
-            InputStream in = getClass().getResourceAsStream("ressources/DALEK.ttf"); 
+            InputStream in = getClass().getResourceAsStream("/ressources/DALEK.ttf"); 
             f1 = Font.createFont(Font.PLAIN, in);
         } catch (Exception e) {
             e.printStackTrace();
@@ -80,13 +81,12 @@ public class MapSelecterState extends JPanel implements MouseListener{
 			info = new MapInfo("maps/"+currentMap.getName()+"/map.map");
 
 			try {
-                InputStream in = getClass().getResourceAsStream("maps/"+currentMap.getName()+"/img.png"); 
-				img = ImageIO.read(in);
+				img = ImageIO.read(new File("maps/"+currentMap.getName()+"/img.png"));
 			} catch (IOException ioe) {
 				// ioe.printStackTrace();
 				System.out.println("Le fichier image n'existe pas");
 				try {
-                    InputStream in = getClass().getResourceAsStream("ressources/defaultImage.png"); 
+                    InputStream in = getClass().getResourceAsStream("/ressources/defaultImage.png"); 
 					img = ImageIO.read(in);
 				}
 				catch(IOException e) {
@@ -177,7 +177,7 @@ public class MapSelecterState extends JPanel implements MouseListener{
 			g.fillRect(center+20,h-125,20,30);
 			g.fillRect(center+260,h-125,20,30);
 			g.setColor(new Color(128,0,0));
-			if(keysTV != null) {
+			if(keysTV != null && keysTV.length > 0) {
 				g.drawString(keysTV[indTV],center+110,h-102);
 				g.drawString("<",center+27,h-102);
 				g.drawString(">",center+267,h-102);

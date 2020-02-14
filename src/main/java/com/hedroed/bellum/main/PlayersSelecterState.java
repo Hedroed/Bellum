@@ -34,10 +34,10 @@ public class PlayersSelecterState extends JPanel implements MouseListener,MouseW
 		addMouseListener(this);
 		addMouseWheelListener(this);
 		
-		inter = ImageSprite.createImage("ressources/interface.png");
+		inter = ImageSprite.createImage("/ressources/interface.png");
 		
         try {
-            InputStream in = getClass().getResourceAsStream("ressources/DALEK.ttf");
+            InputStream in = getClass().getResourceAsStream("/ressources/DALEK.ttf");
             f1 = Font.createFont(Font.PLAIN, in);
         } catch (Exception e) {
             e.printStackTrace();

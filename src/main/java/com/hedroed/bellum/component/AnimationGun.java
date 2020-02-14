@@ -34,7 +34,7 @@ public class AnimationGun extends Animation {
 		setTime((int)len*2);
 		
 		// System.out.println("Creation gun ball en "+x+" :: "+y);
-		image = ImageSprite.createImage("ressources/obus.png");
+		image = ImageSprite.createImage("/ressources/obus.png");
 	}
 	
 	public void draw(Graphics g) {

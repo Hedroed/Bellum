@@ -16,10 +16,10 @@ public class TransferVec {
 		this.nbRestant = nb;
 	}
 	
-	public TransferVec(String vecName, int nb) {
-		System.out.println("    Add "+nb+" "+vecName);
-		nameVec = vecName;
-		nbRestant = nb;
+	public TransferVec(String name, int nb) {
+		System.out.println("    Add "+nb+" "+name);
+		this.nameVec = name;
+		this.nbRestant = nb;
 	}
 	
 	public void setJoueur(Joueur j) {
